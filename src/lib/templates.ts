@@ -401,6 +401,92 @@ export const RULE_THICKNESS_MAX = 3
 export const NAME_TRACKING_MIN = -0.05
 export const NAME_TRACKING_MAX = 0.2
 
+export interface DesignPreset {
+  id: string
+  name: string
+  /** Overrides applied on top of the current template (colours are left untouched). */
+  customization: Customization
+}
+
+export const DESIGN_PRESETS: DesignPreset[] = [
+  {
+    id: 'classic',
+    name: 'Classic',
+    customization: {
+      baseFontSize: 11,
+      pageMarginY: 48,
+      pageMarginX: 54,
+      lineHeight: 1.45,
+      nameScale: 1,
+      headingScale: 1,
+      sectionSpacing: 16,
+      bulletStyle: 'disc',
+      headingCase: 'uppercase',
+      headingWeight: 700,
+      headingTracking: 0.14,
+      ruleThickness: 1,
+      nameTracking: 0,
+    },
+  },
+  {
+    id: 'compact',
+    name: 'Compact',
+    customization: {
+      baseFontSize: 10,
+      pageMarginY: 36,
+      pageMarginX: 44,
+      lineHeight: 1.3,
+      nameScale: 0.95,
+      headingScale: 0.95,
+      sectionSpacing: 10,
+      bulletStyle: 'disc',
+      headingCase: 'uppercase',
+      headingWeight: 700,
+      headingTracking: 0.08,
+      ruleThickness: 0.5,
+      nameTracking: 0,
+    },
+  },
+  {
+    id: 'modern',
+    name: 'Modern',
+    customization: {
+      baseFontSize: 11,
+      pageMarginY: 52,
+      pageMarginX: 56,
+      lineHeight: 1.5,
+      nameScale: 1.15,
+      headingScale: 1.05,
+      sectionSpacing: 18,
+      bulletStyle: 'dash',
+      headingCase: 'capitalize',
+      headingWeight: 600,
+      headingTracking: 0.02,
+      ruleThickness: 2,
+      nameTracking: -0.01,
+    },
+  },
+  {
+    id: 'airy',
+    name: 'Airy',
+    customization: {
+      baseFontSize: 11.5,
+      pageMarginY: 64,
+      pageMarginX: 64,
+      lineHeight: 1.7,
+      nameScale: 1,
+      headingScale: 1,
+      sectionSpacing: 26,
+      bulletStyle: 'circle',
+      headingCase: 'uppercase',
+      headingWeight: 400,
+      headingTracking: 0.18,
+      ruleThickness: 1,
+      nameTracking: 0.02,
+    },
+  },
+]
+
 export function resolveTheme(base: TemplateTheme, custom: Customization = {}): TemplateTheme {
   const font = custom.fontId ? FONT_OPTIONS.find((f) => f.id === custom.fontId) : undefined
   return {

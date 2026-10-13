@@ -3,6 +3,7 @@ import {
   BULLET_GLYPH,
   BULLET_LABELS,
   BULLET_STYLES,
+  DESIGN_PRESETS,
   FONT_OPTIONS,
   HEADING_CASES,
   HEADING_CASE_LABELS,
@@ -123,5 +124,25 @@ describe('resolveTheme', () => {
   it('exposes labels for every heading case and weight', () => {
     for (const value of HEADING_CASES) expect(HEADING_CASE_LABELS[value]).toBeTruthy()
     for (const weight of HEADING_WEIGHTS) expect(HEADING_WEIGHT_LABELS[weight]).toBeTruthy()
+  })
+})
+
+describe('design presets', () => {
+  it('has unique ids and names', () => {
+    expect(new Set(DESIGN_PRESETS.map((p) => p.id)).size).toBe(DESIGN_PRESETS.length)
+    for (const preset of DESIGN_PRESETS) expect(preset.name).toBeTruthy()
+  })
+
+  it('resolves cleanly on top of every template', () => {
+    for (const preset of DESIGN_PRESETS) {
+      for (const template of TEMPLATE_LIST) {
+        const theme = resolveTheme(template, preset.customization)
+        expect(theme.baseFontSize).toBeGreaterThan(0)
+        expect(theme.pageMarginY).toBeGreaterThan(0)
+        expect(theme.headingWeight).toBe(
+          preset.customization.headingWeight ?? template.headingWeight,
+        )
+      }
+    }
   })
 })

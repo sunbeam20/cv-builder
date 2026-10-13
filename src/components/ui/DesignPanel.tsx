@@ -4,6 +4,7 @@ import { useResolvedTheme } from '../../lib/useResolvedTheme'
 import {
   BULLET_LABELS,
   BULLET_STYLES,
+  DESIGN_PRESETS,
   FONT_OPTIONS,
   FONT_SIZE_MAX,
   FONT_SIZE_MIN,
@@ -141,6 +142,22 @@ export function DesignPanel() {
         </p>
 
         <div className="flex flex-col gap-4">
+          <div>
+            <div className="mb-1 text-xs font-medium text-slate-600">Presets</div>
+            <div className="flex flex-wrap gap-2">
+              {DESIGN_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => setCustomization(preset.customization)}
+                  className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
+                >
+                  {preset.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Field label="Font family">
             <select
               aria-label="Font family"
