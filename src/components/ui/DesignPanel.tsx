@@ -1,6 +1,9 @@
-import { Palette, RotateCcw, X } from 'lucide-react'
+import { useState } from 'react'
+import { Palette, RotateCcw, Save, Trash2, X } from 'lucide-react'
 import { useResumeStore } from '../../store/resumeStore'
 import { useResolvedTheme } from '../../lib/useResolvedTheme'
+import { SECTION_LABELS } from '../../lib/helpers'
+import type { SectionId } from '../../types'
 import {
   BULLET_LABELS,
   BULLET_STYLES,
@@ -28,13 +31,25 @@ import {
   NAME_TRACKING_MIN,
   RULE_THICKNESS_MAX,
   RULE_THICKNESS_MIN,
+  SECTION_HEADING_LABELS,
+  SECTION_HEADING_STYLES,
   SECTION_SPACING_MAX,
   SECTION_SPACING_MIN,
   TEMPLATES,
   TRACKING_MAX,
   TRACKING_MIN,
 } from '../../lib/templates'
-import type { BulletStyle, HeaderLayout, HeadingCase } from '../../lib/templates'
+import type { BulletStyle, HeaderLayout, HeadingCase, SectionHeadingStyle } from '../../lib/templates'
+
+const SECTION_IDS: SectionId[] = [
+  'summary',
+  'experience',
+  'education',
+  'skills',
+  'projects',
+  'certifications',
+  'languages',
+]
 import { Field } from './inputs'
 
 function SliderField({
@@ -107,9 +122,24 @@ export function DesignPanel() {
   const customization = useResumeStore((s) => s.customization)
   const setCustomization = useResumeStore((s) => s.setCustomization)
   const resetCustomization = useResumeStore((s) => s.resetCustomization)
+  const customPresets = useResumeStore((s) => s.customPresets)
+  const saveCustomPreset = useResumeStore((s) => s.saveCustomPreset)
+  const removeCustomPreset = useResumeStore((s) => s.removeCustomPreset)
+  const [presetName, setPresetName] = useState('')
   const theme = useResolvedTheme()
 
   if (!open) return null
+
+  const savePreset = () => {
+    saveCustomPreset(presetName)
+    setPresetName('')
+  }
+  const setSectionHeading = (id: SectionId, value: SectionHeadingStyle | '') => {
+    const next = { ...customization.sectionHeadings }
+    if (value) next[id] = value
+    else delete next[id]
+    setCustomization({ sectionHeadings: next })
+  }
 
   return (
     <div
@@ -157,6 +187,55 @@ export function DesignPanel() {
                   {preset.name}
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-1 text-xs font-medium text-slate-600">My presets</div>
+            <div className="flex flex-wrap items-center gap-2">
+              {customPresets.map((preset) => (
+                <span
+                  key={preset.id}
+                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 pl-2.5 pr-1 py-1 text-xs font-medium text-slate-600"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setCustomization(preset.customization)}
+                    className="hover:text-indigo-700"
+                  >
+                    {preset.name}
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Delete preset ${preset.name}`}
+                    onClick={() => removeCustomPreset(preset.id)}
+                    className="inline-flex h-4 w-4 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-rose-600"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </span>
+              ))}
+              <div className="flex items-center gap-1">
+                <input
+                  type="text"
+                  aria-label="New preset name"
+                  placeholder="Name this look"
+                  value={presetName}
+                  onChange={(e) => setPresetName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') savePreset()
+                  }}
+                  className="w-32 rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+                />
+                <button
+                  type="button"
+                  onClick={savePreset}
+                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
+                >
+                  <Save size={12} />
+                  Save
+                </button>
+              </div>
             </div>
           </div>
 
@@ -358,6 +437,38 @@ export function DesignPanel() {
               value={theme.ruleColor}
               onChange={(ruleColor) => setCustomization({ ruleColor })}
             />
+            <ColorField
+              label="Body text"
+              value={theme.bodyColor}
+              onChange={(bodyColor) => setCustomization({ bodyColor })}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3">
+            <div className="text-xs font-medium text-slate-600">Section headings</div>
+            {SECTION_IDS.map((id) => (
+              <label
+                key={id}
+                className="flex items-center justify-between gap-2 text-xs text-slate-600"
+              >
+                {SECTION_LABELS[id]}
+                <select
+                  aria-label={`${SECTION_LABELS[id]} heading style`}
+                  value={customization.sectionHeadings?.[id] ?? ''}
+                  onChange={(e) =>
+                    setSectionHeading(id, e.target.value as SectionHeadingStyle | '')
+                  }
+                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+                >
+                  <option value="">Template default</option>
+                  {SECTION_HEADING_STYLES.map((value) => (
+                    <option key={value} value={value}>
+                      {SECTION_HEADING_LABELS[value]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -378,6 +489,15 @@ export function DesignPanel() {
                 className="accent-indigo-600"
               />
               Rule under section headings
+            </label>
+            <label className="flex items-center gap-2 text-xs font-medium text-slate-600">
+              <input
+                type="checkbox"
+                checked={theme.contactIcons}
+                onChange={(e) => setCustomization({ contactIcons: e.target.checked })}
+                className="accent-indigo-600"
+              />
+              Icons next to contact details
             </label>
           </div>
 

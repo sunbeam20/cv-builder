@@ -15,9 +15,9 @@ import {
   WidthType,
 } from 'docx'
 import type { Resume, SectionId } from '../types'
-import type { TemplateTheme } from '../lib/templates'
+import type { ContactIconKind, SectionHeadingStyle, TemplateTheme } from '../lib/templates'
 import { SECTION_LABELS, downloadBlob, formatRange, slug } from '../lib/helpers'
-import { BULLET_GLYPH } from '../lib/templates'
+import { BULLET_GLYPH, CONTACT_ICONS, sectionHeadingStyle } from '../lib/templates'
 
 const CONTENT_WIDTH = 9026
 
@@ -30,22 +30,32 @@ interface HeadingOpts {
   characterSpacing: number
   bold: boolean
   borderSize: number
-  hasRule: boolean
+  style: SectionHeadingStyle
   before: number
 }
 
-const heading = (text: string, o: HeadingOpts) =>
-  new Paragraph({
+const heading = (text: string, o: HeadingOpts) => {
+  const none = { style: BorderStyle.NONE, size: 0, color: o.borderColor, space: 0 }
+  const border =
+    o.style === 'rule'
+      ? {
+          top: none,
+          left: none,
+          right: none,
+          bottom: { style: BorderStyle.SINGLE, size: o.borderSize, color: o.borderColor, space: 2 },
+        }
+      : o.style === 'bar'
+        ? {
+            top: none,
+            bottom: none,
+            right: none,
+            left: { style: BorderStyle.SINGLE, size: o.borderSize * 3, color: o.borderColor, space: 6 },
+          }
+        : { top: none, bottom: none, left: none, right: none }
+  return new Paragraph({
     heading: HeadingLevel.HEADING_2,
     spacing: { before: o.before, after: 80 },
-    border: {
-      bottom: {
-        color: o.borderColor,
-        size: o.hasRule ? o.borderSize : 0,
-        style: o.hasRule ? BorderStyle.SINGLE : BorderStyle.NONE,
-        space: 2,
-      },
-    },
+    border,
     children: [
       new TextRun({
         text,
@@ -56,6 +66,7 @@ const heading = (text: string, o: HeadingOpts) =>
       }),
     ],
   })
+}
 
 const line = (children: (TextRun | ExternalHyperlink)[], after = 60) =>
   new Paragraph({ spacing: { after }, children })
@@ -89,7 +100,7 @@ const bullets = (items: string[], glyph: string) =>
         }),
     )
 
-export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<void> {
+export async function buildResumeDocx(resume: Resume, theme: TemplateTheme): Promise<Blob> {
   const {
     profile,
     sectionOrder,
@@ -110,7 +121,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
   const headingSize = fs(Math.round(22 * theme.headingScale))
   const headingTracking = Math.round(theme.headingTracking * (headingSize / 2) * 20)
   const toTitleCase = (text: string) => text.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-  const headingFor = (text: string) => {
+  const headingFor = (text: string, section: SectionId) => {
     const display =
       theme.headingCase === 'uppercase'
         ? text.toUpperCase()
@@ -124,31 +135,37 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
       characterSpacing: headingTracking,
       bold: theme.headingWeight >= 600,
       borderSize: Math.max(2, Math.round(theme.ruleThickness * 6)),
-      hasRule: theme.headingRule,
+      style: sectionHeadingStyle(theme, section),
       before: theme.sectionSpacing * 15,
     })
   }
 
   const contactLines: (TextRun | ExternalHyperlink)[][] = []
-  const addContact = (node: TextRun | ExternalHyperlink | string) => {
-    contactLines.push([
+  const addContact = (kind: ContactIconKind, node: TextRun | ExternalHyperlink | string) => {
+    const runs: (TextRun | ExternalHyperlink)[] = []
+    if (theme.contactIcons) {
+      runs.push(new TextRun({ text: `${CONTACT_ICONS[kind]} `, size: fs(18), color: accent }))
+    }
+    runs.push(
       typeof node === 'string' ? new TextRun({ text: node, size: fs(18), color: '475569' }) : node,
-    ])
+    )
+    contactLines.push(runs)
   }
-  if (profile.location.trim()) addContact(profile.location.trim())
-  if (profile.phone.trim()) addContact(profile.phone.trim())
+  if (profile.location.trim()) addContact('location', profile.location.trim())
+  if (profile.phone.trim()) addContact('phone', profile.phone.trim())
   if (profile.email.trim()) {
     const email = profile.email.trim()
-    addContact(hyperlink(`mailto:${email}`, email, linkColor, fs(18)))
+    addContact('email', hyperlink(`mailto:${email}`, email, linkColor, fs(18)))
   }
   if (profile.website.trim()) {
     const site = profile.website.trim()
-    addContact(hyperlink(normalizeUrl(site), site, linkColor, fs(18)))
+    addContact('website', hyperlink(normalizeUrl(site), site, linkColor, fs(18)))
   }
   profile.links.forEach((link) => {
     const label = (link.label || link.url).trim()
     if (!label) return
     addContact(
+      'link',
       link.url.trim() ? hyperlink(normalizeUrl(link.url.trim()), label, linkColor, fs(18)) : label,
     )
   })
@@ -214,13 +231,13 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
 
   const blocks: Record<SectionId, Paragraph[]> = {
     summary: profile.summary.trim()
-      ? [headingFor(SECTION_LABELS.summary), line([new TextRun({ text: profile.summary })])]
+      ? [headingFor(SECTION_LABELS.summary, 'summary'), line([new TextRun({ text: profile.summary })])]
       : [],
 
     experience:
       experience.length > 0
         ? [
-            headingFor(SECTION_LABELS.experience),
+            headingFor(SECTION_LABELS.experience, 'experience'),
             ...experience.flatMap((exp) => {
               const sub = [exp.company, exp.location]
                 .map((s) => s.trim())
@@ -238,7 +255,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     education:
       education.length > 0
         ? [
-            headingFor(SECTION_LABELS.education),
+            headingFor(SECTION_LABELS.education, 'education'),
             ...education.flatMap((edu) => {
               const sub =
                 [edu.degree, edu.field]
@@ -257,7 +274,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     skills:
       skills.length > 0
         ? [
-            headingFor(SECTION_LABELS.skills),
+            headingFor(SECTION_LABELS.skills, 'skills'),
             ...skills.map((group) =>
               line([
                 ...(group.category
@@ -272,7 +289,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     projects:
       projects.length > 0
         ? [
-            headingFor(SECTION_LABELS.projects),
+            headingFor(SECTION_LABELS.projects, 'projects'),
             ...projects.flatMap((project) => {
               const title: (TextRun | ExternalHyperlink)[] = [
                 new TextRun({ text: project.name, bold: true }),
@@ -302,7 +319,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     certifications:
       certifications.length > 0
         ? [
-            headingFor(SECTION_LABELS.certifications),
+            headingFor(SECTION_LABELS.certifications, 'certifications'),
             ...certifications.map((cert) =>
               line([
                 new TextRun({
@@ -318,7 +335,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     languages:
       languages.length > 0
         ? [
-            headingFor(SECTION_LABELS.languages),
+            headingFor(SECTION_LABELS.languages, 'languages'),
             line(
               [
                 new TextRun({
@@ -347,7 +364,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     styles: {
       default: {
         document: {
-          run: { font: theme.docxFont, size: fs(22) },
+          run: { font: theme.docxFont, size: fs(22), color: theme.bodyColor.replace('#', '') },
           paragraph: {
             spacing: { line: Math.round(theme.lineHeight * 240), lineRule: LineRuleType.AUTO },
           },
@@ -371,6 +388,10 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     ],
   })
 
-  const blob = await Packer.toBlob(doc)
-  downloadBlob(blob, `${slug(profile.fullName)}_CV.docx`)
+  return Packer.toBlob(doc)
+}
+
+export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<void> {
+  const blob = await buildResumeDocx(resume, theme)
+  downloadBlob(blob, `${slug(resume.profile.fullName)}_CV.docx`)
 }

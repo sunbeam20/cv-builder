@@ -15,6 +15,7 @@ import {
   TEMPLATE_LIST,
   isTemplateId,
   resolveTheme,
+  sectionHeadingStyle,
 } from './templates'
 
 describe('templates', () => {
@@ -126,6 +127,33 @@ describe('resolveTheme', () => {
   it('exposes labels for every heading case and weight', () => {
     for (const value of HEADING_CASES) expect(HEADING_CASE_LABELS[value]).toBeTruthy()
     for (const weight of HEADING_WEIGHTS) expect(HEADING_WEIGHT_LABELS[weight]).toBeTruthy()
+  })
+
+  it('defaults body colour and contact icons and supports overrides', () => {
+    for (const template of TEMPLATE_LIST) {
+      expect(template.bodyColor).toMatch(/^#[0-9a-f]{6}$/i)
+      expect(template.contactIcons).toBe(false)
+    }
+    const theme = resolveTheme(TEMPLATES.ats, { bodyColor: '#111111', contactIcons: true })
+    expect(theme.bodyColor).toBe('#111111')
+    expect(theme.contactIcons).toBe(true)
+  })
+
+  it('resolves per-section heading styles with a headingRule fallback', () => {
+    const plain = resolveTheme(TEMPLATES.elegant, {})
+    expect(plain.headingRule).toBe(false)
+    expect(sectionHeadingStyle(plain, 'summary')).toBe('plain')
+
+    const themed = resolveTheme(TEMPLATES.ats, { sectionHeadings: { skills: 'bar' } })
+    expect(sectionHeadingStyle(themed, 'skills')).toBe('bar')
+    expect(sectionHeadingStyle(themed, 'summary')).toBe('rule')
+
+    const overridden = resolveTheme(TEMPLATES.elegant, {
+      headingRule: true,
+      sectionHeadings: { experience: 'plain' },
+    })
+    expect(sectionHeadingStyle(overridden, 'summary')).toBe('rule')
+    expect(sectionHeadingStyle(overridden, 'experience')).toBe('plain')
   })
 
   it('defaults every template to a stacked header and supports overrides', () => {

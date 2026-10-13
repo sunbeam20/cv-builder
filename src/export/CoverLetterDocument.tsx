@@ -1,7 +1,8 @@
 import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { ReactNode } from 'react'
 import type { CoverLetter, Profile } from '../types'
-import type { TemplateTheme } from '../lib/templates'
+import type { ContactIconKind, TemplateTheme } from '../lib/templates'
+import { ContactIcon } from './PdfDocument'
 
 const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 
@@ -15,7 +16,7 @@ const makeStyles = (theme: TemplateTheme) => {
       fontFamily: theme.pdfFonts.regular,
       fontSize: s(10.5),
       lineHeight: theme.lineHeight,
-      color: '#334155',
+      color: theme.bodyColor,
     },
     name: {
       fontSize: s(22 * theme.nameScale),
@@ -25,6 +26,9 @@ const makeStyles = (theme: TemplateTheme) => {
     },
     headline: { marginTop: 2, fontSize: s(11.5), color: '#475569' },
     contact: { marginTop: 6, fontSize: s(9), color: '#475569' },
+    contactRow: { marginTop: 6, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' },
+    contactItem: { flexDirection: 'row', alignItems: 'center' },
+    contactIcon: { marginRight: 2 },
     link: { color: theme.linkColor, textDecoration: 'underline' },
     block: { marginTop: 22 },
     company: { fontFamily: theme.pdfFonts.bold, color: '#0f172a' },
@@ -44,15 +48,13 @@ export function CoverLetterDocument({
 }) {
   const styles = makeStyles(theme)
 
-  const contactNodes: ReactNode[] = []
-  const addContact = (node: ReactNode) => {
-    if (contactNodes.length > 0) contactNodes.push('  |  ')
-    contactNodes.push(node)
-  }
-  if (profile.location.trim()) addContact(profile.location.trim())
-  if (profile.phone.trim()) addContact(profile.phone.trim())
+  const contacts: { kind: ContactIconKind; node: ReactNode }[] = []
+  const addContact = (kind: ContactIconKind, node: ReactNode) => contacts.push({ kind, node })
+  if (profile.location.trim()) addContact('location', profile.location.trim())
+  if (profile.phone.trim()) addContact('phone', profile.phone.trim())
   if (profile.email.trim()) {
     addContact(
+      'email',
       <Link key="email" src={`mailto:${profile.email.trim()}`} style={styles.link}>
         {profile.email.trim()}
       </Link>,
@@ -60,11 +62,13 @@ export function CoverLetterDocument({
   }
   if (profile.website.trim()) {
     addContact(
+      'website',
       <Link key="website" src={normalizeUrl(profile.website.trim())} style={styles.link}>
         {profile.website.trim()}
       </Link>,
     )
   }
+  const iconSize = 9 * (theme.baseFontSize / 11)
 
   const paragraphs = letter.body
     .split(/\n{2,}/)
@@ -95,7 +99,21 @@ export function CoverLetterDocument({
         {profile.headline.trim() ? (
           <Text style={styles.headline}>{profile.headline}</Text>
         ) : null}
-        {contactNodes.length > 0 ? <Text style={styles.contact}>{contactNodes}</Text> : null}
+        {contacts.length > 0 ? (
+          <View style={styles.contactRow}>
+            {contacts.map((c, i) => (
+              <View key={i} style={styles.contactItem}>
+                {i > 0 ? <Text style={styles.contact}>{'  |  '}</Text> : null}
+                {theme.contactIcons ? (
+                  <View style={styles.contactIcon}>
+                    <ContactIcon kind={c.kind} color={theme.accent} size={iconSize} />
+                  </View>
+                ) : null}
+                <Text style={styles.contact}>{c.node}</Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
 
         <View style={styles.block}>
           {letter.date ? <Text>{letter.date}</Text> : null}

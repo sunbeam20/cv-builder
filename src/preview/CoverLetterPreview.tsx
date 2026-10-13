@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode, RefObject } from 'react'
 import type { CoverLetter, Profile } from '../types'
-import type { TemplateTheme } from '../lib/templates'
+import type { ContactIconKind, TemplateTheme } from '../lib/templates'
+import { CONTACT_ICONS } from '../lib/templates'
 import { A4_WIDTH, A4_HEIGHT, useFitScale } from './useFitScale'
 
 interface Props {
@@ -16,28 +17,40 @@ const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url :
 
 export function CoverLetterPage({ letter, profile, pageRef, theme }: Props) {
   const linkStyle: CSSProperties = { color: theme.linkColor, textDecoration: 'underline' }
-  const contactNodes: ReactNode[] = []
-  if (profile.location.trim()) contactNodes.push(profile.location.trim())
-  if (profile.phone.trim()) contactNodes.push(profile.phone.trim())
+  const iconFor = (kind: ContactIconKind) =>
+    theme.contactIcons ? (
+      <span key={`icon-${kind}`} className="mr-1" style={{ color: theme.accent }}>
+        {CONTACT_ICONS[kind]}
+      </span>
+    ) : null
+  const contacts: { kind: ContactIconKind; node: ReactNode }[] = []
+  if (profile.location.trim()) contacts.push({ kind: 'location', node: profile.location.trim() })
+  if (profile.phone.trim()) contacts.push({ kind: 'phone', node: profile.phone.trim() })
   if (profile.email.trim()) {
-    contactNodes.push(
-      <a key="email" href={`mailto:${profile.email.trim()}`} style={linkStyle}>
-        {profile.email.trim()}
-      </a>,
-    )
+    contacts.push({
+      kind: 'email',
+      node: (
+        <a key="email" href={`mailto:${profile.email.trim()}`} style={linkStyle}>
+          {profile.email.trim()}
+        </a>
+      ),
+    })
   }
   if (profile.website.trim()) {
-    contactNodes.push(
-      <a
-        key="website"
-        href={normalizeUrl(profile.website.trim())}
-        target="_blank"
-        rel="noreferrer"
-        style={linkStyle}
-      >
-        {profile.website.trim()}
-      </a>,
-    )
+    contacts.push({
+      kind: 'website',
+      node: (
+        <a
+          key="website"
+          href={normalizeUrl(profile.website.trim())}
+          target="_blank"
+          rel="noreferrer"
+          style={linkStyle}
+        >
+          {profile.website.trim()}
+        </a>
+      ),
+    })
   }
 
   const paragraphs = letter.body
@@ -53,6 +66,7 @@ export function CoverLetterPage({ letter, profile, pageRef, theme }: Props) {
         fontFamily: theme.fontFamily,
         fontSize: `${theme.baseFontSize}px`,
         lineHeight: theme.lineHeight,
+        color: theme.bodyColor,
         padding: `${theme.pageMarginY}px ${theme.pageMarginX}px`,
         minHeight: A4_HEIGHT,
       }}
@@ -76,19 +90,20 @@ export function CoverLetterPage({ letter, profile, pageRef, theme }: Props) {
             {profile.headline}
           </p>
         ) : null}
-        {contactNodes.length > 0 ? (
+        {contacts.length > 0 ? (
           <p className="mt-2 text-slate-600" style={{ fontSize: em(10.5) }}>
-            {contactNodes.map((node, index) => (
+            {contacts.map((c, index) => (
               <span key={index}>
                 {index > 0 ? '  |  ' : ''}
-                {node}
+                {iconFor(c.kind)}
+                {c.node}
               </span>
             ))}
           </p>
         ) : null}
       </header>
 
-      <div className="mt-8 text-slate-700" style={{ fontSize: em(11) }}>
+      <div className="mt-8" style={{ fontSize: em(11) }}>
         {letter.date ? <p>{letter.date}</p> : null}
 
         {letter.recipient || letter.company ? (

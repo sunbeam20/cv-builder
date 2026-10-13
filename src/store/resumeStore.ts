@@ -3,8 +3,8 @@ import { persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { Draft } from 'immer'
 import type { Application, CoverLetter, DocType, Resume, SectionId } from '../types'
-import type { Customization, TemplateId } from '../lib/templates'
-import { DEFAULT_SECTION_ORDER, emptyResume } from '../lib/helpers'
+import type { Customization, DesignPreset, TemplateId } from '../lib/templates'
+import { DEFAULT_SECTION_ORDER, emptyResume, uid } from '../lib/helpers'
 import { DEFAULT_AI_SETTINGS, type AiSettings } from '../lib/ai'
 import { emptyCoverLetter } from '../lib/coverLetter'
 import { sampleResume } from '../lib/sampleData'
@@ -21,6 +21,7 @@ interface ResumeState {
   applications: Application[]
   template: TemplateId
   customization: Customization
+  customPresets: DesignPreset[]
   docType: DocType
   ai: AiSettings
   aiSettingsOpen: boolean
@@ -36,6 +37,8 @@ interface ResumeState {
   setTemplate: (template: TemplateId) => void
   setCustomization: (patch: Customization) => void
   resetCustomization: () => void
+  saveCustomPreset: (name: string) => void
+  removeCustomPreset: (id: string) => void
   openDesign: () => void
   closeDesign: () => void
   setDocType: (docType: DocType) => void
@@ -86,6 +89,7 @@ export const useResumeStore = create<ResumeState>()(
         applications: [],
         template: 'ats',
         customization: {},
+        customPresets: [],
         docType: 'resume',
         ai: { ...DEFAULT_AI_SETTINGS },
         aiSettingsOpen: false,
@@ -149,6 +153,19 @@ export const useResumeStore = create<ResumeState>()(
         resetCustomization: () =>
           set((state) => {
             state.customization = {}
+          }),
+        saveCustomPreset: (name) =>
+          set((state) => {
+            state.customPresets.push({
+              id: uid(),
+              name: name.trim() || 'My preset',
+              customization: { ...state.customization },
+            })
+          }),
+        removeCustomPreset: (id) =>
+          set((state) => {
+            const index = state.customPresets.findIndex((p) => p.id === id)
+            if (index !== -1) state.customPresets.splice(index, 1)
           }),
         openDesign: () =>
           set((state) => {
@@ -227,13 +244,14 @@ export const useResumeStore = create<ResumeState>()(
     }),
     {
       name: 'cv-builder-v1',
-      version: 5,
+      version: 6,
       partialize: (state) => ({
         resume: state.resume,
         coverLetter: state.coverLetter,
         applications: state.applications,
         template: state.template,
         customization: state.customization,
+        customPresets: state.customPresets,
         ai: state.ai,
       }),
       migrate: (persisted, version) => {
@@ -243,6 +261,9 @@ export const useResumeStore = create<ResumeState>()(
         }
         if (state && !state.customization) {
           state.customization = {}
+        }
+        if (state && !state.customPresets) {
+          state.customPresets = []
         }
         if (state?.resume) {
           if (!state.resume.sectionOrder) {

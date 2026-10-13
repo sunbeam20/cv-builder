@@ -3,7 +3,8 @@ import type { CSSProperties, ReactNode, RefObject } from 'react'
 import type { Resume, SectionId } from '../types'
 import type { TemplateTheme } from '../lib/templates'
 import { SECTION_LABELS, formatRange } from '../lib/helpers'
-import { BULLET_GLYPH } from '../lib/templates'
+import { BULLET_GLYPH, CONTACT_ICONS, sectionHeadingStyle } from '../lib/templates'
+import type { ContactIconKind, SectionHeadingStyle } from '../lib/templates'
 import { A4_WIDTH, A4_HEIGHT, useFitScale } from './useFitScale'
 
 export { A4_WIDTH, A4_HEIGHT } from './useFitScale'
@@ -25,17 +26,46 @@ const em = (px: number): string => `${(px / 11).toFixed(4)}em`
 
 const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 
-function SectionTitle({ children, theme }: { children: ReactNode; theme: TemplateTheme }) {
+function SectionTitle({
+  children,
+  theme,
+  section,
+}: {
+  children: ReactNode
+  theme: TemplateTheme
+  section: SectionId
+}) {
+  const style: SectionHeadingStyle = sectionHeadingStyle(theme, section)
+  const base: CSSProperties = {
+    fontSize: em(11 * theme.headingScale),
+    letterSpacing: `${theme.headingTracking}em`,
+    fontWeight: theme.headingWeight,
+    textTransform: theme.headingCase,
+    color: theme.accent,
+  }
+  if (style === 'bar') {
+    return (
+      <h2 className="mb-2 flex items-center gap-2" style={base}>
+        <span
+          aria-hidden
+          style={{
+            flex: '0 0 auto',
+            width: '3px',
+            height: em(11 * theme.headingScale),
+            background: theme.accent,
+            borderRadius: '1px',
+          }}
+        />
+        {children}
+      </h2>
+    )
+  }
   return (
     <h2
-      className={`mb-2 ${theme.headingRule ? 'pb-1' : ''}`}
+      className={`mb-2 ${style === 'rule' ? 'pb-1' : ''}`}
       style={{
-        fontSize: em(11 * theme.headingScale),
-        letterSpacing: `${theme.headingTracking}em`,
-        fontWeight: theme.headingWeight,
-        textTransform: theme.headingCase,
-        color: theme.accent,
-        ...(theme.headingRule
+        ...base,
+        ...(style === 'rule'
           ? { borderBottom: `${theme.ruleThickness}px solid ${theme.ruleColor}` }
           : {}),
       }}
@@ -52,7 +82,7 @@ function Bullets({ items, theme }: { items: string[]; theme: TemplateTheme }) {
   return (
     <div className="mt-1 flex flex-col gap-0.5 pl-1">
       {bullets.map((bullet, i) => (
-        <div key={i} className="flex text-slate-700" style={{ fontSize: em(11) }}>
+        <div key={i} className="flex" style={{ fontSize: em(11) }}>
           {glyph ? (
             <span className="mr-1.5 shrink-0" style={{ width: '0.9em' }}>
               {glyph}
@@ -80,18 +110,30 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
 
   const linkStyle: CSSProperties = { color: theme.linkColor, textDecoration: 'underline' }
 
-  const contactNodes: ReactNode[] = []
-  if (profile.location.trim()) contactNodes.push(profile.location.trim())
-  if (profile.phone.trim()) contactNodes.push(profile.phone.trim())
+  const iconFor = (kind: ContactIconKind) =>
+    theme.contactIcons ? (
+      <span key={`icon-${kind}`} className="mr-1" style={{ color: theme.accent }}>
+        {CONTACT_ICONS[kind]}
+      </span>
+    ) : null
+
+  const contacts: { key: string; kind: ContactIconKind; node: ReactNode }[] = []
+  const addContact = (kind: ContactIconKind, node: ReactNode, key: string) =>
+    contacts.push({ key, kind, node })
+  if (profile.location.trim()) addContact('location', profile.location.trim(), 'location')
+  if (profile.phone.trim()) addContact('phone', profile.phone.trim(), 'phone')
   if (profile.email.trim()) {
-    contactNodes.push(
+    addContact(
+      'email',
       <a key="email" href={`mailto:${profile.email.trim()}`} style={linkStyle}>
         {profile.email.trim()}
       </a>,
+      'email',
     )
   }
   if (profile.website.trim()) {
-    contactNodes.push(
+    addContact(
+      'website',
       <a
         key="website"
         href={normalizeUrl(profile.website.trim())}
@@ -101,12 +143,14 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
       >
         {profile.website.trim()}
       </a>,
+      'website',
     )
   }
   profile.links.forEach((link, index) => {
     const label = (link.label || link.url).trim()
     if (!label) return
-    contactNodes.push(
+    addContact(
+      'link',
       link.url.trim() ? (
         <a
           key={`link-${index}`}
@@ -120,14 +164,21 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
       ) : (
         <span key={`link-${index}`}>{label}</span>
       ),
+      `link-${index}`,
     )
   })
+  const contactNodes = contacts.map((c) => (
+    <span key={c.key}>
+      {iconFor(c.kind)}
+      {c.node}
+    </span>
+  ))
 
   const sections: Record<SectionId, ReactNode> = {
     summary: profile.summary.trim() ? (
       <section style={{ marginTop: theme.sectionSpacing }}>
-        <SectionTitle theme={theme}>{SECTION_LABELS.summary}</SectionTitle>
-        <p className="text-slate-700" style={{ fontSize: em(11) }}>
+        <SectionTitle theme={theme} section="summary">{SECTION_LABELS.summary}</SectionTitle>
+        <p style={{ fontSize: em(11) }}>
           {profile.summary}
         </p>
       </section>
@@ -136,7 +187,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     experience:
       experience.length > 0 ? (
         <section style={{ marginTop: theme.sectionSpacing }}>
-          <SectionTitle theme={theme}>{SECTION_LABELS.experience}</SectionTitle>
+          <SectionTitle theme={theme} section="experience">{SECTION_LABELS.experience}</SectionTitle>
           <div className="flex flex-col gap-3">
             {experience.map((exp) => (
               <div key={exp.id}>
@@ -161,7 +212,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     education:
       education.length > 0 ? (
         <section style={{ marginTop: theme.sectionSpacing }}>
-          <SectionTitle theme={theme}>{SECTION_LABELS.education}</SectionTitle>
+          <SectionTitle theme={theme} section="education">{SECTION_LABELS.education}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {education.map((edu) => (
               <div key={edu.id}>
@@ -178,7 +229,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
                   {edu.location ? ` — ${edu.location}` : ''}
                 </p>
                 {edu.details.trim() ? (
-                  <p className="text-slate-700" style={{ fontSize: em(11) }}>
+                  <p style={{ fontSize: em(11) }}>
                     {edu.details}
                   </p>
                 ) : null}
@@ -191,10 +242,10 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     skills:
       skills.length > 0 ? (
         <section style={{ marginTop: theme.sectionSpacing }}>
-          <SectionTitle theme={theme}>{SECTION_LABELS.skills}</SectionTitle>
+          <SectionTitle theme={theme} section="skills">{SECTION_LABELS.skills}</SectionTitle>
           <div className="flex flex-col gap-1">
             {skills.map((group) => (
-              <p key={group.id} className="text-slate-700" style={{ fontSize: em(11) }}>
+              <p key={group.id} style={{ fontSize: em(11) }}>
                 {group.category ? (
                   <span className="font-semibold text-slate-900">{group.category}: </span>
                 ) : null}
@@ -208,7 +259,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     projects:
       projects.length > 0 ? (
         <section style={{ marginTop: theme.sectionSpacing }}>
-          <SectionTitle theme={theme}>{SECTION_LABELS.projects}</SectionTitle>
+          <SectionTitle theme={theme} section="projects">{SECTION_LABELS.projects}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {projects.map((project) => (
               <div key={project.id}>
@@ -227,7 +278,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
                   ) : null}
                 </p>
                 {project.description.trim() ? (
-                  <p className="text-slate-700" style={{ fontSize: em(11) }}>
+                  <p style={{ fontSize: em(11) }}>
                     {project.description}
                   </p>
                 ) : null}
@@ -241,10 +292,10 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     certifications:
       certifications.length > 0 ? (
         <section style={{ marginTop: theme.sectionSpacing }}>
-          <SectionTitle theme={theme}>{SECTION_LABELS.certifications}</SectionTitle>
+          <SectionTitle theme={theme} section="certifications">{SECTION_LABELS.certifications}</SectionTitle>
           <div className="flex flex-col gap-1">
             {certifications.map((cert) => (
-              <p key={cert.id} className="text-slate-700" style={{ fontSize: em(11) }}>
+              <p key={cert.id} style={{ fontSize: em(11) }}>
                 {cert.name}
                 {cert.issuer ? ` — ${cert.issuer}` : ''}
                 {cert.date ? ` (${cert.date})` : ''}
@@ -257,8 +308,8 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     languages:
       languages.length > 0 ? (
         <section style={{ marginTop: theme.sectionSpacing }}>
-          <SectionTitle theme={theme}>{SECTION_LABELS.languages}</SectionTitle>
-          <p className="text-slate-700" style={{ fontSize: em(11) }}>
+          <SectionTitle theme={theme} section="languages">{SECTION_LABELS.languages}</SectionTitle>
+          <p style={{ fontSize: em(11) }}>
             {languages
               .map((l) => [l.name, l.proficiency].filter(Boolean).join(' '))
               .filter(Boolean)
@@ -276,6 +327,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
         fontFamily: theme.fontFamily,
         fontSize: `${theme.baseFontSize}px`,
         lineHeight: theme.lineHeight,
+        color: theme.bodyColor,
         padding: `${theme.pageMarginY}px ${theme.pageMarginX}px`,
       }}
     >

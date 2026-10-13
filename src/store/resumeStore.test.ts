@@ -34,6 +34,17 @@ describe('resumeStore', () => {
     expect(get().customization).toEqual({})
   })
 
+  it('saves and removes custom presets from the current customization', () => {
+    get().setCustomization({ accent: '#123456', bodyColor: '#222222' })
+    get().saveCustomPreset('  My Look  ')
+    const saved = get().customPresets.at(-1)
+    expect(saved?.name).toBe('My Look')
+    expect(saved?.customization).toEqual({ accent: '#123456', bodyColor: '#222222' })
+
+    get().removeCustomPreset(saved!.id)
+    expect(get().customPresets.find((p) => p.id === saved!.id)).toBeUndefined()
+  })
+
   it('updates resume immutably', () => {
     const before = get().resume
     get().update((d) => {

@@ -1,4 +1,27 @@
+import type { SectionId } from '../types'
+
 export type TemplateId = 'ats' | 'modern' | 'elegant' | 'teal' | 'mono' | 'burgundy'
+
+export type SectionHeadingStyle = 'rule' | 'bar' | 'plain'
+
+export const SECTION_HEADING_STYLES: SectionHeadingStyle[] = ['rule', 'bar', 'plain']
+
+export const SECTION_HEADING_LABELS: Record<SectionHeadingStyle, string> = {
+  rule: 'Rule',
+  bar: 'Accent bar',
+  plain: 'Plain',
+}
+
+/** Simple glyphs used as optional contact icons (preview + DOCX). */
+export type ContactIconKind = 'location' | 'phone' | 'email' | 'website' | 'link'
+
+export const CONTACT_ICONS: Record<ContactIconKind, string> = {
+  location: '\u25C9',
+  phone: '\u260E',
+  email: '\u2709',
+  website: '\u25CE',
+  link: '\u2197',
+}
 
 export type HeadingCase = 'uppercase' | 'capitalize' | 'none'
 
@@ -96,6 +119,12 @@ export interface TemplateTheme {
   nameTracking: number
   /** Header layout: stacked (name/contact centred) or split (contact right-aligned) */
   headerLayout: HeaderLayout
+  /** Colour of body text */
+  bodyColor: string
+  /** Prefix contact details with small icons */
+  contactIcons: boolean
+  /** Per-section heading style overrides (falls back to the headingRule setting) */
+  sectionHeadings: Partial<Record<SectionId, SectionHeadingStyle>>
   accentBar: boolean
   /** Draw a rule under section headings */
   headingRule: boolean
@@ -107,6 +136,9 @@ const BASE_DEFAULTS = {
   ruleThickness: 1,
   nameTracking: 0,
   headerLayout: 'stacked',
+  bodyColor: '#334155',
+  contactIcons: false,
+  sectionHeadings: {},
 } as const
 
 export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
@@ -386,6 +418,9 @@ export interface Customization {
   ruleThickness?: number
   nameTracking?: number
   headerLayout?: HeaderLayout
+  bodyColor?: string
+  contactIcons?: boolean
+  sectionHeadings?: Partial<Record<SectionId, SectionHeadingStyle>>
   accent?: string
   nameColor?: string
   linkColor?: string
@@ -525,9 +560,20 @@ export function resolveTheme(base: TemplateTheme, custom: Customization = {}): T
     ruleThickness: custom.ruleThickness ?? base.ruleThickness,
     nameTracking: custom.nameTracking ?? base.nameTracking,
     headerLayout: custom.headerLayout ?? base.headerLayout,
+    bodyColor: custom.bodyColor ?? base.bodyColor,
+    contactIcons: custom.contactIcons ?? base.contactIcons,
+    sectionHeadings: { ...base.sectionHeadings, ...custom.sectionHeadings },
     accentBar: custom.accentBar ?? base.accentBar,
     headingRule: custom.headingRule ?? base.headingRule,
   }
+}
+
+/** Resolve the heading style for a section, defaulting from the global headingRule flag. */
+export function sectionHeadingStyle(
+  theme: TemplateTheme,
+  id: SectionId,
+): SectionHeadingStyle {
+  return theme.sectionHeadings[id] ?? (theme.headingRule ? 'rule' : 'plain')
 }
 
 export const hasCustomization = (custom: Customization = {}): boolean =>
