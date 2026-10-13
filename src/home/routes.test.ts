@@ -34,6 +34,48 @@ describe('resolveView', () => {
     if (view.kind === 'app') expect(view.tool.slug).toBe('portfolio')
   })
 
+  it('maps the hydrate path to its tool on the hub domain', () => {
+    const view = resolveView('#/hydrate', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('hydrate')
+  })
+
+  it('maps the job-tracker path to its tool on the hub domain', () => {
+    const view = resolveView('#/job-tracker', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('jobs')
+  })
+
+  it('maps the password path to its tool on the hub domain', () => {
+    const view = resolveView('#/password', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('password')
+  })
+
+  it('maps the convert path to its tool on the hub domain', () => {
+    const view = resolveView('#/convert', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('convert')
+  })
+
+  it('maps the text-diff path to its tool on the hub domain', () => {
+    const view = resolveView('#/text-diff', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('diff')
+  })
+
+  it('maps the lorem path to its tool on the hub domain', () => {
+    const view = resolveView('#/lorem', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('lorem')
+  })
+
+  it('maps the color-studio path to its tool on the hub domain', () => {
+    const view = resolveView('#/color-studio', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('colors')
+  })
+
   it('routes a shared portfolio payload to the viewer and keeps its case', () => {
     const view = resolveView('#/p/AbC-D_$xyz', 'example.com')
     expect(view.kind).toBe('portfolio')
@@ -57,6 +99,12 @@ describe('resolveView', () => {
     const view = resolveView('#/', 'cv.example.com')
     expect(view.kind).toBe('app')
     if (view.kind === 'app') expect(view.tool.slug).toBe('cv')
+  })
+
+  it('boots the hydration tracker on its own subdomain', () => {
+    const view = resolveView('#/anything', 'hydrate.example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('hydrate')
   })
 
   it('treats unknown subdomains as the hub', () => {

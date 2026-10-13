@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import {
   ArrowLeft,
   ChevronDown,
   ChevronUp,
   Copy,
-  Download,
   Eye,
   ExternalLink,
   Globe,
+  ImagePlus,
   LayoutList,
   Link2,
   Palette,
@@ -17,14 +17,16 @@ import {
   Sparkles,
   Trash2,
 } from 'lucide-react'
-import { downloadBlob, resumeHasContent, slug } from '../lib/helpers'
+import { resumeHasContent } from '../lib/helpers'
 import { FONT_OPTIONS } from '../lib/templates'
 import { sampleResume } from '../lib/sampleData'
 import { useResumeStore } from '../store/resumeStore'
 import { toast } from '../lib/toast'
 import { goHome } from '../home/navigation'
+import { ToolMenu } from '../home/ToolMenu'
 import { BRAND } from '../home/config'
 import { Field, IconButton, TextArea, TextInput } from '../components/ui/inputs'
+import { fileToPhoto } from './photo'
 import {
   DEFAULT_SETTINGS,
   emptyPortfolio,
@@ -224,8 +226,24 @@ export function PortfolioApp() {
   const shareUrl = useMemo(() => portfolioShareUrl(data, settings), [data, settings])
   const hasContent = portfolioHasContent(data)
   const accent = resolveAccent(settings)
+  const photoInputRef = useRef<HTMLInputElement>(null)
 
   const patchData = (patch: Partial<PortfolioData>) => setData((prev) => ({ ...prev, ...patch }))
+
+  const onPhotoFile = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Unsupported file', { description: 'Choose an image file (PNG or JPEG).' })
+      return
+    }
+    try {
+      const photo = await fileToPhoto(file)
+      if (!photo) throw new Error('empty')
+      patchData({ photo })
+      toast.success('Profile picture updated')
+    } catch {
+      toast.error('Could not read that image', { description: 'Try a different file.' })
+    }
+  }
   const updateSettings = (patch: Partial<PortfolioSettings>) =>
     setSettings((prev) => ({ ...prev, ...patch }))
 
@@ -253,17 +271,6 @@ export function PortfolioApp() {
     })
   }
 
-  const fileName = () => `${slug(data.name || 'portfolio')}-portfolio.html`
-
-  const downloadHtml = () => {
-    if (!hasContent) {
-      toast.error('Nothing to export yet', { description: 'Add or import some details first.' })
-      return
-    }
-    downloadBlob(new Blob([html], { type: 'text/html' }), fileName())
-    toast.success('Portfolio downloaded')
-  }
-
   const copyText = async (text: string, success: string, failure: string) => {
     try {
       await navigator.clipboard.writeText(text)
@@ -273,14 +280,6 @@ export function PortfolioApp() {
       toast.error('Couldn’t copy', { description: failure })
       return false
     }
-  }
-
-  const copyHtml = () => {
-    if (!hasContent) {
-      toast.error('Nothing to copy yet', { description: 'Add or import some details first.' })
-      return
-    }
-    void copyText(html, 'HTML copied to clipboard', 'Your browser blocked clipboard access.')
   }
 
   const copyShareLink = () => {
@@ -329,25 +328,14 @@ export function PortfolioApp() {
               Design a page and share it with a single link.
             </p>
           </div>
+          <ToolMenu />
           <button
             type="button"
-            onClick={copyHtml}
-            className="hidden items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 sm:inline-flex"
-          >
-            <Copy size={14} />
-            Copy HTML
-          </button>
-          <button type="button" onClick={copyShareLink} className={ghostButton}>
-            <Share2 size={14} />
-            Share link
-          </button>
-          <button
-            type="button"
-            onClick={downloadHtml}
+            onClick={copyShareLink}
             className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-medium text-white transition hover:bg-indigo-700"
           >
-            <Download size={15} />
-            Download HTML
+            <Share2 size={15} />
+            Share link
           </button>
         </div>
       </header>
@@ -419,6 +407,50 @@ export function PortfolioApp() {
               </Card>
 
               <Card title="Profile" icon={<Globe size={16} />}>
+                <div className="flex flex-col gap-1">
+                  <Label>Profile picture</Label>
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-indigo-600 text-lg font-semibold text-white">
+                      {data.photo ? (
+                        <img src={data.photo} alt="" className="h-full w-full object-cover" />
+                      ) : (
+                        data.name.trim().charAt(0).toUpperCase() || 'P'
+                      )}
+                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => photoInputRef.current?.click()}
+                        className={ghostButton}
+                      >
+                        <ImagePlus size={14} />
+                        {data.photo ? 'Change photo' : 'Upload photo'}
+                      </button>
+                      {data.photo ? (
+                        <button
+                          type="button"
+                          onClick={() => patchData({ photo: '' })}
+                          className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 size={14} />
+                          Remove
+                        </button>
+                      ) : null}
+                    </div>
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      aria-label="Upload profile picture"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0]
+                        if (file) void onPhotoFile(file)
+                        event.target.value = ''
+                      }}
+                    />
+                  </div>
+                </div>
                 <Field label="Name">
                   <TextInput
                     value={data.name}
@@ -976,7 +1008,7 @@ export function PortfolioApp() {
 
               <Card title="Layout" icon={<LayoutList size={16} />}>
                 <Toggle
-                  label="Show avatar"
+                  label="Show photo or avatar"
                   checked={settings.showAvatar}
                   onChange={(checked) => updateSettings({ showAvatar: checked })}
                 />
@@ -1032,7 +1064,7 @@ export function PortfolioApp() {
                 <h2 className="text-sm font-semibold text-slate-800">Your page starts here</h2>
                 <p className="max-w-xs text-xs leading-relaxed text-slate-500">
                   Import your details, load the example, or type your own — a clean portfolio page
-                  appears instantly, ready to download or share with a link.
+                  appears instantly, ready to share with a link.
                 </p>
                 <button
                   type="button"

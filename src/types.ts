@@ -86,9 +86,16 @@ export interface Resume {
   languages: Language[]
 }
 
-export type DocType = 'resume' | 'tracker'
-
 export type ApplicationStatus = 'wishlist' | 'applied' | 'interview' | 'offer' | 'rejected'
+
+/** A single status change on an application, used to build its timeline. */
+export interface ApplicationEvent {
+  id: string
+  status: ApplicationStatus
+  /** ISO timestamp of the change. */
+  at: string
+  note?: string
+}
 
 export interface Application {
   id: string
@@ -97,6 +104,29 @@ export interface Application {
   location: string
   url: string
   status: ApplicationStatus
+  /** Date applied (yyyy-mm-dd). */
   date: string
   notes: string
+  /** Freeform salary / compensation text. */
+  salary: string
+  /** Where the lead came from, e.g. "LinkedIn", "Referral". */
+  source: string
+  /** 0–3 star priority. */
+  priority: number
+  contactName: string
+  contactEmail: string
+  /** Reminder date to chase the application (yyyy-mm-dd). */
+  followUpDate: string
+  tags: string[]
+  /** Job description / posting text. */
+  description: string
+  /** Which CV/version was sent, e.g. "Frontend v2". */
+  resumeVersion: string
+  /** ISO timestamp the record was created. */
+  createdAt: string
+  /** ISO timestamp of the last edit. */
+  updatedAt: string
+  /** Status-change timeline, oldest first. */
+  history: ApplicationEvent[]
+  archived: boolean
 }

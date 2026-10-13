@@ -4,14 +4,12 @@ import { Toolbar } from './components/Toolbar'
 import { AiSettingsModal } from './components/ui/AiSettingsModal'
 import { DesignPanel } from './components/ui/DesignPanel'
 import { EditorPanel } from './components/editor/EditorPanel'
-import { TrackerView } from './components/tracker/TrackerView'
 import { ResumePreview } from './preview/ResumePreview'
 import { useResumeStore } from './store/resumeStore'
 import { useResolvedTheme } from './lib/useResolvedTheme'
 
 export default function App() {
   const resume = useResumeStore((s) => s.resume)
-  const docType = useResumeStore((s) => s.docType)
   const undo = useResumeStore((s) => s.undo)
   const redo = useResumeStore((s) => s.redo)
   const pageRef = useRef<HTMLDivElement>(null)
@@ -45,12 +43,7 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <Toolbar pageRef={pageRef} />
-      {docType === 'tracker' ? (
-        <main className="mx-auto max-w-[1600px] px-4 py-6">
-          <TrackerView />
-        </main>
-      ) : (
-        <main className="mx-auto max-w-[1600px] px-4 py-6">
+      <main className="mx-auto max-w-[1600px] px-4 py-6">
           <div className="mb-4 flex justify-center no-print lg:hidden">
             <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 shadow-sm">
               <button
@@ -97,8 +90,7 @@ export default function App() {
               <ResumePreview resume={resume} pageRef={pageRef} theme={theme} />
             </div>
           </div>
-        </main>
-      )}
+      </main>
       <AiSettingsModal />
       <DesignPanel />
     </div>

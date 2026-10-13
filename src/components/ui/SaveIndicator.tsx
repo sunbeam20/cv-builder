@@ -5,7 +5,6 @@ import { useResumeStore } from '../../store/resumeStore'
 /** Reassures users their work is persisted locally, without them having to press Save. */
 export function SaveIndicator() {
   const resume = useResumeStore((s) => s.resume)
-  const applications = useResumeStore((s) => s.applications)
   const [status, setStatus] = useState<'saved' | 'saving'>('saved')
   const mounted = useRef(false)
 
@@ -17,7 +16,7 @@ export function SaveIndicator() {
     setStatus('saving')
     const timer = setTimeout(() => setStatus('saved'), 500)
     return () => clearTimeout(timer)
-  }, [resume, applications])
+  }, [resume])
 
   return (
     <span

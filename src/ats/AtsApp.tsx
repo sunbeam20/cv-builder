@@ -19,6 +19,7 @@ import { resumePlainText } from '../lib/match'
 import { useResumeStore } from '../store/resumeStore'
 import { toast } from '../lib/toast'
 import { goHome } from '../home/navigation'
+import { ToolMenu } from '../home/ToolMenu'
 import { BRAND } from '../home/config'
 import { readResumeFile } from './extract'
 
@@ -191,6 +192,7 @@ export function AtsApp() {
               Check how well your CV passes applicant tracking systems.
             </p>
           </div>
+          <ToolMenu />
           <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-600 sm:inline-flex">
             <Sparkles size={12} />
             Runs locally

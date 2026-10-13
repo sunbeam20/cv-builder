@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { Draft } from 'immer'
-import type { Application, DocType, Resume, SectionId } from '../types'
+import type { Resume, SectionId } from '../types'
 import type { Customization, DesignPreset, TemplateId } from '../lib/templates'
 import { DEFAULT_SECTION_ORDER, emptyResume, uid } from '../lib/helpers'
 import { DEFAULT_AI_SETTINGS, type AiSettings } from '../lib/ai'
@@ -19,11 +19,9 @@ let lastEditAt = 0
 
 interface ResumeState {
   resume: Resume
-  applications: Application[]
   template: TemplateId
   customization: Customization
   customPresets: DesignPreset[]
-  docType: DocType
   ai: AiSettings
   aiSettingsOpen: boolean
   designOpen: boolean
@@ -43,13 +41,8 @@ interface ResumeState {
   setCustomPresets: (presets: DesignPreset[]) => void
   openDesign: () => void
   closeDesign: () => void
-  setDocType: (docType: DocType) => void
   moveSection: (from: number, to: number) => void
   toggleSection: (id: SectionId) => void
-  addApplication: (application: Application) => void
-  updateApplication: (id: string, recipe: (draft: Draft<Application>) => void) => void
-  removeApplication: (id: string) => void
-  setApplications: (applications: Application[]) => void
   setAi: (patch: Partial<AiSettings>) => void
   openAiSettings: () => void
   closeAiSettings: () => void
@@ -85,11 +78,9 @@ export const useResumeStore = create<ResumeState>()(
 
       return {
         resume: initialResume,
-        applications: [],
         template: 'ats',
         customization: {},
         customPresets: [],
-        docType: 'resume',
         ai: { ...DEFAULT_AI_SETTINGS },
         aiSettingsOpen: false,
         designOpen: false,
@@ -176,10 +167,6 @@ export const useResumeStore = create<ResumeState>()(
           set((state) => {
             state.designOpen = false
           }),
-        setDocType: (docType) =>
-          set((state) => {
-            state.docType = docType
-          }),
         moveSection: (from, to) => {
           const { sectionOrder } = get().resume
           if (
@@ -203,24 +190,6 @@ export const useResumeStore = create<ResumeState>()(
             if (index === -1) hidden.push(id)
             else hidden.splice(index, 1)
           }),
-        addApplication: (application) =>
-          set((state) => {
-            state.applications.unshift(application)
-          }),
-        updateApplication: (id, recipe) =>
-          set((state) => {
-            const application = state.applications.find((a) => a.id === id)
-            if (application) recipe(application)
-          }),
-        removeApplication: (id) =>
-          set((state) => {
-            const index = state.applications.findIndex((a) => a.id === id)
-            if (index !== -1) state.applications.splice(index, 1)
-          }),
-        setApplications: (applications) =>
-          set((state) => {
-            state.applications = applications
-          }),
         setAi: (patch) =>
           set((state) => {
             Object.assign(state.ai, patch)
@@ -241,7 +210,6 @@ export const useResumeStore = create<ResumeState>()(
       storage: createJSONStorage(() => crossOriginStorage),
       partialize: (state) => ({
         resume: state.resume,
-        applications: state.applications,
         template: state.template,
         customization: state.customization,
         customPresets: state.customPresets,
@@ -249,9 +217,6 @@ export const useResumeStore = create<ResumeState>()(
       }),
       migrate: (persisted, version) => {
         const state = persisted as Partial<ResumeState> | undefined
-        if (state && !state.applications) {
-          state.applications = []
-        }
         if (state && !state.customization) {
           state.customization = {}
         }

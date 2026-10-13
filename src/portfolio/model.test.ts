@@ -113,6 +113,21 @@ describe('renderPortfolioHtml', () => {
     expect(html).toContain('.section{margin-top:30px}')
   })
 
+  it('renders an uploaded profile picture as the avatar', () => {
+    const html = renderPortfolioHtml(
+      { ...data(), photo: 'data:image/png;base64,AAAA' },
+      DEFAULT_SETTINGS,
+    )
+    expect(html).toContain('<img class="avatar" src="data:image/png;base64,AAAA"')
+    expect(html).toContain('alt="Jordan Avery"')
+    expect(html).not.toContain('<span class="avatar"')
+  })
+
+  it('falls back to the initial when there is no photo', () => {
+    const html = renderPortfolioHtml(data(), DEFAULT_SETTINGS)
+    expect(html).toContain('<span class="avatar" aria-hidden="true">J</span>')
+  })
+
   it('falls back to a placeholder name when empty', () => {
     const html = renderPortfolioHtml(emptyPortfolio(), DEFAULT_SETTINGS)
     expect(html).toContain('Your Name')

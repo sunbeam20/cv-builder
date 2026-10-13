@@ -21,6 +21,7 @@ import { FONT_OPTIONS } from '../lib/templates'
 import { useResumeStore } from '../store/resumeStore'
 import { toast } from '../lib/toast'
 import { goHome } from '../home/navigation'
+import { ToolMenu } from '../home/ToolMenu'
 import { BRAND } from '../home/config'
 import {
   BANNER_SIZES,
@@ -268,6 +269,7 @@ export function BannerApp() {
               Design social and LinkedIn banners in your browser.
             </p>
           </div>
+          <ToolMenu />
           <button
             type="button"
             onClick={reset}

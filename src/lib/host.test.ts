@@ -17,6 +17,13 @@ describe('parseHost', () => {
     expect(parsed.isDev).toBe(false)
   })
 
+  it('resolves the hydration tracker on its own subdomain', () => {
+    const parsed = parseHost('hydrate.example.com')
+    expect(parsed.tool?.slug).toBe('hydrate')
+    expect(parsed.tool?.name).toBe('Hydration Tracker')
+    expect(parsed.rootHost).toBe('example.com')
+  })
+
   it('treats an unknown label as part of the root host', () => {
     const parsed = parseHost('notatool.example.com')
     expect(parsed.tool).toBeNull()

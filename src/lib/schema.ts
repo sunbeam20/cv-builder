@@ -100,6 +100,13 @@ export const applicationStatusSchema = z.enum([
   'rejected',
 ])
 
+export const applicationEventSchema = z.object({
+  id,
+  status: applicationStatusSchema,
+  at: z.string(),
+  note: z.string().optional(),
+})
+
 export const applicationSchema = z.object({
   id,
   company: z.string(),
@@ -109,6 +116,19 @@ export const applicationSchema = z.object({
   status: applicationStatusSchema,
   date: z.string(),
   notes: z.string(),
+  salary: z.string().default(''),
+  source: z.string().default(''),
+  priority: z.number().default(0),
+  contactName: z.string().default(''),
+  contactEmail: z.string().default(''),
+  followUpDate: z.string().default(''),
+  tags: z.array(z.string()).default([]),
+  description: z.string().default(''),
+  resumeVersion: z.string().default(''),
+  createdAt: z.string().default(''),
+  updatedAt: z.string().default(''),
+  history: z.array(applicationEventSchema).default([]),
+  archived: z.boolean().default(false),
 })
 
 export const customizationSchema = z.object({

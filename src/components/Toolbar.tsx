@@ -17,28 +17,22 @@ import {
   Upload,
 } from 'lucide-react'
 import { useResumeStore } from '../store/resumeStore'
+import { useJobsStore } from '../jobs/store'
 import { bundleSchema, resumeSchema } from '../lib/schema'
 import { downloadBlob, resumeHasContent, slug } from '../lib/helpers'
 import { isTemplateId } from '../lib/templates'
 import { useResolvedTheme } from '../lib/useResolvedTheme'
 import { toast } from '../lib/toast'
 import { goHome } from '../home/navigation'
+import { ToolMenu } from '../home/ToolMenu'
 import { BRAND } from '../home/config'
-import type { DocType } from '../types'
 import { TemplatePicker } from './ui/TemplatePicker'
 import { SaveIndicator } from './ui/SaveIndicator'
-
-const TABS: { id: DocType; label: string }[] = [
-  { id: 'resume', label: 'Résumé' },
-  { id: 'tracker', label: 'Tracker' },
-]
 
 type Busy = 'pdf' | 'png' | null
 
 const buttonBase =
   'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-60'
-
-const tabBase = 'rounded px-2.5 py-1 text-xs font-medium transition'
 
 const iconButton =
   'inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40'
@@ -49,17 +43,15 @@ interface ToolbarProps {
 
 export function Toolbar({ pageRef }: ToolbarProps) {
   const resume = useResumeStore((s) => s.resume)
-  const applications = useResumeStore((s) => s.applications)
   const template = useResumeStore((s) => s.template)
   const customization = useResumeStore((s) => s.customization)
   const customPresets = useResumeStore((s) => s.customPresets)
-  const docType = useResumeStore((s) => s.docType)
-  const setDocType = useResumeStore((s) => s.setDocType)
   const setTemplate = useResumeStore((s) => s.setTemplate)
   const setCustomization = useResumeStore((s) => s.setCustomization)
   const setCustomPresets = useResumeStore((s) => s.setCustomPresets)
   const replace = useResumeStore((s) => s.replace)
-  const setApplications = useResumeStore((s) => s.setApplications)
+  const applications = useJobsStore((s) => s.applications)
+  const setApplications = useJobsStore((s) => s.setApplications)
   const loadSample = useResumeStore((s) => s.loadSample)
   const reset = useResumeStore((s) => s.reset)
   const openAiSettings = useResumeStore((s) => s.openAiSettings)
@@ -73,7 +65,6 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const theme = useResolvedTheme()
-  const isTracker = docType === 'tracker'
 
   const hasContent = resumeHasContent(resume) || applications.length > 0
 
@@ -199,7 +190,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       <button
         type="button"
         className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
-        disabled={busy !== null || isTracker}
+        disabled={busy !== null}
         onClick={() =>
           run('png', 'PNG', async () => {
             const node = pageRef.current
@@ -215,7 +206,6 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       <button
         type="button"
         className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
-        disabled={isTracker}
         onClick={() => window.print()}
       >
         <Printer size={15} />
@@ -284,23 +274,6 @@ export function Toolbar({ pageRef }: ToolbarProps) {
           >
             CV Builder
           </button>
-          <div className="flex rounded-md border border-slate-200 p-0.5">
-            {TABS.map((tab) => {
-              const active = docType === tab.id
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setDocType(tab.id)}
-                  className={`${tabBase} ${
-                    active ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-50'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              )
-            })}
-          </div>
           <div className="hidden sm:block">
             <TemplatePicker />
           </div>
@@ -338,10 +311,12 @@ export function Toolbar({ pageRef }: ToolbarProps) {
           <SaveIndicator />
         </div>
 
+        <ToolMenu />
+
         <button
           type="button"
           className={`${buttonBase} bg-indigo-600 text-white hover:bg-indigo-700`}
-          disabled={busy !== null || isTracker}
+          disabled={busy !== null}
           onClick={() =>
             run('pdf', 'PDF', async () => {
               const { exportPdf } = await import('../export/exportPdf')

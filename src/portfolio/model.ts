@@ -39,6 +39,8 @@ export interface PortfolioData {
   email: string
   website: string
   summary: string
+  /** Optional profile picture as a (downscaled) data URL. */
+  photo: string
   links: PortfolioLink[]
   skills: string[]
   projects: PortfolioProject[]
@@ -111,6 +113,7 @@ export const emptyPortfolio = (): PortfolioData => ({
   email: '',
   website: '',
   summary: '',
+  photo: '',
   links: [],
   skills: [],
   projects: [],
@@ -126,6 +129,7 @@ export function resumeToPortfolio(resume: Resume): PortfolioData {
     email: resume.profile.email,
     website: resume.profile.website,
     summary: resume.profile.summary,
+    photo: '',
     links: resume.profile.links.map((link) => ({ label: link.label, url: link.url })),
     skills: Array.from(new Set(resume.skills.flatMap((group) => group.items))).filter((item) =>
       item.trim(),
@@ -374,8 +378,11 @@ export function renderPortfolioHtml(data: PortfolioData, settings: PortfolioSett
     ? body
     : `<p class="summary">Add your details in the CV Builder, then import them here to build your page.</p>`
 
+  const photo = data.photo.trim()
   const avatar = settings.showAvatar
-    ? `<span class="avatar" aria-hidden="true">${initial}</span>`
+    ? photo.startsWith('data:image/')
+      ? `<img class="avatar" src="${h(photo)}" alt="${h(name)}" />`
+      : `<span class="avatar" aria-hidden="true">${initial}</span>`
     : ''
   const topbar = settings.accentBar ? '<div class="topbar" aria-hidden="true"></div>' : ''
 
@@ -393,7 +400,7 @@ export function renderPortfolioHtml(data: PortfolioData, settings: PortfolioSett
   .topbar{height:6px;background:linear-gradient(90deg,${colors.accent},${colors.accentSoft})}
   .wrap{max-width:860px;margin:0 auto;padding:${wrapPad}}
   .hero{display:flex;flex-direction:column;gap:14px;border-bottom:1px solid ${colors.border};padding-bottom:${heroPad}}
-  .avatar{width:76px;height:76px;border-radius:20px;background:${colors.accent};color:#fff;display:grid;place-items:center;font-size:32px;font-weight:700}
+  .avatar{width:76px;height:76px;border-radius:20px;background:${colors.accent};color:#fff;display:block;overflow:hidden;font-size:32px;font-weight:700;line-height:76px;text-align:center;object-fit:cover}
   h1{font-size:${h1Size};line-height:1.1;margin:0;letter-spacing:-0.02em}
   .headline{font-size:18px;color:${colors.accent};font-weight:600;margin:0}
   .contact{display:flex;flex-wrap:wrap;gap:10px 18px;list-style:none;margin:0;padding:0;font-size:14px;color:${colors.muted}}

@@ -6,6 +6,7 @@ import { useResumeStore } from '../store/resumeStore'
 import { useToastStore } from '../lib/toast'
 import { emptyResume } from '../lib/helpers'
 import { sampleResume } from '../lib/sampleData'
+import { DEFAULT_SETTINGS, emptyPortfolio, saveDraft } from './model'
 import type { Resume } from '../types'
 
 beforeEach(() => {
@@ -31,8 +32,26 @@ describe('PortfolioApp', () => {
     render(<PortfolioApp />)
     expect(screen.getByText('Portfolio Page')).toBeInTheDocument()
     expect(screen.getByText('Your page starts here')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Download HTML/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Share link/ })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Download HTML/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Copy HTML/ })).not.toBeInTheDocument()
+  })
+
+  it('offers a profile picture upload control', () => {
+    render(<PortfolioApp />)
+    expect(screen.getByLabelText('Upload profile picture')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Upload photo/ })).toBeInTheDocument()
+  })
+
+  it('shows a stored profile picture in the preview', () => {
+    saveDraft({
+      data: { ...emptyPortfolio(), name: 'Jo', photo: 'data:image/png;base64,AAAA' },
+      settings: DEFAULT_SETTINGS,
+    })
+    render(<PortfolioApp />)
+    expect(preview().getAttribute('srcdoc')).toContain('data:image/png;base64,AAAA')
+    expect(screen.getByRole('button', { name: /Change photo/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Remove' })).toBeInTheDocument()
   })
 
   it('loads the example into a live preview', () => {
