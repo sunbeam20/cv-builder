@@ -29,4 +29,10 @@ describe('EditorPanel', () => {
     expect(screen.getByLabelText('Reorder Professional Summary')).toBeInTheDocument()
     expect(screen.getByLabelText('Reorder Experience')).toBeInTheDocument()
   })
+
+  it('exposes draggable handles for list entries', () => {
+    useResumeStore.getState().replace(sampleResume())
+    render(<EditorPanel />)
+    expect(screen.getByLabelText('Reorder Senior Frontend Engineer')).toBeInTheDocument()
+  })
 })
