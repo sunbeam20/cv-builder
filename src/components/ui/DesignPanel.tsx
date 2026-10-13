@@ -1,8 +1,58 @@
 import { Palette, RotateCcw, X } from 'lucide-react'
 import { useResumeStore } from '../../store/resumeStore'
 import { useResolvedTheme } from '../../lib/useResolvedTheme'
-import { FONT_OPTIONS, FONT_SIZE_MAX, FONT_SIZE_MIN, TEMPLATES } from '../../lib/templates'
+import {
+  FONT_OPTIONS,
+  FONT_SIZE_MAX,
+  FONT_SIZE_MIN,
+  LINE_HEIGHT_MAX,
+  LINE_HEIGHT_MIN,
+  MARGIN_X_MAX,
+  MARGIN_X_MIN,
+  MARGIN_Y_MAX,
+  MARGIN_Y_MIN,
+  TEMPLATES,
+  TRACKING_MAX,
+  TRACKING_MIN,
+} from '../../lib/templates'
 import { Field } from './inputs'
+
+function SliderField({
+  label,
+  display,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+}: {
+  label: string
+  display: string
+  value: number
+  min: number
+  max: number
+  step: number
+  onChange: (value: number) => void
+}) {
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between text-xs font-medium text-slate-600">
+        <span>{label}</span>
+        <span className="font-mono text-[11px] text-slate-400">{display}</span>
+      </div>
+      <input
+        type="range"
+        aria-label={label}
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full accent-indigo-600"
+      />
+    </div>
+  )
+}
 
 function ColorField({
   label,
@@ -91,20 +141,52 @@ export function DesignPanel() {
             </select>
           </Field>
 
-          <div>
-            <div className="mb-1 flex items-center justify-between text-xs font-medium text-slate-600">
-              <span>Base font size</span>
-              <span className="font-mono text-[11px] text-slate-400">{theme.baseFontSize}px</span>
-            </div>
-            <input
-              type="range"
-              aria-label="Base font size"
-              min={FONT_SIZE_MIN}
-              max={FONT_SIZE_MAX}
+          <SliderField
+            label="Base font size"
+            display={`${theme.baseFontSize}px`}
+            value={theme.baseFontSize}
+            min={FONT_SIZE_MIN}
+            max={FONT_SIZE_MAX}
+            step={1}
+            onChange={(baseFontSize) => setCustomization({ baseFontSize })}
+          />
+
+          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3">
+            <SliderField
+              label="Page margin (vertical)"
+              display={`${theme.pageMarginY}px`}
+              value={theme.pageMarginY}
+              min={MARGIN_Y_MIN}
+              max={MARGIN_Y_MAX}
               step={1}
-              value={theme.baseFontSize}
-              onChange={(e) => setCustomization({ baseFontSize: Number(e.target.value) })}
-              className="w-full accent-indigo-600"
+              onChange={(pageMarginY) => setCustomization({ pageMarginY })}
+            />
+            <SliderField
+              label="Page margin (horizontal)"
+              display={`${theme.pageMarginX}px`}
+              value={theme.pageMarginX}
+              min={MARGIN_X_MIN}
+              max={MARGIN_X_MAX}
+              step={1}
+              onChange={(pageMarginX) => setCustomization({ pageMarginX })}
+            />
+            <SliderField
+              label="Line height"
+              display={theme.lineHeight.toFixed(2)}
+              value={theme.lineHeight}
+              min={LINE_HEIGHT_MIN}
+              max={LINE_HEIGHT_MAX}
+              step={0.05}
+              onChange={(lineHeight) => setCustomization({ lineHeight })}
+            />
+            <SliderField
+              label="Heading letter spacing"
+              display={`${theme.headingTracking.toFixed(2)}em`}
+              value={theme.headingTracking}
+              min={TRACKING_MIN}
+              max={TRACKING_MAX}
+              step={0.01}
+              onChange={(headingTracking) => setCustomization({ headingTracking })}
             />
           </div>
 

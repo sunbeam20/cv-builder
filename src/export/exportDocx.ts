@@ -3,6 +3,7 @@ import {
   Document,
   ExternalHyperlink,
   HeadingLevel,
+  LineRuleType,
   Packer,
   Paragraph,
   TabStopType,
@@ -16,7 +17,7 @@ const CONTENT_WIDTH = 9026
 
 const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 
-const heading = (text: string, accent: string, size = 22) =>
+const heading = (text: string, accent: string, size = 22, characterSpacing = 30) =>
   new Paragraph({
     heading: HeadingLevel.HEADING_2,
     spacing: { before: 220, after: 80 },
@@ -26,7 +27,7 @@ const heading = (text: string, accent: string, size = 22) =>
         text: text.toUpperCase(),
         bold: true,
         size,
-        characterSpacing: 30,
+        characterSpacing,
         color: accent,
       }),
     ],
@@ -79,7 +80,8 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
   const linkColor = theme.linkColor.replace('#', '')
   const fs = (halfPoints: number) => Math.round(halfPoints * (theme.baseFontSize / 11))
   const headingSize = fs(22)
-  const headingFor = (text: string) => heading(text, accent, headingSize)
+  const headingTracking = Math.round(theme.headingTracking * (headingSize / 2) * 20)
+  const headingFor = (text: string) => heading(text, accent, headingSize, headingTracking)
 
   const contactChildren: (TextRun | ExternalHyperlink)[] = []
   const addContact = (node: TextRun | ExternalHyperlink | string) => {
@@ -265,13 +267,23 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
       default: {
         document: {
           run: { font: theme.docxFont, size: fs(22) },
+          paragraph: {
+            spacing: { line: Math.round(theme.lineHeight * 240), lineRule: LineRuleType.AUTO },
+          },
         },
       },
     },
     sections: [
       {
         properties: {
-          page: { margin: { top: 1000, bottom: 1000, left: 1000, right: 1000 } },
+          page: {
+            margin: {
+              top: theme.pageMarginY * 15,
+              bottom: theme.pageMarginY * 15,
+              left: theme.pageMarginX * 15,
+              right: theme.pageMarginX * 15,
+            },
+          },
         },
         children,
       },

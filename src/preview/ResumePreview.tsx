@@ -27,9 +27,10 @@ const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url :
 function SectionTitle({ children, theme }: { children: ReactNode; theme: TemplateTheme }) {
   return (
     <h2
-      className={`mb-2 font-bold uppercase tracking-[0.14em] ${theme.headingRule ? 'border-b pb-1' : ''}`}
+      className={`mb-2 font-bold uppercase ${theme.headingRule ? 'border-b pb-1' : ''}`}
       style={{
         fontSize: em(11),
+        letterSpacing: `${theme.headingTracking}em`,
         color: theme.accent,
         ...(theme.headingRule ? { borderColor: theme.accent } : {}),
       }}
@@ -45,7 +46,7 @@ function Bullets({ items }: { items: string[] }) {
   return (
     <ul className="mt-1 list-disc space-y-0.5 pl-4">
       {bullets.map((bullet, i) => (
-        <li key={i} className="leading-snug text-slate-700" style={{ fontSize: em(11) }}>
+        <li key={i} className="text-slate-700" style={{ fontSize: em(11) }}>
           {bullet}
         </li>
       ))}
@@ -115,7 +116,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     summary: profile.summary.trim() ? (
       <section className="mt-4">
         <SectionTitle theme={theme}>{SECTION_LABELS.summary}</SectionTitle>
-        <p className="leading-relaxed text-slate-700" style={{ fontSize: em(11) }}>
+        <p className="text-slate-700" style={{ fontSize: em(11) }}>
           {profile.summary}
         </p>
       </section>
@@ -166,7 +167,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
                   {edu.location ? ` — ${edu.location}` : ''}
                 </p>
                 {edu.details.trim() ? (
-                  <p className="leading-snug text-slate-700" style={{ fontSize: em(11) }}>
+                  <p className="text-slate-700" style={{ fontSize: em(11) }}>
                     {edu.details}
                   </p>
                 ) : null}
@@ -260,7 +261,12 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     <div
       ref={pageRef}
       className="resume-page relative shadow-xl ring-1 ring-slate-200"
-      style={{ fontFamily: theme.fontFamily, fontSize: `${theme.baseFontSize}px` }}
+      style={{
+        fontFamily: theme.fontFamily,
+        fontSize: `${theme.baseFontSize}px`,
+        lineHeight: theme.lineHeight,
+        padding: `${theme.pageMarginY}px ${theme.pageMarginX}px`,
+      }}
     >
       {theme.accentBar ? (
         <div className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.accent }} />

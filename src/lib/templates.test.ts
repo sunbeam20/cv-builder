@@ -63,4 +63,17 @@ describe('resolveTheme', () => {
     const theme = resolveTheme(TEMPLATES.modern, { fontId: 'nope' })
     expect(theme.fontFamily).toBe(TEMPLATES.modern.fontFamily)
   })
+
+  it('applies layout overrides', () => {
+    const theme = resolveTheme(TEMPLATES.ats, {
+      pageMarginY: 60,
+      pageMarginX: 40,
+      lineHeight: 1.6,
+      headingTracking: 0.2,
+    })
+    expect(theme.pageMarginY).toBe(60)
+    expect(theme.pageMarginX).toBe(40)
+    expect(theme.lineHeight).toBe(1.6)
+    expect(theme.headingTracking).toBe(0.2)
+  })
 })

@@ -125,6 +125,10 @@ export const applicationSchema = z.object({
 export const customizationSchema = z.object({
   fontId: z.string().optional(),
   baseFontSize: z.number().optional(),
+  pageMarginY: z.number().optional(),
+  pageMarginX: z.number().optional(),
+  lineHeight: z.number().optional(),
+  headingTracking: z.number().optional(),
   accent: z.string().optional(),
   nameColor: z.string().optional(),
   linkColor: z.string().optional(),

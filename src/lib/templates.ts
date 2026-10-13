@@ -20,6 +20,14 @@ export interface TemplateTheme {
   linkColor: string
   /** Base body font size in px (all other sizes are em-relative) */
   baseFontSize: number
+  /** Page padding in px: vertical (top/bottom) */
+  pageMarginY: number
+  /** Page padding in px: horizontal (left/right) */
+  pageMarginX: number
+  /** Body line height (unitless multiple) */
+  lineHeight: number
+  /** Letter spacing for section headings, in em */
+  headingTracking: number
   accentBar: boolean
   /** Draw a rule under section headings */
   headingRule: boolean
@@ -41,6 +49,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     nameColor: '#0f172a',
     linkColor: '#2563eb',
     baseFontSize: 11,
+    pageMarginY: 48,
+    pageMarginX: 54,
+    lineHeight: 1.45,
+    headingTracking: 0.14,
     accentBar: false,
     headingRule: true,
   },
@@ -59,6 +71,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     nameColor: '#4f46e5',
     linkColor: '#2563eb',
     baseFontSize: 11,
+    pageMarginY: 48,
+    pageMarginX: 54,
+    lineHeight: 1.45,
+    headingTracking: 0.14,
     accentBar: true,
     headingRule: true,
   },
@@ -77,6 +93,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     nameColor: '#1e293b',
     linkColor: '#2563eb',
     baseFontSize: 11,
+    pageMarginY: 48,
+    pageMarginX: 54,
+    lineHeight: 1.5,
+    headingTracking: 0.14,
     accentBar: false,
     headingRule: false,
   },
@@ -95,6 +115,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     nameColor: '#0f766e',
     linkColor: '#0d9488',
     baseFontSize: 11,
+    pageMarginY: 48,
+    pageMarginX: 54,
+    lineHeight: 1.45,
+    headingTracking: 0.14,
     accentBar: true,
     headingRule: true,
   },
@@ -113,6 +137,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     nameColor: '#0f172a',
     linkColor: '#0f766e',
     baseFontSize: 11,
+    pageMarginY: 48,
+    pageMarginX: 54,
+    lineHeight: 1.45,
+    headingTracking: 0.1,
     accentBar: false,
     headingRule: true,
   },
@@ -131,6 +159,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     nameColor: '#881337',
     linkColor: '#9f1239',
     baseFontSize: 11,
+    pageMarginY: 48,
+    pageMarginX: 54,
+    lineHeight: 1.45,
+    headingTracking: 0.16,
     accentBar: true,
     headingRule: false,
   },
@@ -228,6 +260,10 @@ export const isFontId = (value: string): value is string => FONT_OPTIONS.some((f
 export interface Customization {
   fontId?: string
   baseFontSize?: number
+  pageMarginY?: number
+  pageMarginX?: number
+  lineHeight?: number
+  headingTracking?: number
   accent?: string
   nameColor?: string
   linkColor?: string
@@ -237,6 +273,14 @@ export interface Customization {
 
 export const FONT_SIZE_MIN = 9
 export const FONT_SIZE_MAX = 13
+export const MARGIN_Y_MIN = 24
+export const MARGIN_Y_MAX = 80
+export const MARGIN_X_MIN = 24
+export const MARGIN_X_MAX = 80
+export const LINE_HEIGHT_MIN = 1.2
+export const LINE_HEIGHT_MAX = 1.8
+export const TRACKING_MIN = 0
+export const TRACKING_MAX = 0.3
 
 export function resolveTheme(base: TemplateTheme, custom: Customization = {}): TemplateTheme {
   const font = custom.fontId ? FONT_OPTIONS.find((f) => f.id === custom.fontId) : undefined
@@ -249,6 +293,10 @@ export function resolveTheme(base: TemplateTheme, custom: Customization = {}): T
     nameColor: custom.nameColor ?? base.nameColor,
     linkColor: custom.linkColor ?? base.linkColor,
     baseFontSize: custom.baseFontSize ?? base.baseFontSize,
+    pageMarginY: custom.pageMarginY ?? base.pageMarginY,
+    pageMarginX: custom.pageMarginX ?? base.pageMarginX,
+    lineHeight: custom.lineHeight ?? base.lineHeight,
+    headingTracking: custom.headingTracking ?? base.headingTracking,
     accentBar: custom.accentBar ?? base.accentBar,
     headingRule: custom.headingRule ?? base.headingRule,
   }

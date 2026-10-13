@@ -52,6 +52,8 @@ export function CoverLetterPage({ letter, profile, pageRef, theme }: Props) {
       style={{
         fontFamily: theme.fontFamily,
         fontSize: `${theme.baseFontSize}px`,
+        lineHeight: theme.lineHeight,
+        padding: `${theme.pageMarginY}px ${theme.pageMarginX}px`,
         minHeight: A4_HEIGHT,
       }}
     >
@@ -82,7 +84,7 @@ export function CoverLetterPage({ letter, profile, pageRef, theme }: Props) {
         ) : null}
       </header>
 
-      <div className="mt-8 leading-relaxed text-slate-700" style={{ fontSize: em(11) }}>
+      <div className="mt-8 text-slate-700" style={{ fontSize: em(11) }}>
         {letter.date ? <p>{letter.date}</p> : null}
 
         {letter.recipient || letter.company ? (

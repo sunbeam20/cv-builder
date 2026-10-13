@@ -1,4 +1,4 @@
-import { Document, ExternalHyperlink, Packer, Paragraph, TextRun } from 'docx'
+import { Document, ExternalHyperlink, LineRuleType, Packer, Paragraph, TextRun } from 'docx'
 import type { CoverLetter, Profile } from '../types'
 import type { TemplateTheme } from '../lib/templates'
 import { downloadBlob, slug } from '../lib/helpers'
@@ -98,11 +98,27 @@ export async function exportCoverLetterDocx(
   const doc = new Document({
     creator: profile.fullName || 'CV Builder',
     title: `${profile.fullName || 'Cover Letter'} — Cover Letter`,
-    styles: { default: { document: { run: { font: theme.docxFont, size: fs(22) } } } },
+    styles: {
+      default: {
+        document: {
+          run: { font: theme.docxFont, size: fs(22) },
+          paragraph: {
+            spacing: { line: Math.round(theme.lineHeight * 240), lineRule: LineRuleType.AUTO },
+          },
+        },
+      },
+    },
     sections: [
       {
         properties: {
-          page: { margin: { top: 1000, bottom: 1000, left: 1000, right: 1000 } },
+          page: {
+            margin: {
+              top: theme.pageMarginY * 15,
+              bottom: theme.pageMarginY * 15,
+              left: theme.pageMarginX * 15,
+              right: theme.pageMarginX * 15,
+            },
+          },
         },
         children,
       },

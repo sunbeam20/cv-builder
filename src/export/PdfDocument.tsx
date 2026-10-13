@@ -10,12 +10,12 @@ const makeStyles = (theme: TemplateTheme) => {
   const s = (n: number) => n * (theme.baseFontSize / 11)
   return StyleSheet.create({
     page: {
-      paddingTop: 48,
-      paddingBottom: 48,
-      paddingHorizontal: 54,
+      paddingTop: theme.pageMarginY * 0.75,
+      paddingBottom: theme.pageMarginY * 0.75,
+      paddingHorizontal: theme.pageMarginX * 0.75,
       fontFamily: theme.pdfFonts.regular,
       fontSize: s(10),
-      lineHeight: 1.4,
+      lineHeight: theme.lineHeight,
       color: '#111827',
     },
     name: { fontSize: s(22), fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
@@ -26,7 +26,7 @@ const makeStyles = (theme: TemplateTheme) => {
     sectionTitle: {
       fontSize: s(10),
       fontFamily: theme.pdfFonts.bold,
-      letterSpacing: 1.4,
+      letterSpacing: theme.headingTracking * s(10),
       textTransform: 'uppercase',
       borderBottomWidth: theme.headingRule ? 0.75 : 0,
       paddingBottom: 3,
