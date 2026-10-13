@@ -1,0 +1,82 @@
+import { z } from 'zod'
+
+const id = z.string()
+
+export const linkSchema = z.object({
+  id,
+  label: z.string(),
+  url: z.string(),
+})
+
+export const profileSchema = z.object({
+  fullName: z.string(),
+  headline: z.string(),
+  email: z.string(),
+  phone: z.string(),
+  location: z.string(),
+  website: z.string(),
+  summary: z.string(),
+  links: z.array(linkSchema),
+})
+
+export const experienceSchema = z.object({
+  id,
+  company: z.string(),
+  role: z.string(),
+  location: z.string(),
+  start: z.string(),
+  end: z.string(),
+  current: z.boolean(),
+  bullets: z.array(z.string()),
+})
+
+export const educationSchema = z.object({
+  id,
+  school: z.string(),
+  degree: z.string(),
+  field: z.string(),
+  location: z.string(),
+  start: z.string(),
+  end: z.string(),
+  details: z.string(),
+})
+
+export const skillGroupSchema = z.object({
+  id,
+  category: z.string(),
+  items: z.array(z.string()),
+})
+
+export const projectSchema = z.object({
+  id,
+  name: z.string(),
+  link: z.string(),
+  description: z.string(),
+  bullets: z.array(z.string()),
+})
+
+export const certificationSchema = z.object({
+  id,
+  name: z.string(),
+  issuer: z.string(),
+  date: z.string(),
+  link: z.string(),
+})
+
+export const languageSchema = z.object({
+  id,
+  name: z.string(),
+  proficiency: z.string(),
+})
+
+export const resumeSchema = z.object({
+  profile: profileSchema,
+  experience: z.array(experienceSchema),
+  education: z.array(educationSchema),
+  skills: z.array(skillGroupSchema),
+  projects: z.array(projectSchema),
+  certifications: z.array(certificationSchema),
+  languages: z.array(languageSchema),
+})
+
+export type ResumeInput = z.infer<typeof resumeSchema>

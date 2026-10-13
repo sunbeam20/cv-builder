@@ -1,0 +1,50 @@
+export const uid = (): string =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : Math.random().toString(36).slice(2, 11)
+
+export const emptyResume = () => ({
+  profile: {
+    fullName: '',
+    headline: '',
+    email: '',
+    phone: '',
+    location: '',
+    website: '',
+    summary: '',
+    links: [],
+  },
+  experience: [],
+  education: [],
+  skills: [],
+  projects: [],
+  certifications: [],
+  languages: [],
+})
+
+export const formatRange = (start: string, end: string, current: boolean): string => {
+  const left = start.trim()
+  const right = current ? 'Present' : end.trim()
+  if (!left && !right) return ''
+  if (!left) return right
+  if (!right) return left
+  return `${left} – ${right}`
+}
+
+export const slug = (value: string): string =>
+  value
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_') || 'resume'
+
+export const downloadBlob = (blob: Blob, filename: string): void => {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
