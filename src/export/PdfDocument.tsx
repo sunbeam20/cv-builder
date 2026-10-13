@@ -27,6 +27,14 @@ const makeStyles = (theme: TemplateTheme) => {
     },
     headline: { marginTop: 2, fontSize: s(11.5), color: '#475569' },
     contact: { marginTop: 6, fontSize: s(9), color: '#475569' },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    headerLeft: { flexShrink: 1, paddingRight: 12 },
+    headerRight: { alignItems: 'flex-end' },
+    contactRight: { fontSize: s(9), color: '#475569', marginBottom: 2 },
     link: { color: theme.linkColor, textDecoration: 'underline' },
     section: { marginTop: theme.sectionSpacing * 0.75 },
     sectionTitle: {
@@ -112,9 +120,11 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
   const glyph = BULLET_GLYPH[theme.bulletStyle]
 
   const contactNodes: ReactNode[] = []
+  const contactLines: ReactNode[] = []
   const addContact = (node: ReactNode) => {
     if (contactNodes.length > 0) contactNodes.push('  |  ')
     contactNodes.push(node)
+    contactLines.push(node)
   }
   if (profile.location.trim()) addContact(profile.location.trim())
   if (profile.phone.trim()) addContact(profile.phone.trim())
@@ -275,13 +285,33 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
             }}
           />
         ) : null}
-        <View>
-          <Text style={styles.name}>{profile.fullName || 'Your Name'}</Text>
-          {profile.headline.trim() ? (
-            <Text style={styles.headline}>{profile.headline}</Text>
-          ) : null}
-          {contactNodes.length > 0 ? <Text style={styles.contact}>{contactNodes}</Text> : null}
-        </View>
+        {theme.headerLayout === 'split' ? (
+          <View style={styles.headerRow}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.name}>{profile.fullName || 'Your Name'}</Text>
+              {profile.headline.trim() ? (
+                <Text style={styles.headline}>{profile.headline}</Text>
+              ) : null}
+            </View>
+            {contactLines.length > 0 ? (
+              <View style={styles.headerRight}>
+                {contactLines.map((node, i) => (
+                  <Text key={i} style={styles.contactRight}>
+                    {node}
+                  </Text>
+                ))}
+              </View>
+            ) : null}
+          </View>
+        ) : (
+          <View>
+            <Text style={styles.name}>{profile.fullName || 'Your Name'}</Text>
+            {profile.headline.trim() ? (
+              <Text style={styles.headline}>{profile.headline}</Text>
+            ) : null}
+            {contactNodes.length > 0 ? <Text style={styles.contact}>{contactNodes}</Text> : null}
+          </View>
+        )}
 
         {sectionOrder
           .filter((id) => !hiddenSections.includes(id))

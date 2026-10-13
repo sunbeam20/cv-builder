@@ -283,31 +283,62 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
         <div className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.accent }} />
       ) : null}
       <header>
-        <h1
-          className="font-bold leading-tight"
-          style={{
-            fontSize: em(26 * theme.nameScale),
-            letterSpacing: `${theme.nameTracking}em`,
-            color: theme.nameColor,
-          }}
-        >
-          {profile.fullName || 'Your Name'}
-        </h1>
-        {profile.headline ? (
-          <p className="mt-0.5 font-medium text-slate-600" style={{ fontSize: em(13) }}>
-            {profile.headline}
-          </p>
-        ) : null}
-        {contactNodes.length > 0 ? (
-          <p className="mt-2 text-slate-600" style={{ fontSize: em(10.5) }}>
-            {contactNodes.map((node, index) => (
-              <span key={index}>
-                {index > 0 ? '  |  ' : ''}
-                {node}
-              </span>
-            ))}
-          </p>
-        ) : null}
+        {theme.headerLayout === 'split' ? (
+          <div className="flex items-start justify-between gap-6">
+            <div>
+              <h1
+                className="font-bold leading-tight"
+                style={{
+                  fontSize: em(26 * theme.nameScale),
+                  letterSpacing: `${theme.nameTracking}em`,
+                  color: theme.nameColor,
+                }}
+              >
+                {profile.fullName || 'Your Name'}
+              </h1>
+              {profile.headline ? (
+                <p className="mt-0.5 font-medium text-slate-600" style={{ fontSize: em(13) }}>
+                  {profile.headline}
+                </p>
+              ) : null}
+            </div>
+            {contactNodes.length > 0 ? (
+              <div className="text-right text-slate-600" style={{ fontSize: em(10.5) }}>
+                {contactNodes.map((node, index) => (
+                  <div key={index}>{node}</div>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <>
+            <h1
+              className="font-bold leading-tight"
+              style={{
+                fontSize: em(26 * theme.nameScale),
+                letterSpacing: `${theme.nameTracking}em`,
+                color: theme.nameColor,
+              }}
+            >
+              {profile.fullName || 'Your Name'}
+            </h1>
+            {profile.headline ? (
+              <p className="mt-0.5 font-medium text-slate-600" style={{ fontSize: em(13) }}>
+                {profile.headline}
+              </p>
+            ) : null}
+            {contactNodes.length > 0 ? (
+              <p className="mt-2 text-slate-600" style={{ fontSize: em(10.5) }}>
+                {contactNodes.map((node, index) => (
+                  <span key={index}>
+                    {index > 0 ? '  |  ' : ''}
+                    {node}
+                  </span>
+                ))}
+              </p>
+            ) : null}
+          </>
+        )}
       </header>
 
       {sectionOrder

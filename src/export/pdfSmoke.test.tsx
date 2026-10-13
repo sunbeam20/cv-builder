@@ -12,6 +12,16 @@ describe('pdf render smoke', () => {
     expect(blob.size).toBeGreaterThan(0)
   })
 
+  it('renders the resume document with a split header', async () => {
+    const blob = await pdf(
+      <PdfDocument
+        resume={sampleResume()}
+        theme={{ ...TEMPLATES.modern, headerLayout: 'split' }}
+      />,
+    ).toBlob()
+    expect(blob.size).toBeGreaterThan(0)
+  })
+
   it('renders the cover letter document', async () => {
     const resume = sampleResume()
     const blob = await pdf(

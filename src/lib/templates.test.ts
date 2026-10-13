@@ -5,6 +5,8 @@ import {
   BULLET_STYLES,
   DESIGN_PRESETS,
   FONT_OPTIONS,
+  HEADER_LAYOUTS,
+  HEADER_LAYOUT_LABELS,
   HEADING_CASES,
   HEADING_CASE_LABELS,
   HEADING_WEIGHTS,
@@ -124,6 +126,14 @@ describe('resolveTheme', () => {
   it('exposes labels for every heading case and weight', () => {
     for (const value of HEADING_CASES) expect(HEADING_CASE_LABELS[value]).toBeTruthy()
     for (const weight of HEADING_WEIGHTS) expect(HEADING_WEIGHT_LABELS[weight]).toBeTruthy()
+  })
+
+  it('defaults every template to a stacked header and supports overrides', () => {
+    for (const value of HEADER_LAYOUTS) expect(HEADER_LAYOUT_LABELS[value]).toBeTruthy()
+    for (const template of TEMPLATE_LIST) {
+      expect(template.headerLayout).toBe('stacked')
+    }
+    expect(resolveTheme(TEMPLATES.ats, { headerLayout: 'split' }).headerLayout).toBe('split')
   })
 })
 

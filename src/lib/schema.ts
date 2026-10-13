@@ -138,6 +138,7 @@ export const customizationSchema = z.object({
   ruleColor: z.string().optional(),
   ruleThickness: z.number().optional(),
   nameTracking: z.number().optional(),
+  headerLayout: z.enum(['stacked', 'split']).optional(),
   accent: z.string().optional(),
   nameColor: z.string().optional(),
   linkColor: z.string().optional(),

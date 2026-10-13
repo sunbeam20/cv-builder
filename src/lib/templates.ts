@@ -18,6 +18,15 @@ export const HEADING_WEIGHT_LABELS: Record<number, string> = {
   700: 'Bold',
 }
 
+export type HeaderLayout = 'stacked' | 'split'
+
+export const HEADER_LAYOUTS: HeaderLayout[] = ['stacked', 'split']
+
+export const HEADER_LAYOUT_LABELS: Record<HeaderLayout, string> = {
+  stacked: 'Stacked',
+  split: 'Two columns',
+}
+
 export type BulletStyle = 'disc' | 'circle' | 'square' | 'dash' | 'none'
 
 export const BULLET_STYLES: BulletStyle[] = ['disc', 'circle', 'square', 'dash', 'none']
@@ -85,16 +94,19 @@ export interface TemplateTheme {
   ruleThickness: number
   /** Letter spacing for the name, in em */
   nameTracking: number
+  /** Header layout: stacked (name/contact centred) or split (contact right-aligned) */
+  headerLayout: HeaderLayout
   accentBar: boolean
   /** Draw a rule under section headings */
   headingRule: boolean
 }
 
-const TYPO_DEFAULTS = {
+const BASE_DEFAULTS = {
   headingCase: 'uppercase',
   headingWeight: 700,
   ruleThickness: 1,
   nameTracking: 0,
+  headerLayout: 'stacked',
 } as const
 
 export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
@@ -102,7 +114,7 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     id: 'ats',
     name: 'ATS Classic',
     ruleColor: '#0f172a',
-    ...TYPO_DEFAULTS,
+    ...BASE_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 16,
@@ -130,7 +142,7 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     id: 'modern',
     name: 'Modern Accent',
     ruleColor: '#4f46e5',
-    ...TYPO_DEFAULTS,
+    ...BASE_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 16,
@@ -158,7 +170,7 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     id: 'elegant',
     name: 'Elegant Serif',
     ruleColor: '#334155',
-    ...TYPO_DEFAULTS,
+    ...BASE_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 18,
@@ -186,7 +198,7 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     id: 'teal',
     name: 'Teal Accent',
     ruleColor: '#0d9488',
-    ...TYPO_DEFAULTS,
+    ...BASE_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 16,
@@ -214,7 +226,7 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     id: 'mono',
     name: 'Technical Mono',
     ruleColor: '#334155',
-    ...TYPO_DEFAULTS,
+    ...BASE_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 16,
@@ -242,7 +254,7 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     id: 'burgundy',
     name: 'Burgundy Serif',
     ruleColor: '#9f1239',
-    ...TYPO_DEFAULTS,
+    ...BASE_DEFAULTS,
     nameScale: 1.05,
     headingScale: 1.05,
     sectionSpacing: 18,
@@ -373,6 +385,7 @@ export interface Customization {
   ruleColor?: string
   ruleThickness?: number
   nameTracking?: number
+  headerLayout?: HeaderLayout
   accent?: string
   nameColor?: string
   linkColor?: string
@@ -511,6 +524,7 @@ export function resolveTheme(base: TemplateTheme, custom: Customization = {}): T
     ruleColor: custom.ruleColor ?? base.ruleColor,
     ruleThickness: custom.ruleThickness ?? base.ruleThickness,
     nameTracking: custom.nameTracking ?? base.nameTracking,
+    headerLayout: custom.headerLayout ?? base.headerLayout,
     accentBar: custom.accentBar ?? base.accentBar,
     headingRule: custom.headingRule ?? base.headingRule,
   }

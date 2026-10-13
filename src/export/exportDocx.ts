@@ -1,4 +1,5 @@
 import {
+  AlignmentType,
   BorderStyle,
   Document,
   ExternalHyperlink,
@@ -6,8 +7,12 @@ import {
   LineRuleType,
   Packer,
   Paragraph,
+  Table,
+  TableCell,
+  TableRow,
   TabStopType,
   TextRun,
+  WidthType,
 } from 'docx'
 import type { Resume, SectionId } from '../types'
 import type { TemplateTheme } from '../lib/templates'
@@ -124,14 +129,11 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     })
   }
 
-  const contactChildren: (TextRun | ExternalHyperlink)[] = []
+  const contactLines: (TextRun | ExternalHyperlink)[][] = []
   const addContact = (node: TextRun | ExternalHyperlink | string) => {
-    if (contactChildren.length > 0) {
-      contactChildren.push(new TextRun({ text: '  |  ', size: fs(18), color: '475569' }))
-    }
-    contactChildren.push(
+    contactLines.push([
       typeof node === 'string' ? new TextRun({ text: node, size: fs(18), color: '475569' }) : node,
-    )
+    ])
   }
   if (profile.location.trim()) addContact(profile.location.trim())
   if (profile.phone.trim()) addContact(profile.phone.trim())
@@ -151,26 +153,63 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     )
   })
 
-  const header: Paragraph[] = [
-    new Paragraph({
-      spacing: { after: 40 },
-      children: [
-        new TextRun({
-          text: profile.fullName || 'Your Name',
-          bold: true,
-          size: fs(Math.round(44 * theme.nameScale)),
-          characterSpacing: Math.round(theme.nameTracking * (fs(Math.round(44 * theme.nameScale)) / 2) * 20),
-          color: nameColor,
-        }),
-      ],
-    }),
-  ]
+  const nameRun = new TextRun({
+    text: profile.fullName || 'Your Name',
+    bold: true,
+    size: fs(Math.round(44 * theme.nameScale)),
+    characterSpacing: Math.round(theme.nameTracking * (fs(Math.round(44 * theme.nameScale)) / 2) * 20),
+    color: nameColor,
+  })
+  const nameParagraph = new Paragraph({ spacing: { after: 40 }, children: [nameRun] })
+  const headlineParagraph = profile.headline.trim()
+    ? line([new TextRun({ text: profile.headline, size: fs(24), color: '475569' })], 40)
+    : null
 
-  if (profile.headline.trim()) {
-    header.push(line([new TextRun({ text: profile.headline, size: fs(24), color: '475569' })], 40))
-  }
-  if (contactChildren.length > 0) {
-    header.push(line(contactChildren))
+  const header: (Paragraph | Table)[] = []
+  if (theme.headerLayout === 'split' && contactLines.length > 0) {
+    const noBorders = {
+      top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+      bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+      left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+      right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+    }
+    header.push(
+      new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({
+                width: { size: 58, type: WidthType.PERCENTAGE },
+                borders: noBorders,
+                children: [nameParagraph, ...(headlineParagraph ? [headlineParagraph] : [])],
+              }),
+              new TableCell({
+                width: { size: 42, type: WidthType.PERCENTAGE },
+                borders: noBorders,
+                children: contactLines.map(
+                  (runs) =>
+                    new Paragraph({
+                      alignment: AlignmentType.RIGHT,
+                      spacing: { after: 20 },
+                      children: runs,
+                    }),
+                ),
+              }),
+            ],
+          }),
+        ],
+      }),
+    )
+  } else {
+    const contactChildren = contactLines.flatMap((runs, i) =>
+      i === 0
+        ? runs
+        : [new TextRun({ text: '  |  ', size: fs(18), color: '475569' }), ...runs],
+    )
+    header.push(nameParagraph)
+    if (headlineParagraph) header.push(headlineParagraph)
+    if (contactChildren.length > 0) header.push(line(contactChildren))
   }
 
   const blocks: Record<SectionId, Paragraph[]> = {
@@ -295,7 +334,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
         : [],
   }
 
-  const children: Paragraph[] = [
+  const children: (Paragraph | Table)[] = [
     ...header,
     ...sectionOrder
       .filter((id) => !hiddenSections.includes(id))

@@ -10,6 +10,8 @@ import {
   FONT_SIZE_MIN,
   HEADING_CASE_LABELS,
   HEADING_CASES,
+  HEADER_LAYOUT_LABELS,
+  HEADER_LAYOUTS,
   HEADING_SCALE_MAX,
   HEADING_SCALE_MIN,
   HEADING_WEIGHTS,
@@ -32,7 +34,7 @@ import {
   TRACKING_MAX,
   TRACKING_MIN,
 } from '../../lib/templates'
-import type { BulletStyle, HeadingCase } from '../../lib/templates'
+import type { BulletStyle, HeaderLayout, HeadingCase } from '../../lib/templates'
 import { Field } from './inputs'
 
 function SliderField({
@@ -282,6 +284,21 @@ export function DesignPanel() {
           </div>
 
           <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3">
+            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600">
+              Header layout
+              <select
+                aria-label="Header layout"
+                value={theme.headerLayout}
+                onChange={(e) => setCustomization({ headerLayout: e.target.value as HeaderLayout })}
+                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+              >
+                {HEADER_LAYOUTS.map((value) => (
+                  <option key={value} value={value}>
+                    {HEADER_LAYOUT_LABELS[value]}
+                  </option>
+                ))}
+              </select>
+            </label>
             <SliderField
               label="Page margin (vertical)"
               display={`${theme.pageMarginY}px`}
