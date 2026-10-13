@@ -31,6 +31,16 @@ describe('ResumePage', () => {
     const heading = screen.getByText('Experience')
     expect(heading).toHaveStyle({ color: 'rgb(79, 70, 229)' })
   })
+
+  it('uses a serif font and no heading rule for the elegant theme', () => {
+    const ref = createRef<HTMLDivElement>()
+    const { container } = render(
+      <ResumePage resume={sampleResume()} pageRef={ref} theme={TEMPLATES.elegant} />,
+    )
+    const page = container.querySelector('.resume-page') as HTMLElement
+    expect(page.style.fontFamily).toContain('Georgia')
+    expect(screen.getByText('Experience')).not.toHaveClass('border-b')
+  })
 })
 
 describe('ResumePreview', () => {

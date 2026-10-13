@@ -219,6 +219,13 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
   const doc = new Document({
     creator: profile.fullName || 'CV Builder',
     title: `${profile.fullName || 'Resume'} — CV`,
+    styles: {
+      default: {
+        document: {
+          run: { font: theme.docxFont },
+        },
+      },
+    },
     sections: [
       {
         properties: {

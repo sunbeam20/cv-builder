@@ -13,11 +13,21 @@ interface PreviewProps {
   theme: TemplateTheme
 }
 
-function SectionTitle({ children, accent }: { children: ReactNode; accent: string }) {
+function SectionTitle({
+  children,
+  accent,
+  rule,
+}: {
+  children: ReactNode
+  accent: string
+  rule: boolean
+}) {
   return (
     <h2
-      className="mb-2 border-b pb-1 text-[11px] font-bold uppercase tracking-[0.14em]"
-      style={{ color: accent, borderColor: accent }}
+      className={`mb-2 text-[11px] font-bold uppercase tracking-[0.14em] ${
+        rule ? 'border-b pb-1' : ''
+      }`}
+      style={rule ? { color: accent, borderColor: accent } : { color: accent }}
     >
       {children}
     </h2>
@@ -63,7 +73,7 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
   const sections: Record<SectionId, ReactNode> = {
     summary: profile.summary.trim() ? (
       <section className="mt-4">
-        <SectionTitle accent={theme.accent}>{SECTION_LABELS.summary}</SectionTitle>
+        <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.summary}</SectionTitle>
         <p className="text-[11px] leading-relaxed text-slate-700">{profile.summary}</p>
       </section>
     ) : null,
@@ -71,7 +81,7 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
     experience:
       experience.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>{SECTION_LABELS.experience}</SectionTitle>
+          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.experience}</SectionTitle>
           <div className="flex flex-col gap-3">
             {experience.map((exp) => (
               <div key={exp.id}>
@@ -96,7 +106,7 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
     education:
       education.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>{SECTION_LABELS.education}</SectionTitle>
+          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.education}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {education.map((edu) => (
               <div key={edu.id}>
@@ -124,7 +134,7 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
     skills:
       skills.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>{SECTION_LABELS.skills}</SectionTitle>
+          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.skills}</SectionTitle>
           <div className="flex flex-col gap-1">
             {skills.map((group) => (
               <p key={group.id} className="text-[11px] text-slate-700">
@@ -141,7 +151,7 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
     projects:
       projects.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>{SECTION_LABELS.projects}</SectionTitle>
+          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.projects}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {projects.map((project) => (
               <div key={project.id}>
@@ -166,7 +176,7 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
     certifications:
       certifications.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>{SECTION_LABELS.certifications}</SectionTitle>
+          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.certifications}</SectionTitle>
           <div className="flex flex-col gap-1">
             {certifications.map((cert) => (
               <p key={cert.id} className="text-[11px] text-slate-700">
@@ -182,7 +192,7 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
     languages:
       languages.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>{SECTION_LABELS.languages}</SectionTitle>
+          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.languages}</SectionTitle>
           <p className="text-[11px] text-slate-700">
             {languages
               .map((l) => [l.name, l.proficiency].filter(Boolean).join(' '))
@@ -194,7 +204,11 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
   }
 
   return (
-    <div ref={pageRef} className="resume-page relative shadow-xl ring-1 ring-slate-200">
+    <div
+      ref={pageRef}
+      className="resume-page relative shadow-xl ring-1 ring-slate-200"
+      style={{ fontFamily: theme.fontFamily }}
+    >
       {theme.accentBar ? (
         <div className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.accent }} />
       ) : null}
