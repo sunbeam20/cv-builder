@@ -1,8 +1,12 @@
-import { Suspense, useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { HomePage } from './HomePage'
 import { ComingSoon } from './ComingSoon'
 import { useView } from './useView'
 import { TOOL_VIEWS } from './toolViews'
+import type { View } from './routes'
+import { Toaster } from '../components/ui/Toaster'
+
+const PortfolioViewer = lazy(() => import('../portfolio/PortfolioViewer'))
 
 function Loading({ label }: { label: string }) {
   return (
@@ -15,14 +19,16 @@ function Loading({ label }: { label: string }) {
   )
 }
 
-export function Root() {
-  const view = useView()
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [view.kind])
-
+function ActiveView({ view }: { view: View }) {
   if (view.kind === 'home') return <HomePage />
+
+  if (view.kind === 'portfolio') {
+    return (
+      <Suspense fallback={<Loading label="portfolio" />}>
+        <PortfolioViewer payload={view.payload} />
+      </Suspense>
+    )
+  }
 
   const ToolView = TOOL_VIEWS[view.tool.id]
   if (!ToolView) return <ComingSoon tool={view.tool} />
@@ -31,5 +37,20 @@ export function Root() {
     <Suspense fallback={<Loading label={view.tool.name} />}>
       <ToolView />
     </Suspense>
+  )
+}
+
+export function Root() {
+  const view = useView()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [view.kind])
+
+  return (
+    <>
+      <ActiveView view={view} />
+      <Toaster />
+    </>
   )
 }

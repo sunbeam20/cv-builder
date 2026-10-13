@@ -16,7 +16,7 @@ export function useView(): View {
   useEffect(() => {
     const onChange = () => setView(resolveView(window.location.hash, window.location.hostname))
     window.addEventListener('hashchange', onChange)
-    document.title = titleFor(view)
+    if (view.kind !== 'portfolio') document.title = titleFor(view)
     return () => window.removeEventListener('hashchange', onChange)
   }, [view])
 

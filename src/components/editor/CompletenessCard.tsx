@@ -1,11 +1,28 @@
 import { CheckCircle2, Circle, TrendingUp } from 'lucide-react'
 import { useResumeStore } from '../../store/resumeStore'
 import { analyzeResume } from '../../lib/completeness'
+import { scrollToSection } from '../../lib/helpers'
 
 const tone = (score: number): { bar: string; text: string } => {
   if (score >= 80) return { bar: 'bg-emerald-500', text: 'text-emerald-600' }
   if (score >= 50) return { bar: 'bg-amber-500', text: 'text-amber-600' }
   return { bar: 'bg-rose-500', text: 'text-rose-600' }
+}
+
+const ANCHOR_FOR_CHECK: Record<string, string> = {
+  name: 'section-profile',
+  headline: 'section-profile',
+  email: 'section-profile',
+  phone: 'section-profile',
+  location: 'section-profile',
+  links: 'section-profile',
+  summary: 'section-profile',
+  experience: 'section-experience',
+  bullets: 'section-experience',
+  quantified: 'section-experience',
+  education: 'section-education',
+  skills: 'section-skills',
+  extras: 'section-projects',
 }
 
 export function CompletenessCard() {
@@ -36,14 +53,26 @@ export function CompletenessCard() {
           Looks great — nothing left to add.
         </p>
       ) : (
-        <ul className="mt-3 flex flex-col gap-1.5">
-          {missing.map((item) => (
-            <li key={item.id} className="flex items-start gap-2 text-xs text-slate-600">
-              <Circle size={12} className="mt-0.5 shrink-0 text-slate-300" />
-              {item.label}
-            </li>
-          ))}
-        </ul>
+        <>
+          <p className="mt-3 text-[11px] font-medium text-slate-400">
+            Tap an item to jump to that section.
+          </p>
+          <ul className="mt-1.5 flex flex-col gap-1">
+            {missing.map((item) => (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  onClick={() => scrollToSection(ANCHOR_FOR_CHECK[item.id] ?? 'section-profile')}
+                  className="flex w-full items-center gap-2 rounded-md px-1.5 py-1 text-left text-xs text-slate-600 transition hover:bg-slate-50 hover:text-indigo-700"
+                >
+                  <Circle size={12} className="shrink-0 text-slate-300" />
+                  <span className="flex-1">{item.label}</span>
+                  <span className="text-slate-300">→</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </section>
   )

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Palette, RotateCcw, Save, Trash2, X } from 'lucide-react'
 import { useResumeStore } from '../../store/resumeStore'
 import { useResolvedTheme } from '../../lib/useResolvedTheme'
+import { useModalDismiss } from '../../lib/useModalDismiss'
 import { SECTION_LABELS } from '../../lib/helpers'
 import type { SectionId } from '../../types'
 import {
@@ -127,6 +128,7 @@ export function DesignPanel() {
   const removeCustomPreset = useResumeStore((s) => s.removeCustomPreset)
   const [presetName, setPresetName] = useState('')
   const theme = useResolvedTheme()
+  const drawerRef = useModalDismiss(open, close)
 
   if (!open) return null
 
@@ -150,7 +152,9 @@ export function DesignPanel() {
       onClick={close}
     >
       <div
-        className="absolute inset-y-0 left-0 flex w-full max-w-md flex-col bg-white shadow-2xl"
+        ref={drawerRef}
+        tabIndex={-1}
+        className="absolute inset-y-0 left-0 flex w-full max-w-md flex-col bg-white shadow-2xl outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5">

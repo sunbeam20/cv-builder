@@ -23,6 +23,7 @@ export function ProfileForm() {
           <TextInput
             value={profile.fullName}
             placeholder="Jordan Avery"
+            autoComplete="name"
             onChange={(e) => update((d) => void (d.profile.fullName = e.target.value))}
           />
         </Field>
@@ -36,6 +37,8 @@ export function ProfileForm() {
         <Field label="Email">
           <TextInput
             type="email"
+            inputMode="email"
+            autoComplete="email"
             value={profile.email}
             placeholder="you@email.com"
             onChange={(e) => update((d) => void (d.profile.email = e.target.value))}
@@ -43,6 +46,9 @@ export function ProfileForm() {
         </Field>
         <Field label="Phone">
           <TextInput
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
             value={profile.phone}
             placeholder="+1 (555) 000-0000"
             onChange={(e) => update((d) => void (d.profile.phone = e.target.value))}
@@ -52,13 +58,17 @@ export function ProfileForm() {
           <TextInput
             value={profile.location}
             placeholder="Austin, TX"
+            autoComplete="address-level2"
             onChange={(e) => update((d) => void (d.profile.location = e.target.value))}
           />
         </Field>
         <Field label="Website / Portfolio">
           <TextInput
+            type="url"
+            inputMode="url"
             value={profile.website}
             placeholder="yoursite.dev"
+            autoComplete="url"
             onChange={(e) => update((d) => void (d.profile.website = e.target.value))}
           />
         </Field>

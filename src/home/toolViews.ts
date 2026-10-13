@@ -9,4 +9,7 @@ import type { ToolId } from './tools'
  */
 export const TOOL_VIEWS: Record<ToolId, LazyExoticComponent<ComponentType>> = {
   'cv-builder': lazy(() => import('../App')),
+  'ats-scanner': lazy(() => import('../ats/AtsApp')),
+  'banner-maker': lazy(() => import('../banner/BannerApp')),
+  'web-portfolio': lazy(() => import('../portfolio/PortfolioApp')),
 }

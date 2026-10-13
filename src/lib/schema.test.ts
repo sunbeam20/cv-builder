@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { resumeSchema } from './schema'
+import { bundleSchema, resumeSchema } from './schema'
 import { emptyResume } from './helpers'
 import { sampleResume } from './sampleData'
 
@@ -46,5 +46,21 @@ describe('resumeSchema', () => {
     delete input.hiddenSections
     const parsed = resumeSchema.parse(input)
     expect(parsed.hiddenSections).toEqual([])
+  })
+})
+
+describe('bundleSchema', () => {
+  it('accepts a backup bundle without custom presets', () => {
+    const parsed = bundleSchema.parse({ resume: emptyResume() })
+    expect(parsed.customPresets).toBeUndefined()
+  })
+
+  it('round-trips custom design presets', () => {
+    const parsed = bundleSchema.parse({
+      resume: emptyResume(),
+      customPresets: [{ id: 'p1', name: 'My Theme', customization: { accent: '#123456' } }],
+    })
+    expect(parsed.customPresets).toHaveLength(1)
+    expect(parsed.customPresets?.[0].customization.accent).toBe('#123456')
   })
 })

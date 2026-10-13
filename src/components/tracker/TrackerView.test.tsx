@@ -1,10 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { TrackerView } from './TrackerView'
+import { Toaster } from '../ui/Toaster'
 import { useResumeStore } from '../../store/resumeStore'
+import { useToastStore } from '../../lib/toast'
 
 beforeEach(() => {
   useResumeStore.getState().setApplications([])
+  useToastStore.setState({ toasts: [] })
 })
 
 describe('TrackerView', () => {
@@ -19,7 +22,7 @@ describe('TrackerView', () => {
     expect(useResumeStore.getState().applications[0].company).toBe('Acme')
   })
 
-  it('updates status and removes an application', () => {
+  it('updates status and removes an application after confirming', () => {
     const app = {
       id: 'a1',
       company: 'Globex',
@@ -31,12 +34,20 @@ describe('TrackerView', () => {
       notes: '',
     }
     useResumeStore.getState().setApplications([app])
-    render(<TrackerView />)
+    render(
+      <>
+        <TrackerView />
+        <Toaster />
+      </>,
+    )
 
     fireEvent.change(screen.getByLabelText('Status for Globex'), { target: { value: 'offer' } })
     expect(useResumeStore.getState().applications[0].status).toBe('offer')
 
     fireEvent.click(screen.getByLabelText('Remove Globex'))
+    expect(useResumeStore.getState().applications).toHaveLength(1)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Remove' }))
     expect(useResumeStore.getState().applications).toHaveLength(0)
   })
 

@@ -1,4 +1,4 @@
-import type { SectionId } from '../types'
+import type { Resume, SectionId } from '../types'
 
 export const SECTION_LABELS: Record<SectionId, string> = {
   summary: 'Professional Summary',
@@ -8,6 +8,15 @@ export const SECTION_LABELS: Record<SectionId, string> = {
   projects: 'Projects',
   certifications: 'Certifications',
   languages: 'Languages',
+}
+
+/** DOM ids for the editor sections, used for scroll-to-section shortcuts. */
+export const scrollToSection = (anchor: string): void => {
+  const node = document.getElementById(anchor)
+  if (!node) return
+  node.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const focusable = node.querySelector<HTMLElement>('input, textarea, select, button')
+  focusable?.focus({ preventScroll: true })
 }
 
 export const DEFAULT_SECTION_ORDER: SectionId[] = [
@@ -61,6 +70,20 @@ export const slug = (value: string): string =>
     .replace(/[^\w\s-]/g, '')
     .replace(/\s+/g, '_')
     .replace(/_+/g, '_') || 'resume'
+
+/** True when the resume contains any user-entered content worth protecting. */
+export const resumeHasContent = (resume: Resume): boolean =>
+  Boolean(
+    resume.profile.fullName.trim() ||
+      resume.profile.summary.trim() ||
+      resume.profile.email.trim() ||
+      resume.experience.length ||
+      resume.education.length ||
+      resume.skills.length ||
+      resume.projects.length ||
+      resume.certifications.length ||
+      resume.languages.length,
+  )
 
 export const downloadBlob = (blob: Blob, filename: string): void => {
   const url = URL.createObjectURL(blob)

@@ -1,22 +1,21 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Eye, PencilLine } from 'lucide-react'
 import { Toolbar } from './components/Toolbar'
 import { AiSettingsModal } from './components/ui/AiSettingsModal'
 import { DesignPanel } from './components/ui/DesignPanel'
 import { EditorPanel } from './components/editor/EditorPanel'
-import { CoverLetterForm } from './components/editor/CoverLetterForm'
 import { TrackerView } from './components/tracker/TrackerView'
 import { ResumePreview } from './preview/ResumePreview'
-import { CoverLetterPreview } from './preview/CoverLetterPreview'
 import { useResumeStore } from './store/resumeStore'
 import { useResolvedTheme } from './lib/useResolvedTheme'
 
 export default function App() {
   const resume = useResumeStore((s) => s.resume)
-  const coverLetter = useResumeStore((s) => s.coverLetter)
   const docType = useResumeStore((s) => s.docType)
   const undo = useResumeStore((s) => s.undo)
   const redo = useResumeStore((s) => s.redo)
   const pageRef = useRef<HTMLDivElement>(null)
+  const [mobileView, setMobileView] = useState<'edit' | 'preview'>('edit')
 
   const theme = useResolvedTheme()
 
@@ -51,21 +50,52 @@ export default function App() {
           <TrackerView />
         </main>
       ) : (
-        <main className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-          <div className="no-print thin-scroll lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:pr-2">
-            {docType === 'resume' ? <EditorPanel /> : <CoverLetterForm />}
+        <main className="mx-auto max-w-[1600px] px-4 py-6">
+          <div className="mb-4 flex justify-center no-print lg:hidden">
+            <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 shadow-sm">
+              <button
+                type="button"
+                aria-pressed={mobileView === 'edit'}
+                onClick={() => setMobileView('edit')}
+                className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-xs font-medium transition ${
+                  mobileView === 'edit'
+                    ? 'bg-indigo-600 text-white'
+                    : 'text-slate-500 hover:bg-slate-50'
+                }`}
+              >
+                <PencilLine size={14} />
+                Edit
+              </button>
+              <button
+                type="button"
+                aria-pressed={mobileView === 'preview'}
+                onClick={() => setMobileView('preview')}
+                className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-xs font-medium transition ${
+                  mobileView === 'preview'
+                    ? 'bg-indigo-600 text-white'
+                    : 'text-slate-500 hover:bg-slate-50'
+                }`}
+              >
+                <Eye size={14} />
+                Preview
+              </button>
+            </div>
           </div>
-          <div className="preview-col thin-scroll lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:px-1">
-            {docType === 'resume' ? (
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+            <div
+              className={`no-print thin-scroll lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:pr-2 ${
+                mobileView === 'preview' ? 'hidden lg:block' : ''
+              }`}
+            >
+              <EditorPanel />
+            </div>
+            <div
+              className={`preview-col thin-scroll lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:px-1 ${
+                mobileView === 'edit' ? 'hidden lg:block' : ''
+              }`}
+            >
               <ResumePreview resume={resume} pageRef={pageRef} theme={theme} />
-            ) : (
-              <CoverLetterPreview
-                letter={coverLetter}
-                profile={resume.profile}
-                pageRef={pageRef}
-                theme={theme}
-              />
-            )}
+            </div>
           </div>
         </main>
       )}

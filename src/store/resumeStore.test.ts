@@ -45,6 +45,17 @@ describe('resumeStore', () => {
     expect(get().customPresets.find((p) => p.id === saved!.id)).toBeUndefined()
   })
 
+  it('replaces all custom presets (used by import)', () => {
+    get().setCustomPresets([
+      { id: 'p1', name: 'One', customization: { accent: '#111111' } },
+      { id: 'p2', name: 'Two', customization: {} },
+    ])
+    expect(get().customPresets.map((p) => p.id)).toEqual(['p1', 'p2'])
+
+    get().setCustomPresets([])
+    expect(get().customPresets).toEqual([])
+  })
+
   it('updates resume immutably', () => {
     const before = get().resume
     get().update((d) => {
@@ -133,13 +144,6 @@ describe('resumeStore', () => {
   it('does nothing when there is no history to undo', () => {
     expect(get().past.length).toBe(0)
     expect(() => get().undo()).not.toThrow()
-  })
-
-  it('updates and replaces the cover letter', () => {
-    get().updateCoverLetter((d) => {
-      d.company = 'Acme'
-    })
-    expect(get().coverLetter.company).toBe('Acme')
   })
 
   it('adds, updates and removes applications', () => {

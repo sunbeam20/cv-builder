@@ -16,12 +16,40 @@ describe('resolveView', () => {
     expect(resolveView('#/cv-builder', 'example.com')).toEqual({ kind: 'app', tool: expect.any(Object) })
   })
 
+  it('maps the ats-scanner path to its tool on the hub domain', () => {
+    const view = resolveView('#/ats-scanner', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('ats')
+  })
+
+  it('maps the banner-maker path to its tool on the hub domain', () => {
+    const view = resolveView('#/banner-maker', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('banner')
+  })
+
+  it('maps the portfolio path to its tool on the hub domain', () => {
+    const view = resolveView('#/portfolio', 'example.com')
+    expect(view.kind).toBe('app')
+    if (view.kind === 'app') expect(view.tool.slug).toBe('portfolio')
+  })
+
+  it('routes a shared portfolio payload to the viewer and keeps its case', () => {
+    const view = resolveView('#/p/AbC-D_$xyz', 'example.com')
+    expect(view.kind).toBe('portfolio')
+    if (view.kind === 'portfolio') expect(view.payload).toBe('AbC-D_$xyz')
+  })
+
+  it('routes a shared portfolio payload even on tool subdomains', () => {
+    expect(resolveView('#/p/somePayload', 'cv.example.com').kind).toBe('portfolio')
+  })
+
   it('is case-insensitive on the path', () => {
     expect(resolveView('#/CV-Builder', 'example.com').kind).toBe('app')
   })
 
   it('falls back to home for unknown paths', () => {
-    expect(resolveView('#/banner-maker', 'example.com').kind).toBe('home')
+    expect(resolveView('#/nope', 'example.com').kind).toBe('home')
     expect(resolveView('#/foo/bar', 'example.com').kind).toBe('home')
   })
 

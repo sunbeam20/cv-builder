@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildResumeDocx } from './exportDocx'
-import { buildCoverLetterDocx } from './exportCoverLetterDocx'
 import { sampleResume } from '../lib/sampleData'
-import { emptyCoverLetter } from '../lib/coverLetter'
 import { resolveTheme, TEMPLATES } from '../lib/templates'
 
 const isZip = async (blob: Blob) => {
@@ -25,15 +23,6 @@ describe('docx render smoke', () => {
       sectionHeadings: { skills: 'bar', summary: 'plain' },
     })
     const blob = await buildResumeDocx(sampleResume(), theme)
-    expect(blob.size).toBeGreaterThan(0)
-    expect(await isZip(blob)).toBe(true)
-  })
-
-  it('builds a valid cover letter .docx', async () => {
-    const resume = sampleResume()
-    const letter = { ...emptyCoverLetter(resume.profile), body: 'Hello there.\n\nSecond part.' }
-    const theme = resolveTheme(TEMPLATES.elegant, { contactIcons: true })
-    const blob = await buildCoverLetterDocx(letter, resume.profile, theme)
     expect(blob.size).toBeGreaterThan(0)
     expect(await isZip(blob)).toBe(true)
   })

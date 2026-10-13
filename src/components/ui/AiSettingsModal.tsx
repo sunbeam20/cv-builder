@@ -1,6 +1,7 @@
 import { KeyRound, X } from 'lucide-react'
 import { useResumeStore } from '../../store/resumeStore'
 import { DEFAULT_AI_SETTINGS } from '../../lib/ai'
+import { useModalDismiss } from '../../lib/useModalDismiss'
 import { Field, TextInput } from './inputs'
 
 export function AiSettingsModal() {
@@ -8,6 +9,7 @@ export function AiSettingsModal() {
   const ai = useResumeStore((s) => s.ai)
   const setAi = useResumeStore((s) => s.setAi)
   const close = useResumeStore((s) => s.closeAiSettings)
+  const dialogRef = useModalDismiss(open, close)
 
   if (!open) return null
 
@@ -20,7 +22,9 @@ export function AiSettingsModal() {
       onClick={close}
     >
       <div
-        className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl"
+        ref={dialogRef}
+        tabIndex={-1}
+        className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">

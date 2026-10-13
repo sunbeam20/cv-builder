@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { emptyResume, formatRange, slug, uid } from './helpers'
+import { emptyResume, formatRange, resumeHasContent, slug, uid } from './helpers'
+import { sampleResume } from './sampleData'
 
 describe('formatRange', () => {
   it('returns empty string when both sides are empty', () => {
@@ -54,5 +55,21 @@ describe('emptyResume', () => {
     expect(resume.experience).toEqual([])
     expect(resume.profile.fullName).toBe('')
     expect(resume.profile.links).toEqual([])
+  })
+})
+
+describe('resumeHasContent', () => {
+  it('is false for a blank resume', () => {
+    expect(resumeHasContent(emptyResume())).toBe(false)
+  })
+
+  it('is true for the sample resume', () => {
+    expect(resumeHasContent(sampleResume())).toBe(true)
+  })
+
+  it('is true once a name is entered', () => {
+    const resume = emptyResume()
+    resume.profile.fullName = 'Jordan'
+    expect(resumeHasContent(resume)).toBe(true)
   })
 })

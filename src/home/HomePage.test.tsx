@@ -11,16 +11,14 @@ describe('HomePage', () => {
   it('renders the brand, hero, and tool cards', () => {
     render(<HomePage />)
     expect(screen.getAllByText(BRAND).length).toBeGreaterThan(0)
-    expect(screen.getByText('CV Builder')).toBeInTheDocument()
-    expect(screen.getAllByText('Coming soon').length).toBeGreaterThan(1)
+    expect(screen.getAllByText('CV Builder').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Live').length).toBeGreaterThan(0)
     expect(screen.getByLabelText(`${BRAND} home`)).toBeInTheDocument()
   })
 
-  it('navigates to the app when opening the CV Builder', () => {
+  it('opens the tool shown in the hero preview', () => {
     render(<HomePage />)
-    const ctas = screen.getAllByRole('button', { name: 'Open CV Builder' })
-    expect(ctas.length).toBeGreaterThan(1)
-    fireEvent.click(ctas[0])
+    fireEvent.click(screen.getByRole('button', { name: 'Try CV Builder' }))
     expect(window.location.hash).toBe('#/cv-builder')
   })
 

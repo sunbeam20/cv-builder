@@ -2,17 +2,16 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { Draft } from 'immer'
-import type { Application, CoverLetter, DocType, Resume, SectionId } from '../types'
+import type { Application, DocType, Resume, SectionId } from '../types'
 import type { Customization, DesignPreset, TemplateId } from '../lib/templates'
 import { DEFAULT_SECTION_ORDER, emptyResume, uid } from '../lib/helpers'
 import { DEFAULT_AI_SETTINGS, type AiSettings } from '../lib/ai'
-import { emptyCoverLetter } from '../lib/coverLetter'
 import { sampleResume } from '../lib/sampleData'
 import { crossOriginStorage } from '../lib/crossOrigin'
 
 export const STORAGE_KEY = 'cv-builder-v1'
 
-const initialResume = sampleResume()
+const initialResume = emptyResume() as Resume
 
 const HISTORY_LIMIT = 60
 const COALESCE_MS = 400
@@ -20,7 +19,6 @@ let lastEditAt = 0
 
 interface ResumeState {
   resume: Resume
-  coverLetter: CoverLetter
   applications: Application[]
   template: TemplateId
   customization: Customization
@@ -42,13 +40,12 @@ interface ResumeState {
   resetCustomization: () => void
   saveCustomPreset: (name: string) => void
   removeCustomPreset: (id: string) => void
+  setCustomPresets: (presets: DesignPreset[]) => void
   openDesign: () => void
   closeDesign: () => void
   setDocType: (docType: DocType) => void
   moveSection: (from: number, to: number) => void
   toggleSection: (id: SectionId) => void
-  updateCoverLetter: (recipe: (draft: Draft<CoverLetter>) => void) => void
-  setCoverLetter: (letter: CoverLetter) => void
   addApplication: (application: Application) => void
   updateApplication: (id: string, recipe: (draft: Draft<Application>) => void) => void
   removeApplication: (id: string) => void
@@ -88,7 +85,6 @@ export const useResumeStore = create<ResumeState>()(
 
       return {
         resume: initialResume,
-        coverLetter: emptyCoverLetter(initialResume.profile),
         applications: [],
         template: 'ats',
         customization: {},
@@ -110,7 +106,6 @@ export const useResumeStore = create<ResumeState>()(
           set((state) => {
             const next = sampleResume()
             state.resume = next
-            state.coverLetter = emptyCoverLetter(next.profile)
           })
           clearHistory()
         },
@@ -118,7 +113,6 @@ export const useResumeStore = create<ResumeState>()(
           set((state) => {
             const next = emptyResume() as Resume
             state.resume = next
-            state.coverLetter = emptyCoverLetter(next.profile)
           })
           clearHistory()
         },
@@ -170,6 +164,10 @@ export const useResumeStore = create<ResumeState>()(
             const index = state.customPresets.findIndex((p) => p.id === id)
             if (index !== -1) state.customPresets.splice(index, 1)
           }),
+        setCustomPresets: (presets) =>
+          set((state) => {
+            state.customPresets = presets
+          }),
         openDesign: () =>
           set((state) => {
             state.designOpen = true
@@ -205,14 +203,6 @@ export const useResumeStore = create<ResumeState>()(
             if (index === -1) hidden.push(id)
             else hidden.splice(index, 1)
           }),
-        updateCoverLetter: (recipe) =>
-          set((state) => {
-            recipe(state.coverLetter)
-          }),
-        setCoverLetter: (letter) =>
-          set((state) => {
-            state.coverLetter = letter
-          }),
         addApplication: (application) =>
           set((state) => {
             state.applications.unshift(application)
@@ -247,11 +237,10 @@ export const useResumeStore = create<ResumeState>()(
     }),
     {
       name: STORAGE_KEY,
-      version: 6,
+      version: 7,
       storage: createJSONStorage(() => crossOriginStorage),
       partialize: (state) => ({
         resume: state.resume,
-        coverLetter: state.coverLetter,
         applications: state.applications,
         template: state.template,
         customization: state.customization,
@@ -276,9 +265,9 @@ export const useResumeStore = create<ResumeState>()(
           if (!state.resume.hiddenSections) {
             state.resume.hiddenSections = []
           }
-          if (!state.coverLetter) {
-            state.coverLetter = emptyCoverLetter(state.resume.profile)
-          }
+        }
+        if (state) {
+          delete (state as Record<string, unknown>).coverLetter
         }
         void version
         return state as ResumeState

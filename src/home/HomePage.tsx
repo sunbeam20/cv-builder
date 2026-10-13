@@ -1,19 +1,35 @@
-import { ArrowRight, CheckCircle2, Home, MousePointerClick, ShieldCheck, Zap } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import {
+  ArrowRight,
+  CheckCircle2,
+  Home,
+  Image as ImageIcon,
+  MousePointerClick,
+  ShieldCheck,
+  Zap,
+} from 'lucide-react'
 import { BRAND, TAGLINE } from './config'
 import { goHome, openTool } from './navigation'
 import { LIVE_TOOLS, SOON_TOOLS } from './tools'
+import type { ToolDefinition } from './tools'
 import { ResumePage } from '../preview/ResumePreview'
 import { sampleResume } from '../lib/sampleData'
 import { TEMPLATES } from '../lib/templates'
 import { A4_WIDTH } from '../preview/useFitScale'
 
-const HERO_SCALE = 0.5
+const HERO_SCALE = 0.44
+const SLIDE_HEIGHT = 400
+const ROTATE_MS = 4500
 
 const YEAR = new Date().getFullYear()
 
 const scrollTo = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
+
+const prefersReducedMotion = () =>
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 function Navbar() {
   return (
@@ -40,18 +56,18 @@ function Navbar() {
           </button>
           <button
             type="button"
-            onClick={() => scrollTo('features')}
+            onClick={() => scrollTo('why')}
             className="rounded-md px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800"
           >
-            Features
+            Why {BRAND}
           </button>
         </nav>
         <button
           type="button"
-          onClick={() => openTool('cv')}
+          onClick={() => scrollTo('tools')}
           className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-medium text-white transition hover:bg-indigo-700"
         >
-          Open CV Builder
+          Explore tools
           <ArrowRight size={14} />
         </button>
       </div>
@@ -59,26 +75,223 @@ function Navbar() {
   )
 }
 
-function HeroVisual() {
+/* --- Hero preview slides -------------------------------------------------
+ * The carousel is generated from the tool registry, so every tool (including
+ * future ones) gets an equal slide without touching this list. A tool with a
+ * bespoke preview below is rendered custom; anything else falls back to a
+ * generic, on-brand slide.
+ * ------------------------------------------------------------------------ */
+
+function CvPreview() {
   return (
-    <div className="relative mx-auto w-full max-w-md">
+    <div className="flex h-full items-start justify-center overflow-hidden bg-slate-100 pt-7">
       <div
         aria-hidden
-        className="pointer-events-none select-none overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-slate-200"
-        style={{ width: A4_WIDTH * HERO_SCALE, height: 430, margin: '0 auto' }}
+        className="pointer-events-none select-none overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-slate-200"
+        style={{ width: A4_WIDTH * HERO_SCALE, height: SLIDE_HEIGHT - 48 }}
       >
         <div style={{ transform: `scale(${HERO_SCALE})`, transformOrigin: 'top left' }}>
           <ResumePage resume={sampleResume()} theme={TEMPLATES.ats} />
         </div>
       </div>
-      <div className="absolute -left-2 top-1/2 hidden -translate-y-1/2 rounded-full bg-white px-3 py-1.5 text-[11px] font-medium text-slate-600 shadow-md ring-1 ring-slate-200 lg:block">
-        <span className="text-amber-500">★</span> ATS-friendly PDF · DOCX
+    </div>
+  )
+}
+
+function AtsPreview() {
+  const categories = [
+    { label: 'Contact & essentials', score: 95 },
+    { label: 'Structure & length', score: 88 },
+    { label: 'Content quality', score: 90 },
+    { label: 'Formatting', score: 94 },
+  ]
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-4 bg-gradient-to-br from-emerald-50 to-white p-6">
+      <div className="flex items-center gap-4 rounded-2xl bg-white px-5 py-4 shadow ring-1 ring-slate-200">
+        <div
+          className="grid h-16 w-16 shrink-0 place-items-center rounded-full"
+          style={{ background: 'conic-gradient(#10b981 92%, #e2e8f0 0)' }}
+        >
+          <div className="grid h-12 w-12 place-items-center rounded-full bg-white text-sm font-bold text-slate-900">
+            92
+          </div>
+        </div>
+        <div>
+          <p className="text-[11px] font-medium text-slate-400">ATS score</p>
+          <p className="text-lg font-bold text-emerald-600">Excellent</p>
+        </div>
+      </div>
+      <div className="w-full max-w-xs space-y-2.5 rounded-xl bg-white p-4 shadow ring-1 ring-slate-200">
+        {categories.map((category) => (
+          <div key={category.label}>
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="font-medium text-slate-600">{category.label}</span>
+              <span className="text-slate-400">{category.score}</span>
+            </div>
+            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+              <div
+                className="h-full rounded-full bg-emerald-500"
+                style={{ width: `${category.score}%` }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
 }
 
-function ToolCard({ tool }: { tool: (typeof LIVE_TOOLS)[number] | (typeof SOON_TOOLS)[number] }) {
+function BannerPreview() {
+  return (
+    <div className="flex h-full items-center justify-center bg-slate-100 p-6">
+      <div className="w-full max-w-xs overflow-hidden rounded-xl shadow-xl ring-1 ring-slate-200">
+        <div className="flex flex-col gap-2 bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-700 px-6 py-8">
+          <span className="w-fit rounded-full bg-white/20 px-2 py-0.5 text-[9px] font-semibold tracking-wide text-white">
+            OPEN TO WORK
+          </span>
+          <span className="text-xl font-bold text-white">Your Name</span>
+          <span className="text-xs text-white/80">Senior Frontend Engineer</span>
+        </div>
+        <div className="flex items-center gap-2 bg-white px-4 py-3">
+          <ImageIcon size={14} className="text-indigo-600" />
+          <span className="text-[11px] text-slate-500">LinkedIn · 1584 × 396 · PNG</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PortfolioPreview() {
+  return (
+    <div className="flex h-full items-center justify-center bg-slate-100 p-6">
+      <div className="w-full max-w-xs overflow-hidden rounded-xl bg-white shadow-xl ring-1 ring-slate-200">
+        <div className="h-2 w-full bg-indigo-600" />
+        <div className="p-5">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-sm font-bold text-white">
+            J
+          </span>
+          <div className="mt-3 h-3 w-28 rounded bg-slate-800" />
+          <div className="mt-2 h-2 w-40 rounded bg-indigo-500/60" />
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            {['React', 'TypeScript', 'Node'].map((skill) => (
+              <span
+                key={skill}
+                className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-600"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="h-14 rounded-lg bg-slate-100" />
+            <div className="h-14 rounded-lg bg-slate-100" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function GenericPreview({ tool }: { tool: ToolDefinition }) {
+  const Icon = tool.icon
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-4 bg-gradient-to-br from-indigo-50 to-white p-6">
+      <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg">
+        <Icon size={26} />
+      </span>
+      <div className="text-center">
+        <p className="text-base font-bold text-slate-900">{tool.name}</p>
+        <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-slate-500">
+          {tool.tagline}
+        </p>
+      </div>
+      {tool.features ? (
+        <ul className="w-full max-w-xs space-y-1.5 rounded-xl bg-white p-4 shadow ring-1 ring-slate-200">
+          {tool.features.slice(0, 3).map((feature) => (
+            <li key={feature} className="flex items-start gap-1.5 text-[11px] text-slate-600">
+              <CheckCircle2 size={12} className="mt-0.5 shrink-0 text-emerald-500" />
+              {feature}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  )
+}
+
+function ToolPreview({ tool }: { tool: ToolDefinition }) {
+  if (tool.slug === 'cv') return <CvPreview />
+  if (tool.slug === 'ats') return <AtsPreview />
+  if (tool.slug === 'banner') return <BannerPreview />
+  if (tool.slug === 'portfolio') return <PortfolioPreview />
+  return <GenericPreview tool={tool} />
+}
+
+function HeroVisual() {
+  const tools = LIVE_TOOLS
+  const [active, setActive] = useState(0)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    if (paused || tools.length < 2 || prefersReducedMotion()) return
+    const id = window.setInterval(() => setActive((i) => (i + 1) % tools.length), ROTATE_MS)
+    return () => window.clearInterval(id)
+  }, [paused, tools.length])
+
+  const current = tools[active] ?? tools[0]
+
+  return (
+    <div className="mx-auto w-full max-w-md">
+      <div
+        className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocusCapture={() => setPaused(true)}
+        onBlurCapture={() => setPaused(false)}
+      >
+        <div
+          className="flex transition-transform duration-700 ease-in-out"
+          style={{ transform: `translateX(-${active * 100}%)` }}
+        >
+          {tools.map((tool) => (
+            <div key={tool.id} className="w-full shrink-0" style={{ height: SLIDE_HEIGHT }}>
+              <ToolPreview tool={tool} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2" aria-hidden={tools.length < 2}>
+          {tools.map((tool, index) => (
+            <button
+              key={tool.id}
+              type="button"
+              aria-label={`Show ${tool.name}`}
+              aria-current={index === active}
+              onClick={() => setActive(index)}
+              className={`h-2 rounded-full transition-all ${
+                index === active ? 'w-6 bg-indigo-500' : 'w-2 bg-slate-300 hover:bg-slate-400'
+              }`}
+            />
+          ))}
+        </div>
+        {current ? (
+          <button
+            type="button"
+            onClick={() => openTool(current.slug)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+          >
+            Try {current.name}
+            <ArrowRight size={13} />
+          </button>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
+function ToolCard({ tool }: { tool: ToolDefinition }) {
   const Icon = tool.icon
   const live = tool.status === 'live'
   return (
@@ -145,8 +358,8 @@ function PrivacyBanner() {
         <ShieldCheck size={22} className="text-indigo-600" />
         <h3 className="text-sm font-semibold text-slate-800">Your data never leaves your browser</h3>
         <p className="text-xs leading-relaxed text-slate-500">
-          Every tool runs entirely on your device. No accounts, no uploads, no tracking — your CV,
-          notes, and drafts stay in local storage until you export or clear them.
+          Every tool runs entirely on your device. No accounts, no uploads, no tracking — your work
+          stays in local storage until you export or clear it.
         </p>
       </div>
     </div>
@@ -173,6 +386,25 @@ function Footer() {
   )
 }
 
+const BENEFITS = [
+  {
+    title: 'Private by default',
+    body: 'Everything runs in your browser. Nothing is uploaded, so your data stays yours.',
+  },
+  {
+    title: 'No accounts, no lock-in',
+    body: 'Open a tool, use it, close the tab. There is nothing to sign up for or install.',
+  },
+  {
+    title: 'Portable output',
+    body: 'Every tool hands back a clean, exportable file you fully own and can take anywhere.',
+  },
+  {
+    title: 'Free for everyone',
+    body: 'No paywalls, no trials, no upsells. Just useful tools that work offline.',
+  },
+]
+
 export function HomePage() {
   return (
     <div className="min-h-screen">
@@ -185,24 +417,24 @@ export function HomePage() {
             Free · No sign-up · Runs in your browser
           </p>
           <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
-            Small tools, done right — <span className="text-indigo-600">starting with a CV Builder.</span>
+            A growing set of browser tools, <span className="text-indigo-600">done right.</span>
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-500 sm:text-base">{TAGLINE}</p>
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={() => openTool('cv')}
+              onClick={() => scrollTo('tools')}
               className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700"
             >
-              Open CV Builder
+              Browse all tools
               <ArrowRight size={16} />
             </button>
             <button
               type="button"
-              onClick={() => scrollTo('tools')}
+              onClick={() => scrollTo('why')}
               className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
             >
-              Browse all tools
+              Why {BRAND}
             </button>
           </div>
         </div>
@@ -223,15 +455,10 @@ export function HomePage() {
         </div>
       </section>
 
-      <section id="features" className="mx-auto max-w-6xl px-4 py-14">
-        <h2 className="text-lg font-bold text-slate-900">Why CV Builder?</h2>
+      <section id="why" className="mx-auto max-w-6xl px-4 py-14">
+        <h2 className="text-lg font-bold text-slate-900">Why {BRAND}?</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { title: 'ATS-ready output', body: 'Clean single-column layout with real text — PDF, DOCX, or PNG.' },
-            { title: 'Live A4 preview', body: 'See every page exactly as it prints, with automatic pagination.' },
-            { title: 'Design your own', body: 'Six templates plus presets and per-property controls in the design panel.' },
-            { title: 'AI assist & tracking', body: 'Draft smarter with AI help and log applications as you go.' },
-          ].map((item) => (
+          {BENEFITS.map((item) => (
             <div key={item.title} className="rounded-xl border border-slate-200 bg-white p-4">
               <h3 className="text-sm font-semibold text-slate-800">{item.title}</h3>
               <p className="mt-1 text-xs leading-relaxed text-slate-500">{item.body}</p>

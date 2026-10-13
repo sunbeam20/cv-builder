@@ -8,6 +8,7 @@ import {
   emptyApplication,
 } from '../../lib/applications'
 import { downloadBlob } from '../../lib/helpers'
+import { toast } from '../../lib/toast'
 import type { ApplicationStatus } from '../../types'
 
 const STATUS_STYLES: Record<ApplicationStatus, string> = {
@@ -190,7 +191,19 @@ export function TrackerView() {
                 <button
                   type="button"
                   aria-label={`Remove ${app.company || app.role || 'application'}`}
-                  onClick={() => removeApplication(app.id)}
+                  onClick={() => {
+                    const label = app.company || app.role || 'this application'
+                    toast.confirm({
+                      message: `Remove ${label}?`,
+                      description: 'This removes the application from your tracker.',
+                      confirmLabel: 'Remove',
+                      tone: 'error',
+                      onConfirm: () => {
+                        removeApplication(app.id)
+                        toast.success('Application removed', { key: `removed-${app.id}` })
+                      },
+                    })
+                  }}
                   className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
                 >
                   <Trash2 size={14} />

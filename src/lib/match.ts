@@ -77,15 +77,24 @@ export interface KeywordMatchReport {
   score: number
 }
 
+/** Keyword-match any blob of resume text against a job description. */
+export function matchTextToJob(
+  text: string,
+  jobDescription: string,
+  extraKeywords: string[] = [],
+): KeywordMatchReport {
+  const targets = [...new Set([...extraKeywords.flatMap(tokenize), ...extractKeywords(jobDescription)])]
+  const haystack = text.toLowerCase()
+  const matched = targets.filter((keyword) => haystack.includes(keyword))
+  const missing = targets.filter((keyword) => !haystack.includes(keyword))
+  const score = targets.length === 0 ? 0 : Math.round((matched.length / targets.length) * 100)
+  return { keywords: targets, matched, missing, score }
+}
+
 export function matchResumeToJob(
   resume: Resume,
   jobDescription: string,
   extraKeywords: string[] = [],
 ): KeywordMatchReport {
-  const targets = [...new Set([...extraKeywords.flatMap(tokenize), ...extractKeywords(jobDescription)])]
-  const haystack = resumePlainText(resume).toLowerCase()
-  const matched = targets.filter((keyword) => haystack.includes(keyword))
-  const missing = targets.filter((keyword) => !haystack.includes(keyword))
-  const score = targets.length === 0 ? 0 : Math.round((matched.length / targets.length) * 100)
-  return { keywords: targets, matched, missing, score }
+  return matchTextToJob(resumePlainText(resume), jobDescription, extraKeywords)
 }

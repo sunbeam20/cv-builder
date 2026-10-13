@@ -86,18 +86,7 @@ export interface Resume {
   languages: Language[]
 }
 
-export interface CoverLetter {
-  company: string
-  role: string
-  recipient: string
-  date: string
-  greeting: string
-  body: string
-  closing: string
-  signature: string
-}
-
-export type DocType = 'resume' | 'cover' | 'tracker'
+export type DocType = 'resume' | 'tracker'
 
 export type ApplicationStatus = 'wishlist' | 'applied' | 'interview' | 'offer' | 'rejected'
 

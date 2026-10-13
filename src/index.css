@@ -69,6 +69,7 @@ body {
   }
 
   .preview-col {
+    display: block !important;
     position: static !important;
     max-height: none !important;
     overflow: visible !important;

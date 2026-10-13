@@ -1,12 +1,13 @@
-import { useRef, useState } from 'react'
-import type { RefObject } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { ReactNode, RefObject } from 'react'
 import {
   Download,
   FileText,
-  FileType,
   Home,
   Image,
   KeyRound,
+  Loader2,
+  MoreHorizontal,
   Palette,
   Printer,
   Redo2,
@@ -17,26 +18,30 @@ import {
 } from 'lucide-react'
 import { useResumeStore } from '../store/resumeStore'
 import { bundleSchema, resumeSchema } from '../lib/schema'
-import { downloadBlob, slug } from '../lib/helpers'
+import { downloadBlob, resumeHasContent, slug } from '../lib/helpers'
 import { isTemplateId } from '../lib/templates'
 import { useResolvedTheme } from '../lib/useResolvedTheme'
+import { toast } from '../lib/toast'
 import { goHome } from '../home/navigation'
 import { BRAND } from '../home/config'
 import type { DocType } from '../types'
 import { TemplatePicker } from './ui/TemplatePicker'
+import { SaveIndicator } from './ui/SaveIndicator'
 
 const TABS: { id: DocType; label: string }[] = [
   { id: 'resume', label: 'Résumé' },
-  { id: 'cover', label: 'Cover letter' },
   { id: 'tracker', label: 'Tracker' },
 ]
 
-type Busy = 'pdf' | 'docx' | 'png' | null
+type Busy = 'pdf' | 'png' | null
 
 const buttonBase =
   'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-60'
 
 const tabBase = 'rounded px-2.5 py-1 text-xs font-medium transition'
+
+const iconButton =
+  'inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40'
 
 interface ToolbarProps {
   pageRef: RefObject<HTMLDivElement | null>
@@ -44,16 +49,16 @@ interface ToolbarProps {
 
 export function Toolbar({ pageRef }: ToolbarProps) {
   const resume = useResumeStore((s) => s.resume)
-  const coverLetter = useResumeStore((s) => s.coverLetter)
   const applications = useResumeStore((s) => s.applications)
   const template = useResumeStore((s) => s.template)
   const customization = useResumeStore((s) => s.customization)
+  const customPresets = useResumeStore((s) => s.customPresets)
   const docType = useResumeStore((s) => s.docType)
   const setDocType = useResumeStore((s) => s.setDocType)
   const setTemplate = useResumeStore((s) => s.setTemplate)
   const setCustomization = useResumeStore((s) => s.setCustomization)
+  const setCustomPresets = useResumeStore((s) => s.setCustomPresets)
   const replace = useResumeStore((s) => s.replace)
-  const setCoverLetter = useResumeStore((s) => s.setCoverLetter)
   const setApplications = useResumeStore((s) => s.setApplications)
   const loadSample = useResumeStore((s) => s.loadSample)
   const reset = useResumeStore((s) => s.reset)
@@ -64,53 +69,121 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   const canUndo = useResumeStore((s) => s.past.length > 0)
   const canRedo = useResumeStore((s) => s.future.length > 0)
   const [busy, setBusy] = useState<Busy>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [moreOpen, setMoreOpen] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const theme = useResolvedTheme()
-  const isCover = docType === 'cover'
   const isTracker = docType === 'tracker'
 
-  const run = async (kind: Busy, fn: () => Promise<void>) => {
-    setError(null)
+  const hasContent = resumeHasContent(resume) || applications.length > 0
+
+  useEffect(() => {
+    if (!moreOpen) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMoreOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [moreOpen])
+
+  const run = async (kind: Busy, label: string, fn: () => Promise<void>) => {
     setBusy(kind)
+    const toastId = toast.loading(`Preparing ${label}…`, { key: 'export' })
     try {
       await fn()
+      toast.update(toastId, {
+        variant: 'success',
+        message: `${label} downloaded`,
+        duration: 2500,
+      })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Export failed')
+      toast.update(toastId, {
+        variant: 'error',
+        message: err instanceof Error ? err.message : `Couldn’t export ${label}`,
+        duration: 5000,
+      })
     } finally {
       setBusy(null)
     }
   }
 
   const handleImport = async (file: File) => {
-    setError(null)
+    let raw: unknown
     try {
-      const raw = JSON.parse(await file.text())
-      const bundle = bundleSchema.safeParse(raw)
+      raw = JSON.parse(await file.text())
+    } catch {
+      toast.error('That file isn’t a valid CV backup')
+      return
+    }
+
+    const bundle = bundleSchema.safeParse(raw)
+    const single = bundle.success ? null : resumeSchema.safeParse(raw)
+    if (!bundle.success && !single?.success) {
+      toast.error('Invalid CV file')
+      return
+    }
+
+    const apply = () => {
       if (bundle.success) {
         replace(bundle.data.resume)
-        if (bundle.data.coverLetter) setCoverLetter(bundle.data.coverLetter)
         if (bundle.data.applications) setApplications(bundle.data.applications)
         if (bundle.data.template && isTemplateId(bundle.data.template)) {
           setTemplate(bundle.data.template)
         }
         if (bundle.data.customization) setCustomization(bundle.data.customization)
-      } else {
-        replace(resumeSchema.parse(raw))
+        if (bundle.data.customPresets) setCustomPresets(bundle.data.customPresets)
+      } else if (single && single.success) {
+        replace(single.data)
       }
-    } catch {
-      setError('Invalid CV file')
+      toast.success('CV imported', { key: 'import' })
+    }
+
+    if (hasContent) {
+      toast.confirm({
+        message: 'Replace your current CV?',
+        description: 'Importing a backup overwrites your resume and tracker.',
+        confirmLabel: 'Replace',
+        tone: 'error',
+        onConfirm: apply,
+      })
+    } else {
+      apply()
     }
   }
 
   const handleReset = () => {
-    if (window.confirm('Clear all CV data? This cannot be undone.')) reset()
+    toast.confirm({
+      message: 'Clear all CV data?',
+      description: 'This cannot be undone.',
+      confirmLabel: 'Clear everything',
+      tone: 'error',
+      onConfirm: () => {
+        reset()
+        toast.success('Cleared', { key: 'cleared' })
+      },
+    })
+  }
+
+  const handleSample = () => {
+    const load = () => {
+      loadSample()
+      toast.success('Example data loaded', { key: 'sample' })
+    }
+    if (!hasContent) {
+      load()
+      return
+    }
+    toast.confirm({
+      message: 'Load example data?',
+      description: 'This replaces your current CV with sample content.',
+      confirmLabel: 'Load example',
+      onConfirm: load,
+    })
   }
 
   const handleExportJson = () => {
     const json = JSON.stringify(
-      { resume, coverLetter, applications, template, customization },
+      { resume, applications, template, customization, customPresets },
       null,
       2,
     )
@@ -118,7 +191,78 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       new Blob([json], { type: 'application/json' }),
       `${slug(resume.profile.fullName)}.json`,
     )
+    toast.success('Backup downloaded', { key: 'backup' })
   }
+
+  const secondaryActions: ReactNode = (
+    <>
+      <button
+        type="button"
+        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        disabled={busy !== null || isTracker}
+        onClick={() =>
+          run('png', 'PNG', async () => {
+            const node = pageRef.current
+            if (!node) return
+            const { exportPng } = await import('../export/exportPng')
+            await exportPng(node, resume.profile.fullName, 'CV')
+          })
+        }
+      >
+        {busy === 'png' ? <Loader2 size={15} className="animate-spin" /> : <Image size={15} />}
+        {busy === 'png' ? 'Preparing…' : 'PNG'}
+      </button>
+      <button
+        type="button"
+        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        disabled={isTracker}
+        onClick={() => window.print()}
+      >
+        <Printer size={15} />
+        Print
+      </button>
+      <button
+        type="button"
+        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        onClick={() => fileRef.current?.click()}
+      >
+        <Upload size={15} />
+        Import
+      </button>
+      <button
+        type="button"
+        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        onClick={handleExportJson}
+      >
+        <Download size={15} />
+        Backup
+      </button>
+      <button
+        type="button"
+        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        onClick={openAiSettings}
+      >
+        <KeyRound size={15} />
+        AI
+      </button>
+      <button
+        type="button"
+        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        onClick={handleSample}
+      >
+        <Sparkles size={15} />
+        Example
+      </button>
+      <button
+        type="button"
+        className={`${buttonBase} border border-slate-200 text-red-600 hover:bg-red-50`}
+        onClick={handleReset}
+      >
+        <RotateCcw size={15} />
+        Reset
+      </button>
+    </>
+  )
 
   return (
     <div className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur no-print">
@@ -129,7 +273,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
             aria-label={`Go to ${BRAND} home`}
             title="All tools"
             onClick={() => goHome()}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+            className={iconButton}
           >
             <Home size={15} />
           </button>
@@ -157,13 +301,15 @@ export function Toolbar({ pageRef }: ToolbarProps) {
               )
             })}
           </div>
-          <TemplatePicker />
+          <div className="hidden sm:block">
+            <TemplatePicker />
+          </div>
           <button
             type="button"
             aria-label="Customize design"
             title="Customize design"
             onClick={openDesign}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+            className={iconButton}
           >
             <Palette size={15} />
           </button>
@@ -174,7 +320,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
               title="Undo (Ctrl+Z)"
               onClick={undo}
               disabled={!canUndo}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className={iconButton}
             >
               <Undo2 size={15} />
             </button>
@@ -184,11 +330,12 @@ export function Toolbar({ pageRef }: ToolbarProps) {
               title="Redo (Ctrl+Shift+Z)"
               onClick={redo}
               disabled={!canRedo}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className={iconButton}
             >
               <Redo2 size={15} />
             </button>
           </div>
+          <SaveIndicator />
         </div>
 
         <button
@@ -196,106 +343,31 @@ export function Toolbar({ pageRef }: ToolbarProps) {
           className={`${buttonBase} bg-indigo-600 text-white hover:bg-indigo-700`}
           disabled={busy !== null || isTracker}
           onClick={() =>
-            run('pdf', async () => {
-              if (isCover) {
-                const { exportCoverLetterPdf } = await import('../export/exportCoverLetterPdf')
-                await exportCoverLetterPdf(coverLetter, resume.profile, theme)
-              } else {
-                const { exportPdf } = await import('../export/exportPdf')
-                await exportPdf(resume, theme)
-              }
+            run('pdf', 'PDF', async () => {
+              const { exportPdf } = await import('../export/exportPdf')
+              await exportPdf(resume, theme)
             })
           }
         >
-          <FileText size={15} />
-          {busy === 'pdf' ? 'Exporting…' : 'PDF'}
-        </button>
-        <button
-          type="button"
-          className={`${buttonBase} bg-slate-800 text-white hover:bg-slate-900`}
-          disabled={busy !== null || isTracker}
-          onClick={() =>
-            run('docx', async () => {
-              if (isCover) {
-                const { exportCoverLetterDocx } = await import('../export/exportCoverLetterDocx')
-                await exportCoverLetterDocx(coverLetter, resume.profile, theme)
-              } else {
-                const { exportDocx } = await import('../export/exportDocx')
-                await exportDocx(resume, theme)
-              }
-            })
-          }
-        >
-          <FileType size={15} />
-          {busy === 'docx' ? 'Exporting…' : 'DOCX'}
-        </button>
-        <button
-          type="button"
-          className={`${buttonBase} bg-slate-800 text-white hover:bg-slate-900`}
-          disabled={busy !== null || isTracker}
-          onClick={() =>
-            run('png', async () => {
-              const node = pageRef.current
-              if (!node) return
-              const { exportPng } = await import('../export/exportPng')
-              await exportPng(node, resume.profile.fullName, isCover ? 'Cover_Letter' : 'CV')
-            })
-          }
-        >
-          <Image size={15} />
-          {busy === 'png' ? 'Exporting…' : 'PNG'}
+          {busy === 'pdf' ? (
+            <Loader2 size={15} className="animate-spin" />
+          ) : (
+            <FileText size={15} />
+          )}
+          {busy === 'pdf' ? 'Preparing…' : 'Download PDF'}
         </button>
 
-        <span className="mx-1 hidden h-5 w-px bg-slate-200 sm:block" />
+        <div className="hidden items-center gap-2 lg:flex">{secondaryActions}</div>
 
         <button
           type="button"
-          className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
-          disabled={isTracker}
-          onClick={() => window.print()}
+          aria-label="More actions"
+          aria-expanded={moreOpen}
+          onClick={() => setMoreOpen((v) => !v)}
+          className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50 lg:hidden`}
         >
-          <Printer size={15} />
-          Print
-        </button>
-        <button
-          type="button"
-          className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
-          onClick={() => fileRef.current?.click()}
-        >
-          <Upload size={15} />
-          Import
-        </button>
-        <button
-          type="button"
-          className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
-          onClick={handleExportJson}
-        >
-          <Download size={15} />
-          JSON
-        </button>
-        <button
-          type="button"
-          className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
-          onClick={openAiSettings}
-        >
-          <KeyRound size={15} />
-          AI
-        </button>
-        <button
-          type="button"
-          className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
-          onClick={loadSample}
-        >
-          <Sparkles size={15} />
-          Sample
-        </button>
-        <button
-          type="button"
-          className={`${buttonBase} border border-slate-200 text-red-600 hover:bg-red-50`}
-          onClick={handleReset}
-        >
-          <RotateCcw size={15} />
-          Reset
+          <MoreHorizontal size={15} />
+          More
         </button>
 
         <input
@@ -310,9 +382,10 @@ export function Toolbar({ pageRef }: ToolbarProps) {
           }}
         />
       </div>
-      {error ? (
-        <div className="border-t border-red-100 bg-red-50 px-4 py-1.5 text-center text-xs text-red-600">
-          {error}
+
+      {moreOpen ? (
+        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-2 border-t border-slate-100 px-4 py-2.5 lg:hidden">
+          {secondaryActions}
         </div>
       ) : null}
     </div>

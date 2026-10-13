@@ -1,4 +1,4 @@
-import { FileText, FileSignature, Globe, Image, ScanSearch } from 'lucide-react'
+import { FileText, Globe, Image, ScanSearch } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { APP_ROUTE } from './config'
 
@@ -25,12 +25,12 @@ export const TOOLS: ToolDefinition[] = [
     slug: 'cv',
     route: APP_ROUTE,
     name: 'CV Builder',
-    tagline: 'Build an ATS-friendly CV and cover letter with a live preview.',
+    tagline: 'Build an ATS-friendly CV with a live preview.',
     icon: FileText,
     status: 'live',
     features: [
       'Live A4 preview with automatic pagination',
-      'ATS-friendly PDF, DOCX, and PNG export',
+      'ATS-friendly PDF and PNG export',
       'Six one-click templates with a full design panel',
       'AI-assisted writing and an application tracker',
     ],
@@ -38,38 +38,47 @@ export const TOOLS: ToolDefinition[] = [
   {
     id: 'ats-scanner',
     slug: 'ats',
-    route: '',
+    route: '/ats-scanner',
     name: 'ATS Scanner',
     tagline: 'Check how well your CV passes applicant tracking systems.',
     icon: ScanSearch,
-    status: 'soon',
-  },
-  {
-    id: 'cover-letter-kit',
-    slug: 'cover-letter',
-    route: '',
-    name: 'Cover Letter Kit',
-    tagline: 'Templates and short prompts for standout cover letters.',
-    icon: FileSignature,
-    status: 'soon',
+    status: 'live',
+    features: [
+      'Instant 0–100 ATS score with a category breakdown',
+      'Contact, structure, content, and formatting checks',
+      'Keyword match against any job description',
+      'Import your CV straight from the CV Builder',
+    ],
   },
   {
     id: 'banner-maker',
     slug: 'banner',
-    route: '',
+    route: '/banner-maker',
     name: 'Banner Maker',
     tagline: 'Design social and LinkedIn banners right in the browser.',
     icon: Image,
-    status: 'soon',
+    status: 'live',
+    features: [
+      'Presets for LinkedIn, X, Facebook, YouTube and more',
+      'Solid, gradient, or your own image background',
+      'Full control of title, subtitle, badge, and colors',
+      'Export a crisp PNG at 2× resolution',
+    ],
   },
   {
     id: 'web-portfolio',
     slug: 'portfolio',
-    route: '',
+    route: '/portfolio',
     name: 'Portfolio Page',
     tagline: 'Generate a simple, personal portfolio page from your details.',
     icon: Globe,
-    status: 'soon',
+    status: 'live',
+    features: [
+      'Pull your details straight from the CV Builder',
+      'Six accent themes plus light and dark modes',
+      'Toggle the sections you want to show',
+      'Download a single, self-contained HTML file',
+    ],
   },
 ]
 

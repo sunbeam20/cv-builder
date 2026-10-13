@@ -80,17 +80,6 @@ export const languageSchema = z.object({
   proficiency: z.string(),
 })
 
-export const coverLetterSchema = z.object({
-  company: z.string(),
-  role: z.string(),
-  recipient: z.string(),
-  date: z.string(),
-  greeting: z.string(),
-  body: z.string(),
-  closing: z.string(),
-  signature: z.string(),
-})
-
 export const resumeSchema = z.object({
   profile: profileSchema,
   sectionOrder: z.array(sectionIdSchema).optional().default(() => [...DEFAULT_SECTION_ORDER]),
@@ -149,12 +138,18 @@ export const customizationSchema = z.object({
   headingRule: z.boolean().optional(),
 })
 
+export const designPresetSchema = z.object({
+  id,
+  name: z.string(),
+  customization: customizationSchema,
+})
+
 export const bundleSchema = z.object({
   resume: resumeSchema,
-  coverLetter: coverLetterSchema.optional(),
   applications: z.array(applicationSchema).optional(),
   template: z.string().optional(),
   customization: customizationSchema.optional(),
+  customPresets: z.array(designPresetSchema).optional(),
 })
 
 export type ResumeInput = z.infer<typeof resumeSchema>
