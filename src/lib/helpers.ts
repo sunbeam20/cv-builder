@@ -37,6 +37,7 @@ export const emptyResume = () => ({
     links: [],
   },
   sectionOrder: [...DEFAULT_SECTION_ORDER],
+  hiddenSections: [],
   experience: [],
   education: [],
   skills: [],

@@ -94,6 +94,7 @@ export const coverLetterSchema = z.object({
 export const resumeSchema = z.object({
   profile: profileSchema,
   sectionOrder: z.array(sectionIdSchema).optional().default(() => [...DEFAULT_SECTION_ORDER]),
+  hiddenSections: z.array(sectionIdSchema).optional().default(() => []),
   experience: z.array(experienceSchema),
   education: z.array(educationSchema),
   skills: z.array(skillGroupSchema),

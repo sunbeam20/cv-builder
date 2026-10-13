@@ -89,6 +89,7 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
   const {
     profile,
     sectionOrder,
+    hiddenSections,
     experience,
     education,
     skills,
@@ -246,9 +247,11 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
           ) : null}
         </View>
 
-        {sectionOrder.map((id) => (
-          <View key={id}>{sections[id]}</View>
-        ))}
+        {sectionOrder
+          .filter((id) => !hiddenSections.includes(id))
+          .map((id) => (
+            <View key={id}>{sections[id]}</View>
+          ))}
       </Page>
     </Document>
   )

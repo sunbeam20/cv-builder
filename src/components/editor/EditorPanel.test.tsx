@@ -35,4 +35,16 @@ describe('EditorPanel', () => {
     render(<EditorPanel />)
     expect(screen.getByLabelText('Reorder Senior Frontend Engineer')).toBeInTheDocument()
   })
+
+  it('toggles a section between hidden and visible', () => {
+    useResumeStore.getState().replace(sampleResume())
+    render(<EditorPanel />)
+    fireEvent.click(screen.getByText('Section order'))
+
+    fireEvent.click(screen.getByLabelText('Hide Experience'))
+    expect(useResumeStore.getState().resume.hiddenSections).toContain('experience')
+
+    fireEvent.click(screen.getByLabelText('Show Experience'))
+    expect(useResumeStore.getState().resume.hiddenSections).not.toContain('experience')
+  })
 })

@@ -17,6 +17,7 @@ export const sampleResume = (): Resume => ({
     ],
   },
   sectionOrder: [...DEFAULT_SECTION_ORDER],
+  hiddenSections: [],
   experience: [
     {
       id: uid(),

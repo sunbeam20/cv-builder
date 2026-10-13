@@ -56,6 +56,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
   const {
     profile,
     sectionOrder,
+    hiddenSections,
     experience,
     education,
     skills,
@@ -213,7 +214,9 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
 
   const children: Paragraph[] = [
     ...header,
-    ...sectionOrder.flatMap((id) => blocks[id] ?? []),
+    ...sectionOrder
+      .filter((id) => !hiddenSections.includes(id))
+      .flatMap((id) => blocks[id] ?? []),
   ]
 
   const doc = new Document({

@@ -76,4 +76,18 @@ describe('resumeStore', () => {
     get().moveSection(0, 99)
     expect(get().resume.sectionOrder).toEqual(before)
   })
+
+  it('toggles a section between hidden and visible', () => {
+    get().toggleSection('projects')
+    expect(get().resume.hiddenSections).toContain('projects')
+    get().toggleSection('projects')
+    expect(get().resume.hiddenSections).not.toContain('projects')
+  })
+
+  it('updates and replaces the cover letter', () => {
+    get().updateCoverLetter((d) => {
+      d.company = 'Acme'
+    })
+    expect(get().coverLetter.company).toBe('Acme')
+  })
 })

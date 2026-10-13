@@ -14,7 +14,8 @@ import {
 import { useResumeStore } from '../store/resumeStore'
 import { bundleSchema, resumeSchema } from '../lib/schema'
 import { downloadBlob, slug } from '../lib/helpers'
-import { TEMPLATES, TEMPLATE_LIST, isTemplateId } from '../lib/templates'
+import { TEMPLATES, isTemplateId } from '../lib/templates'
+import { TemplatePicker } from './ui/TemplatePicker'
 
 type Busy = 'pdf' | 'docx' | 'png' | null
 
@@ -114,20 +115,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
               Cover letter
             </button>
           </div>
-          <select
-            aria-label="Template"
-            value={template}
-            onChange={(e) => {
-              if (isTemplateId(e.target.value)) setTemplate(e.target.value)
-            }}
-            className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs font-medium text-slate-600 outline-none hover:bg-slate-50 focus:border-indigo-500"
-          >
-            {TEMPLATE_LIST.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </select>
+          <TemplatePicker />
         </div>
 
         <button

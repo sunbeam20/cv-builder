@@ -77,6 +77,7 @@ export type SectionId =
 export interface Resume {
   profile: Profile
   sectionOrder: SectionId[]
+  hiddenSections: SectionId[]
   experience: Experience[]
   education: Education[]
   skills: SkillGroup[]

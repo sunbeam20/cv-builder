@@ -40,4 +40,11 @@ describe('resumeSchema', () => {
       'languages',
     ])
   })
+
+  it('defaults hiddenSections to an empty array when missing', () => {
+    const input = emptyResume() as Record<string, unknown>
+    delete input.hiddenSections
+    const parsed = resumeSchema.parse(input)
+    expect(parsed.hiddenSections).toEqual([])
+  })
 })

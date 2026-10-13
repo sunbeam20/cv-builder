@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { Draft } from 'immer'
-import type { CoverLetter, DocType, Resume } from '../types'
+import type { CoverLetter, DocType, Resume, SectionId } from '../types'
 import type { TemplateId } from '../lib/templates'
 import { DEFAULT_SECTION_ORDER, emptyResume } from '../lib/helpers'
 import { DEFAULT_AI_SETTINGS, type AiSettings } from '../lib/ai'
@@ -25,6 +25,7 @@ interface ResumeState {
   setTemplate: (template: TemplateId) => void
   setDocType: (docType: DocType) => void
   moveSection: (from: number, to: number) => void
+  toggleSection: (id: SectionId) => void
   updateCoverLetter: (recipe: (draft: Draft<CoverLetter>) => void) => void
   setCoverLetter: (letter: CoverLetter) => void
   setAi: (patch: Partial<AiSettings>) => void
@@ -78,6 +79,13 @@ export const useResumeStore = create<ResumeState>()(
           const [item] = order.splice(from, 1)
           order.splice(to, 0, item)
         }),
+      toggleSection: (id) =>
+        set((state) => {
+          const hidden = state.resume.hiddenSections
+          const index = hidden.indexOf(id)
+          if (index === -1) hidden.push(id)
+          else hidden.splice(index, 1)
+        }),
       updateCoverLetter: (recipe) =>
         set((state) => {
           recipe(state.coverLetter)
@@ -113,6 +121,9 @@ export const useResumeStore = create<ResumeState>()(
         if (state?.resume) {
           if (!state.resume.sectionOrder) {
             state.resume.sectionOrder = [...DEFAULT_SECTION_ORDER]
+          }
+          if (!state.resume.hiddenSections) {
+            state.resume.hiddenSections = []
           }
           if (!state.coverLetter) {
             state.coverLetter = emptyCoverLetter(state.resume.profile)

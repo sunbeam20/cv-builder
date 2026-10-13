@@ -58,6 +58,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
   const {
     profile,
     sectionOrder,
+    hiddenSections,
     experience,
     education,
     skills,
@@ -233,11 +234,13 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
         ) : null}
       </header>
 
-      {sectionOrder.map((id) => (
-        <div key={id} className="contents">
-          {sections[id]}
-        </div>
-      ))}
+      {sectionOrder
+        .filter((id) => !hiddenSections.includes(id))
+        .map((id) => (
+          <div key={id} className="contents">
+            {sections[id]}
+          </div>
+        ))}
     </div>
   )
 }

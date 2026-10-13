@@ -41,6 +41,16 @@ describe('ResumePage', () => {
     expect(page.style.fontFamily).toContain('Georgia')
     expect(screen.getByText('Experience')).not.toHaveClass('border-b')
   })
+
+  it('omits sections listed in hiddenSections', () => {
+    const ref = createRef<HTMLDivElement>()
+    const resume = sampleResume()
+    resume.hiddenSections = ['experience']
+    render(<ResumePage resume={resume} pageRef={ref} theme={TEMPLATES.ats} />)
+
+    expect(screen.queryByText('Experience')).not.toBeInTheDocument()
+    expect(screen.getByText('Education')).toBeInTheDocument()
+  })
 })
 
 describe('ResumePreview', () => {
