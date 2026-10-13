@@ -28,3 +28,9 @@ export function routeToHash(route: Route): string {
 export function navigate(route: Route): void {
   window.location.hash = routeToHash(route)
 }
+
+/** Point the hash at an arbitrary tool route (e.g. "/cv-builder"); empty → hub. */
+export function navigateToRoute(route: string): void {
+  const path = route.replace(/^#/, '').replace(/^\/+|\/+$/g, '')
+  window.location.hash = path ? `#/${path}` : '#/'
+}

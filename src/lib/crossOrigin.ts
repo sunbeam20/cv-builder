@@ -97,12 +97,15 @@ export function createCrossOriginStorage(options: {
     const remote = await remoteGet(key)
     const local = mirror.getItem(key)
     const localAt = mirrorAt(key)
-    if (remote && (local == null || remote.at >= localAt)) {
+
+    // Adopt a strictly newer remote value; on ties the mirror wins so repeated
+    // reads never re-notify (which would loop through the store's reapply hook).
+    if (remote && (local == null || remote.at > localAt)) {
       mirrorWrite(key, remote.value, remote.at)
-      notify(key)
-    } else if (remote && local != null && remote.at < localAt) {
-      await remoteSet(key, local, localAt)
-    } else if (!remote && local != null) {
+      if (remote.value !== local) notify(key)
+      return
+    }
+    if (local != null && (!remote || localAt > remote.at)) {
       await remoteSet(key, local, localAt)
     }
   }

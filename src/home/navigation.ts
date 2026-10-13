@@ -1,5 +1,6 @@
 import { isDevHost, parseHost, toolUrl, hubUrl } from '../lib/host'
-import { navigate } from './routes'
+import { navigate, navigateToRoute } from './routes'
+import { TOOL_BY_SLUG } from './tools'
 
 const current = () => parseHost(window.location.hostname)
 
@@ -16,8 +17,11 @@ export function goHome(): void {
 /** Open a tool by its subdomain slug (in-page dev preview, absolute URL in production). */
 export function openTool(slug: string): void {
   const { rootHost, isDev } = current()
+  const tool = TOOL_BY_SLUG.get(slug)
+
   if (isDev) {
-    navigate('app')
+    if (tool?.route) navigateToRoute(tool.route)
+    else navigate('app')
     return
   }
   window.location.assign(toolUrl(slug, rootHost))

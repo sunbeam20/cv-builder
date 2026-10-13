@@ -133,6 +133,23 @@ describe('createCrossOriginStorage', () => {
     expect(storage.getItem('cv')).toBe('"theirs"')
   })
 
+  it('does not re-notify on repeated reads once reconciled', async () => {
+    const { storage, bridge } = make(new FakeBridge())
+    bridge.localStorage.setItem('cv', JSON.stringify({ value: '"theirs"', at: 500 }))
+    const updated = vi.fn()
+    storage.onUpdate(updated)
+    storage.getItem('cv')
+    await vi.waitFor(() => {
+      expect(storage.getItem('cv')).toBe('"theirs"')
+    })
+
+    updated.mockClear()
+    storage.getItem('cv')
+    storage.getItem('cv')
+    await new Promise((resolve) => setTimeout(resolve, 20))
+    expect(updated).not.toHaveBeenCalled()
+  })
+
   it('removes keys from both the mirror and the bridge', async () => {
     const { storage, bridge, mirror } = make(new FakeBridge())
     await storage.setItem('cv', '"v"')
