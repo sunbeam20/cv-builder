@@ -143,17 +143,17 @@ export function DesignPanel() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 no-print"
+      className="fixed inset-0 z-50 no-print"
       role="dialog"
       aria-modal="true"
       aria-label="Design customization"
       onClick={close}
     >
       <div
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-5 shadow-xl"
+        className="absolute inset-y-0 left-0 flex w-full max-w-md flex-col bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
             <Palette size={16} className="text-indigo-600" />
             Design
@@ -168,12 +168,14 @@ export function DesignPanel() {
           </button>
         </div>
 
-        <p className="mb-4 text-xs text-slate-500">
+        <p className="px-5 pt-4 text-xs text-slate-500">
           Fine-tune the look of <span className="font-medium">{TEMPLATES[template].name}</span>.
-          Overrides apply until you reset or pick another template.
+          Overrides apply until you reset or pick another template. The live preview stays
+          visible as you adjust.
         </p>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex-1 overflow-y-auto px-5 pb-2">
+          <div className="flex flex-col gap-4">
           <div>
             <div className="mb-1 text-xs font-medium text-slate-600">Presets</div>
             <div className="flex flex-wrap gap-2">
@@ -516,8 +518,9 @@ export function DesignPanel() {
             </p>
           </div>
         </div>
+        </div>
 
-        <div className="mt-5 flex items-center justify-between">
+        <div className="flex items-center justify-between border-t border-slate-200 px-5 py-3.5">
           <button
             type="button"
             onClick={resetCustomization}
