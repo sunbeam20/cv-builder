@@ -20,7 +20,7 @@ import { bundleSchema, resumeSchema } from '../lib/schema'
 import { downloadBlob, slug } from '../lib/helpers'
 import { isTemplateId } from '../lib/templates'
 import { useResolvedTheme } from '../lib/useResolvedTheme'
-import { navigate } from '../home/routes'
+import { goHome } from '../home/navigation'
 import { BRAND } from '../home/config'
 import type { DocType } from '../types'
 import { TemplatePicker } from './ui/TemplatePicker'
@@ -128,14 +128,14 @@ export function Toolbar({ pageRef }: ToolbarProps) {
             type="button"
             aria-label={`Go to ${BRAND} home`}
             title="All tools"
-            onClick={() => navigate('home')}
+            onClick={() => goHome()}
             className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
           >
             <Home size={15} />
           </button>
           <button
             type="button"
-            onClick={() => navigate('home')}
+            onClick={() => goHome()}
             className="text-sm font-semibold text-slate-800 hover:text-indigo-700"
           >
             CV Builder

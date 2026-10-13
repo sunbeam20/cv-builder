@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <title>bridge</title>
+  </head>
+  <body>
+    <!--
+      Cross-origin storage bridge.
+      Each tool subdomain embeds this page in a hidden iframe; this page owns the
+      authoritative localStorage on the ROOT domain and syncs values via postMessage.
+    -->
+    <script>
+      (function () {
+        'use strict';
+        var PREFIX = 'tinker:';
+        var ownHost = window.location.hostname.toLowerCase();
+        var DEV_HOSTS = ['localhost', '127.0.0.1', '::1'];
+
+        function allowedHost(host) {
+          host = String(host).toLowerCase();
+          if (DEV_HOSTS.indexOf(host) !== -1) return true;
+          if (DEV_HOSTS.indexOf(ownHost) !== -1) return true;
+          return host === ownHost || host.slice(-(ownHost.length + 1)) === '.' + ownHost;
+        }
+
+        function allowedOrigin(origin) {
+          try {
+            return allowedHost(new URL(origin).hostname);
+          } catch (err) {
+            return false;
+          }
+        }
+
+        function read(key) {
+          var raw = localStorage.getItem(PREFIX + key);
+          if (raw == null) return null;
+          try {
+            return JSON.parse(raw);
+          } catch (err) {
+            localStorage.removeItem(PREFIX + key);
+            return null;
+          }
+        }
+
+        function reply(source, origin, data) {
+          if (source && typeof source.postMessage === 'function') {
+            source.postMessage(data, origin);
+          }
+        }
+
+        // Track parents so we can notify everyone when a key changes.
+        var parents = [];
+        function remember(source, origin) {
+          for (var i = 0; i < parents.length; i++) {
+            if (parents[i].origin === origin) return;
+          }
+          parents.push({ source: source, origin: origin });
+          if (parents.length > 50) parents.shift();
+        }
+
+        function broadcastChange(origin, key) {
+          for (var i = 0; i < parents.length; i++) {
+            if (parents[i].origin !== origin) {
+              reply(parents[i].source, parents[i].origin, { t: 'change', key: key });
+            }
+          }
+        }
+
+        window.addEventListener('message', function (event) {
+          if (!allowedOrigin(event.origin)) return;
+          var data = event.data || {};
+          remember(event.source, event.origin);
+
+          if (data.t === 'ping') {
+            reply(event.source, event.origin, { t: 'pong', id: data.id });
+            return;
+          }
+
+          if (data.t === 'get') {
+            var rec = read(data.key);
+            reply(event.source, event.origin, {
+              t: 'get-res',
+              id: data.id,
+              key: data.key,
+              value: rec ? rec.value : null,
+              at: rec ? rec.at : 0,
+            });
+            return;
+          }
+
+          if (data.t === 'set') {
+            localStorage.setItem(
+              PREFIX + data.key,
+              JSON.stringify({ value: data.value, at: typeof data.at === 'number' ? data.at : Date.now() }),
+            );
+            broadcastChange(event.origin, data.key);
+            return;
+          }
+
+          if (data.t === 'remove') {
+            localStorage.removeItem(PREFIX + data.key);
+            broadcastChange(event.origin, data.key);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

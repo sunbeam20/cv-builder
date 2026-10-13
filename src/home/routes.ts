@@ -1,11 +1,24 @@
+import { parseHost } from '../lib/host'
+import { TOOL_BY_ROUTE, type ToolDefinition } from './tools'
+
 export type Route = 'home' | 'app'
 
-const APP_PATHS = new Set(['cv-builder', 'cv'])
+export type View = { kind: 'home' } | { kind: 'app'; tool: ToolDefinition }
 
-/** Map a window.location.hash value to a top-level route. */
-export function parseRoute(hash: string): Route {
-  const path = hash.replace(/^#/, '').replace(/^\/+|\/+$/g, '')
-  return path === '' || !APP_PATHS.has(path.toLowerCase()) ? 'home' : 'app'
+const hashPath = (hash: string): string =>
+  hash.replace(/^#/, '').replace(/^\/+|\/+$/g, '').toLowerCase()
+
+/**
+ * Decide what to render given the current hash and hostname.
+ * A tool subdomain always boots straight into that tool; the hub domain
+ * uses the hash (defaulting to the landing page).
+ */
+export function resolveView(hash: string, hostname: string): View {
+  const host = parseHost(hostname)
+  if (host.tool) return { kind: 'app', tool: host.tool }
+
+  const tool = TOOL_BY_ROUTE.get(hashPath(hash)) ?? null
+  return tool ? { kind: 'app', tool } : { kind: 'home' }
 }
 
 export function routeToHash(route: Route): string {

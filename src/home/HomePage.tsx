@@ -1,6 +1,6 @@
 import { ArrowRight, CheckCircle2, Home, MousePointerClick, ShieldCheck, Zap } from 'lucide-react'
 import { BRAND, TAGLINE } from './config'
-import { navigate } from './routes'
+import { goHome, openTool } from './navigation'
 import { LIVE_TOOLS, SOON_TOOLS } from './tools'
 import { ResumePage } from '../preview/ResumePreview'
 import { sampleResume } from '../lib/sampleData'
@@ -21,7 +21,7 @@ function Navbar() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
         <button
           type="button"
-          onClick={() => navigate('home')}
+          onClick={() => goHome()}
           aria-label={`${BRAND} home`}
           className="mr-auto flex items-center gap-2 text-sm font-semibold text-slate-800 hover:text-indigo-700"
         >
@@ -48,7 +48,7 @@ function Navbar() {
         </nav>
         <button
           type="button"
-          onClick={() => navigate('app')}
+          onClick={() => openTool('cv')}
           className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-medium text-white transition hover:bg-indigo-700"
         >
           Open CV Builder
@@ -122,7 +122,7 @@ function ToolCard({ tool }: { tool: (typeof LIVE_TOOLS)[number] | (typeof SOON_T
       {live ? (
         <button
           type="button"
-          onClick={() => navigate('app')}
+          onClick={() => openTool(tool.slug)}
           className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-indigo-700"
         >
           Launch {tool.name}
@@ -191,7 +191,7 @@ export function HomePage() {
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={() => navigate('app')}
+              onClick={() => openTool('cv')}
               className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700"
             >
               Open CV Builder

@@ -3,7 +3,8 @@
 The CV Builder is one tool inside **Tinker Tools**, a growing hub of free, browser-first tools
 served from a single static site. The landing page (`#/`) shows all tools and upcoming ones; the
 CV Builder lives at `#/cv-builder` via a zero-dependency hash router. Add a future tool by
-dropping an entry into `src/home/tools.ts` and a route case in `src/home/routes.ts`.
+dropping an entry into `src/home/tools.ts` (with a unique `slug`) — routing and the hub card are
+derived from that registry automatically.
 
 A fully client-side CV/resume and cover-letter builder with a live A4 preview and
 **ATS-friendly** export to **PDF, DOCX, and PNG**. No backend — all data stays in your
@@ -29,6 +30,30 @@ browser (`localStorage`).
 - Optional **AI assist**: one-click "Improve" on your summary, bullet points, and cover-letter body via any OpenAI-compatible endpoint
 - Autosave to `localStorage`; import/export JSON (résumé + cover letter + applications + template + customization); load sample data; reset
 - Lazy-loaded exports keep the initial bundle small
+
+## Deployment: hub + tool subdomains
+
+The same static build is served from the apex domain **and** every tool subdomain. The tool is
+chosen from `window.location.hostname`: `cv.example.com` boots the CV Builder, while the apex
+(`example.com`) shows the hub. Unknown subdomains fall back to the hub. In development
+(`localhost`, `127.0.0.1`, `::1`) the hub uses in-page hash navigation instead of real subdomains.
+
+- Point each tool subdomain (e.g. `cv.example.com`) and the apex at the same build output.
+- Set `VITE_ROOT_DOMAIN=example.com` at build time to pin the root domain explicitly (optional;
+  otherwise it is inferred by stripping a known tool label from the hostname).
+- Add a tool by giving it a `slug` in `src/home/tools.ts` and creating the matching subdomain.
+
+### Cross-subdomain data (`public/bridge.html`)
+
+Each subdomain is a **separate origin**, so they cannot share `localStorage` directly. To let all
+tools read and write the user's data, every page embeds a hidden iframe pointing at
+`/bridge.html` on the **root origin**, which owns the authoritative store and syncs via
+`postMessage`:
+
+- `src/lib/crossOrigin.ts` — mirror-first client: reads are served instantly from a local mirror
+  (`tinker:mirror:*`) and reconciled with the bridge; writes hit the mirror and the bridge.
+- Conflicts resolve **last-write-wins** using a per-key timestamp. Messages are origin-validated
+  and the client degrades silently to local-only storage if the iframe is blocked.
 
 ## Tech stack
 
@@ -65,14 +90,21 @@ src/
 │  ├─ ui/                # Field, inputs, cards, AiButton, TemplatePicker, DesignPanel, modals
 │  └─ Toolbar.tsx        # Résumé/cover/tracker tabs, template picker, export/import/reset
 ├─ export/               # PdfDocument/CoverLetterDocument + export{Pdf,Docx,Png}
+├─ home/                 # Hub: landing page, tool registry, host-aware view/hash routing + navigation
 ├─ lib/                  # helpers, Zod schema, templates + fonts, coverLetter, applications, AI, sample data
+│  ├─ host.ts            # Hostname → tool subdomain / root host parsing
+│  ├─ crossOrigin.ts     # Root-origin bridge client (mirror + last-write-wins)
+│  └─ match.ts           # Job-description keyword extraction + résumé matching
 ├─ preview/
 │  ├─ ResumePreview.tsx       # A4 pages + fit-to-width scaling + pagination
 │  ├─ CoverLetterPreview.tsx  # Cover-letter A4 preview
 │  └─ useFitScale.ts          # Shared fit-to-width hook + A4 constants
-├─ store/                # Zustand store with localStorage persistence
+├─ store/                # Zustand store with cross-origin persistence
 ├─ types.ts              # Resume + CoverLetter data models
 └─ App.tsx
+
+public/
+└─ bridge.html           # Root-origin storage bridge embedded by every tool subdomain
 ```
 
 ## ATS notes

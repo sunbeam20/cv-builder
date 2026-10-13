@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { Draft } from 'immer'
 import type { Application, CoverLetter, DocType, Resume, SectionId } from '../types'
@@ -8,6 +8,9 @@ import { DEFAULT_SECTION_ORDER, emptyResume, uid } from '../lib/helpers'
 import { DEFAULT_AI_SETTINGS, type AiSettings } from '../lib/ai'
 import { emptyCoverLetter } from '../lib/coverLetter'
 import { sampleResume } from '../lib/sampleData'
+import { crossOriginStorage } from '../lib/crossOrigin'
+
+export const STORAGE_KEY = 'cv-builder-v1'
 
 const initialResume = sampleResume()
 
@@ -243,8 +246,9 @@ export const useResumeStore = create<ResumeState>()(
       }
     }),
     {
-      name: 'cv-builder-v1',
+      name: STORAGE_KEY,
       version: 6,
+      storage: createJSONStorage(() => crossOriginStorage),
       partialize: (state) => ({
         resume: state.resume,
         coverLetter: state.coverLetter,
@@ -282,3 +286,15 @@ export const useResumeStore = create<ResumeState>()(
     },
   ),
 )
+
+crossOriginStorage.onUpdate((key) => {
+  if (key !== STORAGE_KEY) return
+  const raw = crossOriginStorage.getItem(STORAGE_KEY)
+  if (raw == null) return
+  try {
+    const parsed = JSON.parse(raw) as { state?: Partial<ResumeState> }
+    if (parsed.state) useResumeStore.setState(parsed.state)
+  } catch {
+    // ignore corrupt remote payloads
+  }
+})
