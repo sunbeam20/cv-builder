@@ -1,6 +1,7 @@
 import {
   BorderStyle,
   Document,
+  ExternalHyperlink,
   HeadingLevel,
   Packer,
   Paragraph,
@@ -13,7 +14,9 @@ import { SECTION_LABELS, downloadBlob, formatRange, slug } from '../lib/helpers'
 
 const CONTENT_WIDTH = 9026
 
-const heading = (text: string, accent: string) =>
+const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
+
+const heading = (text: string, accent: string, size = 22) =>
   new Paragraph({
     heading: HeadingLevel.HEADING_2,
     spacing: { before: 220, after: 80 },
@@ -22,15 +25,21 @@ const heading = (text: string, accent: string) =>
       new TextRun({
         text: text.toUpperCase(),
         bold: true,
-        size: 22,
+        size,
         characterSpacing: 30,
         color: accent,
       }),
     ],
   })
 
-const line = (children: TextRun[], after = 60) =>
+const line = (children: (TextRun | ExternalHyperlink)[], after = 60) =>
   new Paragraph({ spacing: { after }, children })
+
+const hyperlink = (url: string, text: string, color: string, size: number) =>
+  new ExternalHyperlink({
+    link: url,
+    children: [new TextRun({ text, color, underline: {}, size })],
+  })
 
 const row = (left: string, right: string) =>
   new Paragraph({
@@ -67,16 +76,37 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
 
   const accent = theme.accent.replace('#', '')
   const nameColor = theme.nameColor.replace('#', '')
+  const linkColor = theme.linkColor.replace('#', '')
+  const fs = (halfPoints: number) => Math.round(halfPoints * (theme.baseFontSize / 11))
+  const headingSize = fs(22)
+  const headingFor = (text: string) => heading(text, accent, headingSize)
 
-  const contactParts = [
-    profile.location,
-    profile.phone,
-    profile.email,
-    profile.website,
-    ...profile.links.map((l) => l.url || l.label),
-  ]
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const contactChildren: (TextRun | ExternalHyperlink)[] = []
+  const addContact = (node: TextRun | ExternalHyperlink | string) => {
+    if (contactChildren.length > 0) {
+      contactChildren.push(new TextRun({ text: '  |  ', size: fs(18), color: '475569' }))
+    }
+    contactChildren.push(
+      typeof node === 'string' ? new TextRun({ text: node, size: fs(18), color: '475569' }) : node,
+    )
+  }
+  if (profile.location.trim()) addContact(profile.location.trim())
+  if (profile.phone.trim()) addContact(profile.phone.trim())
+  if (profile.email.trim()) {
+    const email = profile.email.trim()
+    addContact(hyperlink(`mailto:${email}`, email, linkColor, fs(18)))
+  }
+  if (profile.website.trim()) {
+    const site = profile.website.trim()
+    addContact(hyperlink(normalizeUrl(site), site, linkColor, fs(18)))
+  }
+  profile.links.forEach((link) => {
+    const label = (link.label || link.url).trim()
+    if (!label) return
+    addContact(
+      link.url.trim() ? hyperlink(normalizeUrl(link.url.trim()), label, linkColor, fs(18)) : label,
+    )
+  })
 
   const header: Paragraph[] = [
     new Paragraph({
@@ -85,7 +115,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
         new TextRun({
           text: profile.fullName || 'Your Name',
           bold: true,
-          size: 44,
+          size: fs(44),
           color: nameColor,
         }),
       ],
@@ -93,23 +123,21 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
   ]
 
   if (profile.headline.trim()) {
-    header.push(line([new TextRun({ text: profile.headline, size: 24, color: '475569' })], 40))
+    header.push(line([new TextRun({ text: profile.headline, size: fs(24), color: '475569' })], 40))
   }
-  if (contactParts.length > 0) {
-    header.push(
-      line([new TextRun({ text: contactParts.join('  |  '), size: 18, color: '475569' })]),
-    )
+  if (contactChildren.length > 0) {
+    header.push(line(contactChildren))
   }
 
   const blocks: Record<SectionId, Paragraph[]> = {
     summary: profile.summary.trim()
-      ? [heading(SECTION_LABELS.summary, accent), line([new TextRun({ text: profile.summary })])]
+      ? [headingFor(SECTION_LABELS.summary), line([new TextRun({ text: profile.summary })])]
       : [],
 
     experience:
       experience.length > 0
         ? [
-            heading(SECTION_LABELS.experience, accent),
+            headingFor(SECTION_LABELS.experience),
             ...experience.flatMap((exp) => {
               const sub = [exp.company, exp.location]
                 .map((s) => s.trim())
@@ -127,7 +155,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     education:
       education.length > 0
         ? [
-            heading(SECTION_LABELS.education, accent),
+            headingFor(SECTION_LABELS.education),
             ...education.flatMap((edu) => {
               const sub =
                 [edu.degree, edu.field]
@@ -146,7 +174,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     skills:
       skills.length > 0
         ? [
-            heading(SECTION_LABELS.skills, accent),
+            headingFor(SECTION_LABELS.skills),
             ...skills.map((group) =>
               line([
                 ...(group.category
@@ -161,13 +189,24 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     projects:
       projects.length > 0
         ? [
-            heading(SECTION_LABELS.projects, accent),
+            headingFor(SECTION_LABELS.projects),
             ...projects.flatMap((project) => {
-              const title = project.link.trim()
-                ? `${project.name}  (${project.link})`
-                : project.name
+              const title: (TextRun | ExternalHyperlink)[] = [
+                new TextRun({ text: project.name, bold: true }),
+              ]
+              if (project.link.trim()) {
+                title.push(new TextRun({ text: '  ' }))
+                title.push(
+                  hyperlink(
+                    normalizeUrl(project.link.trim()),
+                    project.link.trim(),
+                    linkColor,
+                    fs(22),
+                  ),
+                )
+              }
               return [
-                line([new TextRun({ text: title, bold: true })], 40),
+                line(title, 40),
                 ...(project.description.trim()
                   ? [line([new TextRun({ text: project.description })], 40)]
                   : []),
@@ -180,7 +219,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     certifications:
       certifications.length > 0
         ? [
-            heading(SECTION_LABELS.certifications, accent),
+            headingFor(SECTION_LABELS.certifications),
             ...certifications.map((cert) =>
               line([
                 new TextRun({
@@ -196,7 +235,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     languages:
       languages.length > 0
         ? [
-            heading(SECTION_LABELS.languages, accent),
+            headingFor(SECTION_LABELS.languages),
             line(
               [
                 new TextRun({
@@ -225,7 +264,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     styles: {
       default: {
         document: {
-          run: { font: theme.docxFont },
+          run: { font: theme.docxFont, size: fs(22) },
         },
       },
     },

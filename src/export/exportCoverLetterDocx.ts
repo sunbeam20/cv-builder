@@ -1,16 +1,47 @@
-import { Document, Packer, Paragraph, TextRun } from 'docx'
+import { Document, ExternalHyperlink, Packer, Paragraph, TextRun } from 'docx'
 import type { CoverLetter, Profile } from '../types'
 import type { TemplateTheme } from '../lib/templates'
 import { downloadBlob, slug } from '../lib/helpers'
+
+const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 
 export async function exportCoverLetterDocx(
   letter: CoverLetter,
   profile: Profile,
   theme: TemplateTheme,
 ): Promise<void> {
-  const contactParts = [profile.location, profile.phone, profile.email, profile.website]
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const linkColor = theme.linkColor.replace('#', '')
+  const fs = (halfPoints: number) => Math.round(halfPoints * (theme.baseFontSize / 11))
+
+  const contactChildren: (TextRun | ExternalHyperlink)[] = []
+  const addContact = (node: TextRun | ExternalHyperlink | string) => {
+    if (contactChildren.length > 0) {
+      contactChildren.push(new TextRun({ text: '  |  ', size: fs(18), color: '475569' }))
+    }
+    contactChildren.push(
+      typeof node === 'string' ? new TextRun({ text: node, size: fs(18), color: '475569' }) : node,
+    )
+  }
+  if (profile.location.trim()) addContact(profile.location.trim())
+  if (profile.phone.trim()) addContact(profile.phone.trim())
+  if (profile.email.trim()) {
+    const email = profile.email.trim()
+    addContact(
+      new ExternalHyperlink({
+        link: `mailto:${email}`,
+        children: [new TextRun({ text: email, color: linkColor, underline: {}, size: fs(18) })],
+      }),
+    )
+  }
+  if (profile.website.trim()) {
+    const site = profile.website.trim()
+    addContact(
+      new ExternalHyperlink({
+        link: normalizeUrl(site),
+        children: [new TextRun({ text: site, color: linkColor, underline: {}, size: fs(18) })],
+      }),
+    )
+  }
 
   const paragraphs = letter.body
     .split(/\n{2,}/)
@@ -24,7 +55,7 @@ export async function exportCoverLetterDocx(
         new TextRun({
           text: profile.fullName || 'Your Name',
           bold: true,
-          size: 44,
+          size: fs(44),
           color: theme.nameColor.replace('#', ''),
         }),
       ],
@@ -35,30 +66,27 @@ export async function exportCoverLetterDocx(
     children.push(
       new Paragraph({
         spacing: { after: 40 },
-        children: [new TextRun({ text: profile.headline, size: 24, color: '475569' })],
+        children: [new TextRun({ text: profile.headline, size: fs(24), color: '475569' })],
       }),
     )
   }
-  if (contactParts.length > 0) {
-    children.push(
-      new Paragraph({
-        spacing: { after: 200 },
-        children: [new TextRun({ text: contactParts.join('  |  '), size: 18, color: '475569' })],
-      }),
-    )
+  if (contactChildren.length > 0) {
+    children.push(new Paragraph({ spacing: { after: 200 }, children: contactChildren }))
   }
 
   if (letter.date) children.push(new Paragraph({ text: letter.date, spacing: { after: 120 } }))
   if (letter.recipient) children.push(new Paragraph({ text: letter.recipient }))
   if (letter.company)
     children.push(new Paragraph({ text: letter.company, spacing: { after: 120 } }))
-  if (letter.greeting) children.push(new Paragraph({ text: letter.greeting, spacing: { after: 120 } }))
+  if (letter.greeting)
+    children.push(new Paragraph({ text: letter.greeting, spacing: { after: 120 } }))
 
   for (const paragraph of paragraphs) {
     children.push(new Paragraph({ text: paragraph, spacing: { after: 120 } }))
   }
 
-  if (letter.closing) children.push(new Paragraph({ text: letter.closing, spacing: { before: 120 } }))
+  if (letter.closing)
+    children.push(new Paragraph({ text: letter.closing, spacing: { before: 120 } }))
   if (letter.signature)
     children.push(
       new Paragraph({
@@ -70,7 +98,7 @@ export async function exportCoverLetterDocx(
   const doc = new Document({
     creator: profile.fullName || 'CV Builder',
     title: `${profile.fullName || 'Cover Letter'} — Cover Letter`,
-    styles: { default: { document: { run: { font: theme.docxFont } } } },
+    styles: { default: { document: { run: { font: theme.docxFont, size: fs(22) } } } },
     sections: [
       {
         properties: {

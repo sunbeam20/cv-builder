@@ -1,26 +1,30 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
+import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { ReactNode } from 'react'
 import type { Resume, SectionId } from '../types'
 import type { TemplateTheme } from '../lib/templates'
 import { SECTION_LABELS, formatRange } from '../lib/helpers'
 
-const makeStyles = (theme: TemplateTheme) =>
-  StyleSheet.create({
+const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
+
+const makeStyles = (theme: TemplateTheme) => {
+  const s = (n: number) => n * (theme.baseFontSize / 11)
+  return StyleSheet.create({
     page: {
       paddingTop: 48,
       paddingBottom: 48,
       paddingHorizontal: 54,
       fontFamily: theme.pdfFonts.regular,
-      fontSize: 10,
+      fontSize: s(10),
       lineHeight: 1.4,
       color: '#111827',
     },
-    name: { fontSize: 22, fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
-    headline: { marginTop: 2, fontSize: 11.5, color: '#475569' },
-    contact: { marginTop: 6, fontSize: 9, color: '#475569' },
+    name: { fontSize: s(22), fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
+    headline: { marginTop: 2, fontSize: s(11.5), color: '#475569' },
+    contact: { marginTop: 6, fontSize: s(9), color: '#475569' },
+    link: { color: theme.linkColor, textDecoration: 'underline' },
     section: { marginTop: 14 },
     sectionTitle: {
-      fontSize: 10,
+      fontSize: s(10),
       fontFamily: theme.pdfFonts.bold,
       letterSpacing: 1.4,
       textTransform: 'uppercase',
@@ -30,14 +34,14 @@ const makeStyles = (theme: TemplateTheme) =>
     },
     entry: { marginBottom: 8 },
     row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
-    entryTitle: { fontSize: 10.5, fontFamily: theme.pdfFonts.bold, color: '#0f172a' },
-    dates: { fontSize: 9, color: '#64748b' },
-    subtitle: { fontSize: 10, fontFamily: theme.pdfFonts.italic, color: '#475569' },
-    body: { fontSize: 10, color: '#334155' },
+    entryTitle: { fontSize: s(10.5), fontFamily: theme.pdfFonts.bold, color: '#0f172a' },
+    dates: { fontSize: s(9), color: '#64748b' },
+    subtitle: { fontSize: s(10), fontFamily: theme.pdfFonts.italic, color: '#475569' },
+    body: { fontSize: s(10), color: '#334155' },
     bulletRow: { flexDirection: 'row', marginTop: 2 },
-    bulletDot: { width: 10, fontSize: 10, color: '#334155' },
-    bulletText: { flex: 1, fontSize: 10, color: '#334155' },
-    skillLine: { fontSize: 10, color: '#334155', marginBottom: 1 },
+    bulletDot: { width: s(10), fontSize: s(10), color: '#334155' },
+    bulletText: { flex: 1, fontSize: s(10), color: '#334155' },
+    skillLine: { fontSize: s(10), color: '#334155', marginBottom: 1 },
     pageNumber: {
       position: 'absolute',
       bottom: 22,
@@ -46,6 +50,7 @@ const makeStyles = (theme: TemplateTheme) =>
       color: '#94a3b8',
     },
   })
+}
 
 type Styles = ReturnType<typeof makeStyles>
 
@@ -100,15 +105,40 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
 
   const styles = makeStyles(theme)
 
-  const contactParts = [
-    profile.location,
-    profile.phone,
-    profile.email,
-    profile.website,
-    ...profile.links.map((l) => l.url || l.label),
-  ]
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const contactNodes: ReactNode[] = []
+  const addContact = (node: ReactNode) => {
+    if (contactNodes.length > 0) contactNodes.push('  |  ')
+    contactNodes.push(node)
+  }
+  if (profile.location.trim()) addContact(profile.location.trim())
+  if (profile.phone.trim()) addContact(profile.phone.trim())
+  if (profile.email.trim()) {
+    addContact(
+      <Link key="email" src={`mailto:${profile.email.trim()}`} style={styles.link}>
+        {profile.email.trim()}
+      </Link>,
+    )
+  }
+  if (profile.website.trim()) {
+    addContact(
+      <Link key="website" src={normalizeUrl(profile.website.trim())} style={styles.link}>
+        {profile.website.trim()}
+      </Link>,
+    )
+  }
+  profile.links.forEach((link, index) => {
+    const label = (link.label || link.url).trim()
+    if (!label) return
+    addContact(
+      link.url.trim() ? (
+        <Link key={`link-${index}`} src={normalizeUrl(link.url.trim())} style={styles.link}>
+          {label}
+        </Link>
+      ) : (
+        label
+      ),
+    )
+  })
 
   const sections: Record<SectionId, ReactNode> = {
     summary: profile.summary.trim() ? (
@@ -176,7 +206,9 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
               <Text style={styles.entryTitle}>
                 {project.name}
                 {project.link.trim() ? (
-                  <Text style={styles.dates}>{`   ${project.link}`}</Text>
+                  <Link src={normalizeUrl(project.link.trim())} style={styles.link}>
+                    {`   ${project.link.trim()}`}
+                  </Link>
                 ) : null}
               </Text>
               {project.description.trim() ? (
@@ -242,9 +274,7 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
           {profile.headline.trim() ? (
             <Text style={styles.headline}>{profile.headline}</Text>
           ) : null}
-          {contactParts.length > 0 ? (
-            <Text style={styles.contact}>{contactParts.join('  |  ')}</Text>
-          ) : null}
+          {contactNodes.length > 0 ? <Text style={styles.contact}>{contactNodes}</Text> : null}
         </View>
 
         {sectionOrder

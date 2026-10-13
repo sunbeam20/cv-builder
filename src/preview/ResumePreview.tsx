@@ -19,21 +19,20 @@ interface PageProps {
   pageRef?: RefObject<HTMLDivElement | null>
 }
 
-function SectionTitle({
-  children,
-  accent,
-  rule,
-}: {
-  children: ReactNode
-  accent: string
-  rule: boolean
-}) {
+/** Convert a design-px size (baseline 11px) to an em value relative to the page font size. */
+const em = (px: number): string => `${(px / 11).toFixed(4)}em`
+
+const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
+
+function SectionTitle({ children, theme }: { children: ReactNode; theme: TemplateTheme }) {
   return (
     <h2
-      className={`mb-2 text-[11px] font-bold uppercase tracking-[0.14em] ${
-        rule ? 'border-b pb-1' : ''
-      }`}
-      style={rule ? { color: accent, borderColor: accent } : { color: accent }}
+      className={`mb-2 font-bold uppercase tracking-[0.14em] ${theme.headingRule ? 'border-b pb-1' : ''}`}
+      style={{
+        fontSize: em(11),
+        color: theme.accent,
+        ...(theme.headingRule ? { borderColor: theme.accent } : {}),
+      }}
     >
       {children}
     </h2>
@@ -46,7 +45,7 @@ function Bullets({ items }: { items: string[] }) {
   return (
     <ul className="mt-1 list-disc space-y-0.5 pl-4">
       {bullets.map((bullet, i) => (
-        <li key={i} className="text-[11px] leading-snug text-slate-700">
+        <li key={i} className="leading-snug text-slate-700" style={{ fontSize: em(11) }}>
           {bullet}
         </li>
       ))}
@@ -67,40 +66,77 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     languages,
   } = resume
 
-  const contactParts = [
-    profile.location,
-    profile.phone,
-    profile.email,
-    profile.website,
-    ...profile.links.map((l) => l.url || l.label),
-  ]
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const linkStyle: CSSProperties = { color: theme.linkColor, textDecoration: 'underline' }
+
+  const contactNodes: ReactNode[] = []
+  if (profile.location.trim()) contactNodes.push(profile.location.trim())
+  if (profile.phone.trim()) contactNodes.push(profile.phone.trim())
+  if (profile.email.trim()) {
+    contactNodes.push(
+      <a key="email" href={`mailto:${profile.email.trim()}`} style={linkStyle}>
+        {profile.email.trim()}
+      </a>,
+    )
+  }
+  if (profile.website.trim()) {
+    contactNodes.push(
+      <a
+        key="website"
+        href={normalizeUrl(profile.website.trim())}
+        target="_blank"
+        rel="noreferrer"
+        style={linkStyle}
+      >
+        {profile.website.trim()}
+      </a>,
+    )
+  }
+  profile.links.forEach((link, index) => {
+    const label = (link.label || link.url).trim()
+    if (!label) return
+    contactNodes.push(
+      link.url.trim() ? (
+        <a
+          key={`link-${index}`}
+          href={normalizeUrl(link.url.trim())}
+          target="_blank"
+          rel="noreferrer"
+          style={linkStyle}
+        >
+          {label}
+        </a>
+      ) : (
+        <span key={`link-${index}`}>{label}</span>
+      ),
+    )
+  })
 
   const sections: Record<SectionId, ReactNode> = {
     summary: profile.summary.trim() ? (
       <section className="mt-4">
-        <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.summary}</SectionTitle>
-        <p className="text-[11px] leading-relaxed text-slate-700">{profile.summary}</p>
+        <SectionTitle theme={theme}>{SECTION_LABELS.summary}</SectionTitle>
+        <p className="leading-relaxed text-slate-700" style={{ fontSize: em(11) }}>
+          {profile.summary}
+        </p>
       </section>
     ) : null,
 
     experience:
       experience.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.experience}</SectionTitle>
+          <SectionTitle theme={theme}>{SECTION_LABELS.experience}</SectionTitle>
           <div className="flex flex-col gap-3">
             {experience.map((exp) => (
               <div key={exp.id}>
                 <div className="flex items-baseline justify-between gap-3">
-                  <p className="text-[11.5px] font-semibold text-slate-900">
+                  <p className="font-semibold text-slate-900" style={{ fontSize: em(11.5) }}>
                     {exp.role || 'Role'}
                   </p>
-                  <p className="shrink-0 text-[10.5px] text-slate-500">
+                  <p className="shrink-0 text-slate-500" style={{ fontSize: em(10.5) }}>
                     {formatRange(exp.start, exp.end, exp.current)}
                   </p>
                 </div>
-                <p className="text-[11px] italic text-slate-600">
+                <p className="italic text-slate-600" style={{ fontSize: em(11) }}>
                   {[exp.company, exp.location].map((s) => s.trim()).filter(Boolean).join(', ')}
                 </p>
                 <Bullets items={exp.bullets} />
@@ -113,24 +149,26 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     education:
       education.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.education}</SectionTitle>
+          <SectionTitle theme={theme}>{SECTION_LABELS.education}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {education.map((edu) => (
               <div key={edu.id}>
                 <div className="flex items-baseline justify-between gap-3">
-                  <p className="text-[11.5px] font-semibold text-slate-900">
+                  <p className="font-semibold text-slate-900" style={{ fontSize: em(11.5) }}>
                     {edu.school || 'School'}
                   </p>
-                  <p className="shrink-0 text-[10.5px] text-slate-500">
+                  <p className="shrink-0 text-slate-500" style={{ fontSize: em(10.5) }}>
                     {formatRange(edu.start, edu.end, false)}
                   </p>
                 </div>
-                <p className="text-[11px] italic text-slate-600">
+                <p className="italic text-slate-600" style={{ fontSize: em(11) }}>
                   {[edu.degree, edu.field].map((s) => s.trim()).filter(Boolean).join(', ')}
                   {edu.location ? ` — ${edu.location}` : ''}
                 </p>
                 {edu.details.trim() ? (
-                  <p className="text-[11px] leading-snug text-slate-700">{edu.details}</p>
+                  <p className="leading-snug text-slate-700" style={{ fontSize: em(11) }}>
+                    {edu.details}
+                  </p>
                 ) : null}
               </div>
             ))}
@@ -141,10 +179,10 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     skills:
       skills.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.skills}</SectionTitle>
+          <SectionTitle theme={theme}>{SECTION_LABELS.skills}</SectionTitle>
           <div className="flex flex-col gap-1">
             {skills.map((group) => (
-              <p key={group.id} className="text-[11px] text-slate-700">
+              <p key={group.id} className="text-slate-700" style={{ fontSize: em(11) }}>
                 {group.category ? (
                   <span className="font-semibold text-slate-900">{group.category}: </span>
                 ) : null}
@@ -158,20 +196,28 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     projects:
       projects.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.projects}</SectionTitle>
+          <SectionTitle theme={theme}>{SECTION_LABELS.projects}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {projects.map((project) => (
               <div key={project.id}>
-                <p className="text-[11.5px] font-semibold text-slate-900">
+                <p className="font-semibold text-slate-900" style={{ fontSize: em(11.5) }}>
                   {project.name}
                   {project.link.trim() ? (
-                    <span className="ml-2 text-[10.5px] font-normal text-slate-500">
-                      {project.link}
-                    </span>
+                    <a
+                      href={normalizeUrl(project.link.trim())}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="ml-2 font-normal"
+                      style={{ fontSize: em(10.5), ...linkStyle }}
+                    >
+                      {project.link.trim()}
+                    </a>
                   ) : null}
                 </p>
                 {project.description.trim() ? (
-                  <p className="text-[11px] text-slate-700">{project.description}</p>
+                  <p className="text-slate-700" style={{ fontSize: em(11) }}>
+                    {project.description}
+                  </p>
                 ) : null}
                 <Bullets items={project.bullets} />
               </div>
@@ -183,10 +229,10 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     certifications:
       certifications.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.certifications}</SectionTitle>
+          <SectionTitle theme={theme}>{SECTION_LABELS.certifications}</SectionTitle>
           <div className="flex flex-col gap-1">
             {certifications.map((cert) => (
-              <p key={cert.id} className="text-[11px] text-slate-700">
+              <p key={cert.id} className="text-slate-700" style={{ fontSize: em(11) }}>
                 {cert.name}
                 {cert.issuer ? ` — ${cert.issuer}` : ''}
                 {cert.date ? ` (${cert.date})` : ''}
@@ -199,8 +245,8 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     languages:
       languages.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent} rule={theme.headingRule}>{SECTION_LABELS.languages}</SectionTitle>
-          <p className="text-[11px] text-slate-700">
+          <SectionTitle theme={theme}>{SECTION_LABELS.languages}</SectionTitle>
+          <p className="text-slate-700" style={{ fontSize: em(11) }}>
             {languages
               .map((l) => [l.name, l.proficiency].filter(Boolean).join(' '))
               .filter(Boolean)
@@ -214,23 +260,32 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
     <div
       ref={pageRef}
       className="resume-page relative shadow-xl ring-1 ring-slate-200"
-      style={{ fontFamily: theme.fontFamily }}
+      style={{ fontFamily: theme.fontFamily, fontSize: `${theme.baseFontSize}px` }}
     >
       {theme.accentBar ? (
         <div className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.accent }} />
       ) : null}
       <header>
         <h1
-          className="text-[26px] font-bold leading-tight tracking-tight"
-          style={{ color: theme.nameColor }}
+          className="font-bold leading-tight tracking-tight"
+          style={{ fontSize: em(26), color: theme.nameColor }}
         >
           {profile.fullName || 'Your Name'}
         </h1>
         {profile.headline ? (
-          <p className="mt-0.5 text-[13px] font-medium text-slate-600">{profile.headline}</p>
+          <p className="mt-0.5 font-medium text-slate-600" style={{ fontSize: em(13) }}>
+            {profile.headline}
+          </p>
         ) : null}
-        {contactParts.length > 0 ? (
-          <p className="mt-2 text-[10.5px] text-slate-600">{contactParts.join('  |  ')}</p>
+        {contactNodes.length > 0 ? (
+          <p className="mt-2 text-slate-600" style={{ fontSize: em(10.5) }}>
+            {contactNodes.map((node, index) => (
+              <span key={index}>
+                {index > 0 ? '  |  ' : ''}
+                {node}
+              </span>
+            ))}
+          </p>
         ) : null}
       </header>
 

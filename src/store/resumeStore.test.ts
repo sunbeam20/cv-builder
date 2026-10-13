@@ -22,6 +22,18 @@ describe('resumeStore', () => {
     expect(get().template).toBe('modern')
   })
 
+  it('applies, resets and clears design customization', () => {
+    get().setCustomization({ accent: '#ff0000', baseFontSize: 12 })
+    expect(get().customization).toEqual({ accent: '#ff0000', baseFontSize: 12 })
+
+    get().resetCustomization()
+    expect(get().customization).toEqual({})
+
+    get().setCustomization({ fontId: 'georgia' })
+    get().setTemplate('modern')
+    expect(get().customization).toEqual({})
+  })
+
   it('updates resume immutably', () => {
     const before = get().resume
     get().update((d) => {

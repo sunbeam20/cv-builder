@@ -6,6 +6,7 @@ import {
   FileType,
   Image,
   KeyRound,
+  Palette,
   Printer,
   Redo2,
   RotateCcw,
@@ -16,7 +17,8 @@ import {
 import { useResumeStore } from '../store/resumeStore'
 import { bundleSchema, resumeSchema } from '../lib/schema'
 import { downloadBlob, slug } from '../lib/helpers'
-import { TEMPLATES, isTemplateId } from '../lib/templates'
+import { isTemplateId } from '../lib/templates'
+import { useResolvedTheme } from '../lib/useResolvedTheme'
 import type { DocType } from '../types'
 import { TemplatePicker } from './ui/TemplatePicker'
 
@@ -42,15 +44,18 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   const coverLetter = useResumeStore((s) => s.coverLetter)
   const applications = useResumeStore((s) => s.applications)
   const template = useResumeStore((s) => s.template)
+  const customization = useResumeStore((s) => s.customization)
   const docType = useResumeStore((s) => s.docType)
   const setDocType = useResumeStore((s) => s.setDocType)
   const setTemplate = useResumeStore((s) => s.setTemplate)
+  const setCustomization = useResumeStore((s) => s.setCustomization)
   const replace = useResumeStore((s) => s.replace)
   const setCoverLetter = useResumeStore((s) => s.setCoverLetter)
   const setApplications = useResumeStore((s) => s.setApplications)
   const loadSample = useResumeStore((s) => s.loadSample)
   const reset = useResumeStore((s) => s.reset)
   const openAiSettings = useResumeStore((s) => s.openAiSettings)
+  const openDesign = useResumeStore((s) => s.openDesign)
   const undo = useResumeStore((s) => s.undo)
   const redo = useResumeStore((s) => s.redo)
   const canUndo = useResumeStore((s) => s.past.length > 0)
@@ -59,7 +64,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   const [error, setError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const theme = TEMPLATES[template]
+  const theme = useResolvedTheme()
   const isCover = docType === 'cover'
   const isTracker = docType === 'tracker'
 
@@ -87,6 +92,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
         if (bundle.data.template && isTemplateId(bundle.data.template)) {
           setTemplate(bundle.data.template)
         }
+        if (bundle.data.customization) setCustomization(bundle.data.customization)
       } else {
         replace(resumeSchema.parse(raw))
       }
@@ -100,7 +106,11 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   }
 
   const handleExportJson = () => {
-    const json = JSON.stringify({ resume, coverLetter, applications, template }, null, 2)
+    const json = JSON.stringify(
+      { resume, coverLetter, applications, template, customization },
+      null,
+      2,
+    )
     downloadBlob(
       new Blob([json], { type: 'application/json' }),
       `${slug(resume.profile.fullName)}.json`,
@@ -130,6 +140,15 @@ export function Toolbar({ pageRef }: ToolbarProps) {
             })}
           </div>
           <TemplatePicker />
+          <button
+            type="button"
+            aria-label="Customize design"
+            title="Customize design"
+            onClick={openDesign}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+          >
+            <Palette size={15} />
+          </button>
           <div className="flex items-center gap-1">
             <button
               type="button"

@@ -12,13 +12,15 @@ browser (`localStorage`).
 - **Application tracker** tab: wishlist → applied → interview → offer → rejected, with notes and CSV export
 - Live A4 preview that scales to fit the viewport, with **automatic multi-page pagination** and page indicators (PDF adds "Page x of y" footers)
 - Six templates: **ATS Classic**, **Modern Accent**, **Elegant Serif**, **Teal Accent**, **Technical Mono**, **Burgundy Serif** — each with matching PDF/DOCX fonts, chosen from a thumbnail picker
+- **Design panel** to override the template: font family (six web-safe faces), base font size (9–13px), accent/name/link colors, and the accent bar / heading rule toggles — applied to preview, PDF, and DOCX
+- **Clickable, colored hyperlinks** for email, website, profile links, and project links in preview, PDF, and DOCX
 - Drag-and-drop reordering for sections, entries, links, and bullet points (order flows through preview, PDF, and DOCX)
 - Show/hide any section to tailor the CV per application
 - Undo/redo for resume edits (toolbar buttons and `Ctrl/Cmd+Z` / `Ctrl/Cmd+Shift+Z`)
 - Single-column, semantic layout optimized for applicant tracking systems
 - Export to PDF (real selectable text), DOCX, and PNG
 - Optional **AI assist**: one-click "Improve" on your summary, bullet points, and cover-letter body via any OpenAI-compatible endpoint
-- Autosave to `localStorage`; import/export JSON (résumé + cover letter + template); load sample data; reset
+- Autosave to `localStorage`; import/export JSON (résumé + cover letter + applications + template + customization); load sample data; reset
 - Lazy-loaded exports keep the initial bundle small
 
 ## Tech stack
@@ -53,10 +55,10 @@ src/
 ├─ components/
 │  ├─ editor/            # One form per CV section, CompletenessCard, CoverLetterForm, EditorPanel
 │  ├─ tracker/           # Application tracker view
-│  ├─ ui/                # Field, inputs, cards, AiButton, TemplatePicker, modals
+│  ├─ ui/                # Field, inputs, cards, AiButton, TemplatePicker, DesignPanel, modals
 │  └─ Toolbar.tsx        # Résumé/cover/tracker tabs, template picker, export/import/reset
 ├─ export/               # PdfDocument/CoverLetterDocument + export{Pdf,Docx,Png}
-├─ lib/                  # helpers, Zod schema, templates, coverLetter, applications, AI, sample data
+├─ lib/                  # helpers, Zod schema, templates + fonts, coverLetter, applications, AI, sample data
 ├─ preview/
 │  ├─ ResumePreview.tsx       # A4 pages + fit-to-width scaling + pagination
 │  ├─ CoverLetterPreview.tsx  # Cover-letter A4 preview

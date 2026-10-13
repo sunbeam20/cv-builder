@@ -122,11 +122,22 @@ export const applicationSchema = z.object({
   notes: z.string(),
 })
 
+export const customizationSchema = z.object({
+  fontId: z.string().optional(),
+  baseFontSize: z.number().optional(),
+  accent: z.string().optional(),
+  nameColor: z.string().optional(),
+  linkColor: z.string().optional(),
+  accentBar: z.boolean().optional(),
+  headingRule: z.boolean().optional(),
+})
+
 export const bundleSchema = z.object({
   resume: resumeSchema,
   coverLetter: coverLetterSchema.optional(),
   applications: z.array(applicationSchema).optional(),
   template: z.string().optional(),
+  customization: customizationSchema.optional(),
 })
 
 export type ResumeInput = z.infer<typeof resumeSchema>

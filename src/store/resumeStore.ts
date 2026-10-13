@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { Draft } from 'immer'
 import type { Application, CoverLetter, DocType, Resume, SectionId } from '../types'
-import type { TemplateId } from '../lib/templates'
+import type { Customization, TemplateId } from '../lib/templates'
 import { DEFAULT_SECTION_ORDER, emptyResume } from '../lib/helpers'
 import { DEFAULT_AI_SETTINGS, type AiSettings } from '../lib/ai'
 import { emptyCoverLetter } from '../lib/coverLetter'
@@ -20,9 +20,11 @@ interface ResumeState {
   coverLetter: CoverLetter
   applications: Application[]
   template: TemplateId
+  customization: Customization
   docType: DocType
   ai: AiSettings
   aiSettingsOpen: boolean
+  designOpen: boolean
   past: Resume[]
   future: Resume[]
   update: (recipe: (draft: Draft<Resume>) => void) => void
@@ -32,6 +34,10 @@ interface ResumeState {
   undo: () => void
   redo: () => void
   setTemplate: (template: TemplateId) => void
+  setCustomization: (patch: Customization) => void
+  resetCustomization: () => void
+  openDesign: () => void
+  closeDesign: () => void
   setDocType: (docType: DocType) => void
   moveSection: (from: number, to: number) => void
   toggleSection: (id: SectionId) => void
@@ -79,9 +85,11 @@ export const useResumeStore = create<ResumeState>()(
         coverLetter: emptyCoverLetter(initialResume.profile),
         applications: [],
         template: 'ats',
+        customization: {},
         docType: 'resume',
         ai: { ...DEFAULT_AI_SETTINGS },
         aiSettingsOpen: false,
+        designOpen: false,
         past: [],
         future: [],
         update: (recipe) => applyResumeEdit(recipe, true),
@@ -132,6 +140,23 @@ export const useResumeStore = create<ResumeState>()(
         setTemplate: (template) =>
           set((state) => {
             state.template = template
+            state.customization = {}
+          }),
+        setCustomization: (patch) =>
+          set((state) => {
+            Object.assign(state.customization, patch)
+          }),
+        resetCustomization: () =>
+          set((state) => {
+            state.customization = {}
+          }),
+        openDesign: () =>
+          set((state) => {
+            state.designOpen = true
+          }),
+        closeDesign: () =>
+          set((state) => {
+            state.designOpen = false
           }),
         setDocType: (docType) =>
           set((state) => {
@@ -202,18 +227,22 @@ export const useResumeStore = create<ResumeState>()(
     }),
     {
       name: 'cv-builder-v1',
-      version: 4,
+      version: 5,
       partialize: (state) => ({
         resume: state.resume,
         coverLetter: state.coverLetter,
         applications: state.applications,
         template: state.template,
+        customization: state.customization,
         ai: state.ai,
       }),
       migrate: (persisted, version) => {
         const state = persisted as Partial<ResumeState> | undefined
         if (state && !state.applications) {
           state.applications = []
+        }
+        if (state && !state.customization) {
+          state.customization = {}
         }
         if (state?.resume) {
           if (!state.resume.sectionOrder) {

@@ -1,26 +1,32 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
+import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
+import type { ReactNode } from 'react'
 import type { CoverLetter, Profile } from '../types'
 import type { TemplateTheme } from '../lib/templates'
 
-const makeStyles = (theme: TemplateTheme) =>
-  StyleSheet.create({
+const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
+
+const makeStyles = (theme: TemplateTheme) => {
+  const s = (n: number) => n * (theme.baseFontSize / 11)
+  return StyleSheet.create({
     page: {
       paddingTop: 54,
       paddingBottom: 48,
       paddingHorizontal: 58,
       fontFamily: theme.pdfFonts.regular,
-      fontSize: 10.5,
+      fontSize: s(10.5),
       lineHeight: 1.5,
       color: '#334155',
     },
-    name: { fontSize: 22, fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
-    headline: { marginTop: 2, fontSize: 11.5, color: '#475569' },
-    contact: { marginTop: 6, fontSize: 9, color: '#475569' },
+    name: { fontSize: s(22), fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
+    headline: { marginTop: 2, fontSize: s(11.5), color: '#475569' },
+    contact: { marginTop: 6, fontSize: s(9), color: '#475569' },
+    link: { color: theme.linkColor, textDecoration: 'underline' },
     block: { marginTop: 22 },
     company: { fontFamily: theme.pdfFonts.bold, color: '#0f172a' },
     paragraph: { marginTop: 12 },
     signature: { marginTop: 24, fontFamily: theme.pdfFonts.bold, color: '#0f172a' },
   })
+}
 
 export function CoverLetterDocument({
   letter,
@@ -33,9 +39,27 @@ export function CoverLetterDocument({
 }) {
   const styles = makeStyles(theme)
 
-  const contactParts = [profile.location, profile.phone, profile.email, profile.website]
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const contactNodes: ReactNode[] = []
+  const addContact = (node: ReactNode) => {
+    if (contactNodes.length > 0) contactNodes.push('  |  ')
+    contactNodes.push(node)
+  }
+  if (profile.location.trim()) addContact(profile.location.trim())
+  if (profile.phone.trim()) addContact(profile.phone.trim())
+  if (profile.email.trim()) {
+    addContact(
+      <Link key="email" src={`mailto:${profile.email.trim()}`} style={styles.link}>
+        {profile.email.trim()}
+      </Link>,
+    )
+  }
+  if (profile.website.trim()) {
+    addContact(
+      <Link key="website" src={normalizeUrl(profile.website.trim())} style={styles.link}>
+        {profile.website.trim()}
+      </Link>,
+    )
+  }
 
   const paragraphs = letter.body
     .split(/\n{2,}/)
@@ -66,9 +90,7 @@ export function CoverLetterDocument({
         {profile.headline.trim() ? (
           <Text style={styles.headline}>{profile.headline}</Text>
         ) : null}
-        {contactParts.length > 0 ? (
-          <Text style={styles.contact}>{contactParts.join('  |  ')}</Text>
-        ) : null}
+        {contactNodes.length > 0 ? <Text style={styles.contact}>{contactNodes}</Text> : null}
 
         <View style={styles.block}>
           {letter.date ? <Text>{letter.date}</Text> : null}

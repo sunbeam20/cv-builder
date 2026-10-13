@@ -1,24 +1,24 @@
 import { useEffect, useRef } from 'react'
 import { Toolbar } from './components/Toolbar'
 import { AiSettingsModal } from './components/ui/AiSettingsModal'
+import { DesignPanel } from './components/ui/DesignPanel'
 import { EditorPanel } from './components/editor/EditorPanel'
 import { CoverLetterForm } from './components/editor/CoverLetterForm'
 import { TrackerView } from './components/tracker/TrackerView'
 import { ResumePreview } from './preview/ResumePreview'
 import { CoverLetterPreview } from './preview/CoverLetterPreview'
 import { useResumeStore } from './store/resumeStore'
-import { TEMPLATES } from './lib/templates'
+import { useResolvedTheme } from './lib/useResolvedTheme'
 
 export default function App() {
   const resume = useResumeStore((s) => s.resume)
   const coverLetter = useResumeStore((s) => s.coverLetter)
-  const template = useResumeStore((s) => s.template)
   const docType = useResumeStore((s) => s.docType)
   const undo = useResumeStore((s) => s.undo)
   const redo = useResumeStore((s) => s.redo)
   const pageRef = useRef<HTMLDivElement>(null)
 
-  const theme = TEMPLATES[template]
+  const theme = useResolvedTheme()
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -70,6 +70,7 @@ export default function App() {
         </main>
       )}
       <AiSettingsModal />
+      <DesignPanel />
     </div>
   )
 }
