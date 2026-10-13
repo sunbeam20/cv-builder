@@ -84,6 +84,33 @@ describe('resumeStore', () => {
     expect(get().resume.hiddenSections).not.toContain('projects')
   })
 
+  it('undoes and redoes resume edits', () => {
+    const original = get().resume.profile.fullName
+    get().update((d) => {
+      d.profile.fullName = 'New Name'
+    })
+    expect(get().resume.profile.fullName).toBe('New Name')
+
+    get().undo()
+    expect(get().resume.profile.fullName).toBe(original)
+
+    get().redo()
+    expect(get().resume.profile.fullName).toBe('New Name')
+  })
+
+  it('clears redo history after a new edit', () => {
+    get().update((d) => void (d.profile.fullName = 'A'))
+    get().undo()
+    expect(get().future.length).toBe(1)
+    get().update((d) => void (d.profile.headline = 'B'))
+    expect(get().future.length).toBe(0)
+  })
+
+  it('does nothing when there is no history to undo', () => {
+    expect(get().past.length).toBe(0)
+    expect(() => get().undo()).not.toThrow()
+  })
+
   it('updates and replaces the cover letter', () => {
     get().updateCoverLetter((d) => {
       d.company = 'Acme'

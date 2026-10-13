@@ -36,6 +36,13 @@ describe('EditorPanel', () => {
     expect(screen.getByLabelText('Reorder Senior Frontend Engineer')).toBeInTheDocument()
   })
 
+  it('exposes drag handles for links and bullet points', () => {
+    useResumeStore.getState().replace(sampleResume())
+    render(<EditorPanel />)
+    expect(screen.getByLabelText('Reorder LinkedIn')).toBeInTheDocument()
+    expect(screen.getAllByLabelText('Reorder highlight 1').length).toBeGreaterThan(0)
+  })
+
   it('toggles a section between hidden and visible', () => {
     useResumeStore.getState().replace(sampleResume())
     render(<EditorPanel />)

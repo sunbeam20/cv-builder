@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Toolbar } from './components/Toolbar'
 import { AiSettingsModal } from './components/ui/AiSettingsModal'
 import { EditorPanel } from './components/editor/EditorPanel'
@@ -13,9 +13,34 @@ export default function App() {
   const coverLetter = useResumeStore((s) => s.coverLetter)
   const template = useResumeStore((s) => s.template)
   const docType = useResumeStore((s) => s.docType)
+  const undo = useResumeStore((s) => s.undo)
+  const redo = useResumeStore((s) => s.redo)
   const pageRef = useRef<HTMLDivElement>(null)
 
   const theme = TEMPLATES[template]
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const el = document.activeElement
+      const typing =
+        el instanceof HTMLElement &&
+        (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)
+      if (typing) return
+      if (!(event.ctrlKey || event.metaKey)) return
+
+      const key = event.key.toLowerCase()
+      if (key === 'z') {
+        event.preventDefault()
+        if (event.shiftKey) redo()
+        else undo()
+      } else if (key === 'y') {
+        event.preventDefault()
+        redo()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [undo, redo])
 
   return (
     <div className="min-h-screen">

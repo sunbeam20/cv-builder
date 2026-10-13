@@ -7,8 +7,10 @@ import {
   Image,
   KeyRound,
   Printer,
+  Redo2,
   RotateCcw,
   Sparkles,
+  Undo2,
   Upload,
 } from 'lucide-react'
 import { useResumeStore } from '../store/resumeStore'
@@ -40,6 +42,10 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   const loadSample = useResumeStore((s) => s.loadSample)
   const reset = useResumeStore((s) => s.reset)
   const openAiSettings = useResumeStore((s) => s.openAiSettings)
+  const undo = useResumeStore((s) => s.undo)
+  const redo = useResumeStore((s) => s.redo)
+  const canUndo = useResumeStore((s) => s.past.length > 0)
+  const canRedo = useResumeStore((s) => s.future.length > 0)
   const [busy, setBusy] = useState<Busy>(null)
   const [error, setError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -116,6 +122,28 @@ export function Toolbar({ pageRef }: ToolbarProps) {
             </button>
           </div>
           <TemplatePicker />
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              aria-label="Undo"
+              title="Undo (Ctrl+Z)"
+              onClick={undo}
+              disabled={!canUndo}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Undo2 size={15} />
+            </button>
+            <button
+              type="button"
+              aria-label="Redo"
+              title="Redo (Ctrl+Shift+Z)"
+              onClick={redo}
+              disabled={!canRedo}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Redo2 size={15} />
+            </button>
+          </div>
         </div>
 
         <button

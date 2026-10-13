@@ -10,8 +10,9 @@ browser (`localStorage`).
 - **Cover letter** tab with a "Generate from résumé" draft and matching PDF/DOCX/PNG export
 - Live A4 preview that scales to fit the viewport, with **automatic multi-page pagination** and page indicators (PDF adds "Page x of y" footers)
 - Six templates: **ATS Classic**, **Modern Accent**, **Elegant Serif**, **Teal Accent**, **Technical Mono**, **Burgundy Serif** — each with matching PDF/DOCX fonts, chosen from a thumbnail picker
-- Drag-and-drop reordering for both sections and individual entries (order flows through preview, PDF, and DOCX)
+- Drag-and-drop reordering for sections, entries, links, and bullet points (order flows through preview, PDF, and DOCX)
 - Show/hide any section to tailor the CV per application
+- Undo/redo for resume edits (toolbar buttons and `Ctrl/Cmd+Z` / `Ctrl/Cmd+Shift+Z`)
 - Single-column, semantic layout optimized for applicant tracking systems
 - Export to PDF (real selectable text), DOCX, and PNG
 - Optional **AI assist**: one-click "Improve" on your summary, bullet points, and cover-letter body via any OpenAI-compatible endpoint

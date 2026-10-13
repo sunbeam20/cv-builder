@@ -4,10 +4,17 @@ import { uid } from '../../lib/helpers'
 import { Field, TextArea, TextInput } from '../ui/inputs'
 import { SectionCard } from '../ui/SectionCard'
 import { AiButton } from '../ui/AiButton'
+import { SortableItem, SortableList } from '../ui/SortableList'
 
 export function ProfileForm() {
   const profile = useResumeStore((s) => s.resume.profile)
   const update = useResumeStore((s) => s.update)
+
+  const reorderLinks = (from: number, to: number) =>
+    update((d) => {
+      const [item] = d.profile.links.splice(from, 1)
+      d.profile.links.splice(to, 0, item)
+    })
 
   return (
     <SectionCard title="Personal details">
@@ -92,44 +99,58 @@ export function ProfileForm() {
             Add link
           </button>
         </div>
-        <div className="flex flex-col gap-2">
-          {profile.links.map((link, index) => (
-            <div key={link.id} className="flex items-end gap-2">
-              <Field label="Label" className="w-32 shrink-0">
-                <TextInput
-                  value={link.label}
-                  placeholder="LinkedIn"
-                  onChange={(e) =>
-                    update((d) => void (d.profile.links[index].label = e.target.value))
-                  }
-                />
-              </Field>
-              <Field label="URL" className="flex-1">
-                <TextInput
-                  value={link.url}
-                  placeholder="linkedin.com/in/you"
-                  onChange={(e) => update((d) => void (d.profile.links[index].url = e.target.value))}
-                />
-              </Field>
-              <button
-                type="button"
-                title="Remove link"
-                aria-label="Remove link"
-                onClick={() =>
-                  update((d) => {
-                    d.profile.links.splice(index, 1)
-                  })
-                }
-                className="mb-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
-              >
-                <X size={14} />
-              </button>
+        {profile.links.length === 0 ? (
+          <p className="text-xs text-slate-400">No links yet.</p>
+        ) : (
+          <SortableList ids={profile.links.map((l) => l.id)} onReorder={reorderLinks}>
+            <div className="flex flex-col gap-2">
+              {profile.links.map((link, index) => (
+                <SortableItem
+                  key={link.id}
+                  id={link.id}
+                  label={link.label || link.url || 'link'}
+                >
+                  {(handle) => (
+                    <div className="flex items-end gap-2">
+                      <div className="mb-0.5">{handle}</div>
+                      <Field label="Label" className="w-32 shrink-0">
+                        <TextInput
+                          value={link.label}
+                          placeholder="LinkedIn"
+                          onChange={(e) =>
+                            update((d) => void (d.profile.links[index].label = e.target.value))
+                          }
+                        />
+                      </Field>
+                      <Field label="URL" className="flex-1">
+                        <TextInput
+                          value={link.url}
+                          placeholder="linkedin.com/in/you"
+                          onChange={(e) =>
+                            update((d) => void (d.profile.links[index].url = e.target.value))
+                          }
+                        />
+                      </Field>
+                      <button
+                        type="button"
+                        title="Remove link"
+                        aria-label="Remove link"
+                        onClick={() =>
+                          update((d) => {
+                            d.profile.links.splice(index, 1)
+                          })
+                        }
+                        className="mb-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
+                </SortableItem>
+              ))}
             </div>
-          ))}
-          {profile.links.length === 0 ? (
-            <p className="text-xs text-slate-400">No links yet.</p>
-          ) : null}
-        </div>
+          </SortableList>
+        )}
       </div>
     </SectionCard>
   )

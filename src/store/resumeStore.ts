@@ -11,6 +11,10 @@ import { sampleResume } from '../lib/sampleData'
 
 const initialResume = sampleResume()
 
+const HISTORY_LIMIT = 60
+const COALESCE_MS = 400
+let lastEditAt = 0
+
 interface ResumeState {
   resume: Resume
   coverLetter: CoverLetter
@@ -18,10 +22,14 @@ interface ResumeState {
   docType: DocType
   ai: AiSettings
   aiSettingsOpen: boolean
+  past: Resume[]
+  future: Resume[]
   update: (recipe: (draft: Draft<Resume>) => void) => void
   replace: (resume: Resume) => void
   loadSample: () => void
   reset: () => void
+  undo: () => void
+  redo: () => void
   setTemplate: (template: TemplateId) => void
   setDocType: (docType: DocType) => void
   moveSection: (from: number, to: number) => void
@@ -35,78 +43,139 @@ interface ResumeState {
 
 export const useResumeStore = create<ResumeState>()(
   persist(
-    immer((set) => ({
-      resume: initialResume,
-      coverLetter: emptyCoverLetter(initialResume.profile),
-      template: 'ats',
-      docType: 'resume',
-      ai: { ...DEFAULT_AI_SETTINGS },
-      aiSettingsOpen: false,
-      update: (recipe) =>
+    immer((set, get) => {
+      const applyResumeEdit = (
+        mutator: (draft: Draft<Resume>) => void,
+        coalesce = false,
+      ) => {
+        const prev = get().resume
         set((state) => {
-          recipe(state.resume)
-        }),
-      replace: (resume) =>
+          const now = Date.now()
+          if (!coalesce || now - lastEditAt > COALESCE_MS) {
+            state.past.push(prev)
+            if (state.past.length > HISTORY_LIMIT) state.past.shift()
+          }
+          lastEditAt = now
+          state.future.length = 0
+          mutator(state.resume)
+        })
+      }
+
+      const clearHistory = () => {
+        lastEditAt = 0
         set((state) => {
-          state.resume = resume
-        }),
-      loadSample: () =>
-        set((state) => {
-          const next = sampleResume()
-          state.resume = next
-          state.coverLetter = emptyCoverLetter(next.profile)
-        }),
-      reset: () =>
-        set((state) => {
-          const next = emptyResume() as Resume
-          state.resume = next
-          state.coverLetter = emptyCoverLetter(next.profile)
-        }),
-      setTemplate: (template) =>
-        set((state) => {
-          state.template = template
-        }),
-      setDocType: (docType) =>
-        set((state) => {
-          state.docType = docType
-        }),
-      moveSection: (from, to) =>
-        set((state) => {
-          const order = state.resume.sectionOrder
-          if (from === to || from < 0 || to < 0 || from >= order.length || to >= order.length) {
+          state.past.length = 0
+          state.future.length = 0
+        })
+      }
+
+      return {
+        resume: initialResume,
+        coverLetter: emptyCoverLetter(initialResume.profile),
+        template: 'ats',
+        docType: 'resume',
+        ai: { ...DEFAULT_AI_SETTINGS },
+        aiSettingsOpen: false,
+        past: [],
+        future: [],
+        update: (recipe) => applyResumeEdit(recipe, true),
+        replace: (resume) => {
+          set((state) => {
+            state.resume = resume
+          })
+          clearHistory()
+        },
+        loadSample: () => {
+          set((state) => {
+            const next = sampleResume()
+            state.resume = next
+            state.coverLetter = emptyCoverLetter(next.profile)
+          })
+          clearHistory()
+        },
+        reset: () => {
+          set((state) => {
+            const next = emptyResume() as Resume
+            state.resume = next
+            state.coverLetter = emptyCoverLetter(next.profile)
+          })
+          clearHistory()
+        },
+        undo: () => {
+          const { past } = get()
+          if (past.length === 0) return
+          lastEditAt = 0
+          set((state) => {
+            const previous = state.past.pop()
+            if (!previous) return
+            state.future.push(state.resume)
+            state.resume = previous
+          })
+        },
+        redo: () => {
+          const { future } = get()
+          if (future.length === 0) return
+          lastEditAt = 0
+          set((state) => {
+            const next = state.future.pop()
+            if (!next) return
+            state.past.push(state.resume)
+            state.resume = next
+          })
+        },
+        setTemplate: (template) =>
+          set((state) => {
+            state.template = template
+          }),
+        setDocType: (docType) =>
+          set((state) => {
+            state.docType = docType
+          }),
+        moveSection: (from, to) => {
+          const { sectionOrder } = get().resume
+          if (
+            from === to ||
+            from < 0 ||
+            to < 0 ||
+            from >= sectionOrder.length ||
+            to >= sectionOrder.length
+          ) {
             return
           }
-          const [item] = order.splice(from, 1)
-          order.splice(to, 0, item)
-        }),
-      toggleSection: (id) =>
-        set((state) => {
-          const hidden = state.resume.hiddenSections
-          const index = hidden.indexOf(id)
-          if (index === -1) hidden.push(id)
-          else hidden.splice(index, 1)
-        }),
-      updateCoverLetter: (recipe) =>
-        set((state) => {
-          recipe(state.coverLetter)
-        }),
-      setCoverLetter: (letter) =>
-        set((state) => {
-          state.coverLetter = letter
-        }),
-      setAi: (patch) =>
-        set((state) => {
-          Object.assign(state.ai, patch)
-        }),
-      openAiSettings: () =>
-        set((state) => {
-          state.aiSettingsOpen = true
-        }),
-      closeAiSettings: () =>
-        set((state) => {
-          state.aiSettingsOpen = false
-        }),
-    })),
+          applyResumeEdit((draft) => {
+            const [item] = draft.sectionOrder.splice(from, 1)
+            draft.sectionOrder.splice(to, 0, item)
+          })
+        },
+        toggleSection: (id) =>
+          applyResumeEdit((draft) => {
+            const hidden = draft.hiddenSections
+            const index = hidden.indexOf(id)
+            if (index === -1) hidden.push(id)
+            else hidden.splice(index, 1)
+          }),
+        updateCoverLetter: (recipe) =>
+          set((state) => {
+            recipe(state.coverLetter)
+          }),
+        setCoverLetter: (letter) =>
+          set((state) => {
+            state.coverLetter = letter
+          }),
+        setAi: (patch) =>
+          set((state) => {
+            Object.assign(state.ai, patch)
+          }),
+        openAiSettings: () =>
+          set((state) => {
+            state.aiSettingsOpen = true
+          }),
+        closeAiSettings: () =>
+          set((state) => {
+            state.aiSettingsOpen = false
+          }),
+      }
+    }),
     {
       name: 'cv-builder-v1',
       version: 3,
