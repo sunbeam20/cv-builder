@@ -4,6 +4,7 @@ import {
   Download,
   FileText,
   FileType,
+  Home,
   Image,
   KeyRound,
   Palette,
@@ -19,6 +20,8 @@ import { bundleSchema, resumeSchema } from '../lib/schema'
 import { downloadBlob, slug } from '../lib/helpers'
 import { isTemplateId } from '../lib/templates'
 import { useResolvedTheme } from '../lib/useResolvedTheme'
+import { navigate } from '../home/routes'
+import { BRAND } from '../home/config'
 import type { DocType } from '../types'
 import { TemplatePicker } from './ui/TemplatePicker'
 
@@ -121,7 +124,22 @@ export function Toolbar({ pageRef }: ToolbarProps) {
     <div className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur no-print">
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-2 px-4 py-2.5">
         <div className="mr-auto flex items-center gap-2">
-          <span className="text-sm font-semibold text-slate-800">CV Builder</span>
+          <button
+            type="button"
+            aria-label={`Go to ${BRAND} home`}
+            title="All tools"
+            onClick={() => navigate('home')}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+          >
+            <Home size={15} />
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('home')}
+            className="text-sm font-semibold text-slate-800 hover:text-indigo-700"
+          >
+            CV Builder
+          </button>
           <div className="flex rounded-md border border-slate-200 p-0.5">
             {TABS.map((tab) => {
               const active = docType === tab.id

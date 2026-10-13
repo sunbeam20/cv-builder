@@ -1,5 +1,10 @@
 # CV Builder
 
+The CV Builder is one tool inside **Tinker Tools**, a growing hub of free, browser-first tools
+served from a single static site. The landing page (`#/`) shows all tools and upcoming ones; the
+CV Builder lives at `#/cv-builder` via a zero-dependency hash router. Add a future tool by
+dropping an entry into `src/home/tools.ts` and a route case in `src/home/routes.ts`.
+
 A fully client-side CV/resume and cover-letter builder with a live A4 preview and
 **ATS-friendly** export to **PDF, DOCX, and PNG**. No backend — all data stays in your
 browser (`localStorage`).
