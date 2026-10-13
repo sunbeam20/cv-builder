@@ -7,11 +7,13 @@ import { CertificationsForm } from './CertificationsForm'
 import { LanguagesForm } from './LanguagesForm'
 import { SectionsPanel } from './SectionsPanel'
 import { CompletenessCard } from './CompletenessCard'
+import { JDMatcher } from './JDMatcher'
 
 export function EditorPanel() {
   return (
     <div className="flex flex-col gap-4">
       <CompletenessCard />
+      <JDMatcher />
       <SectionsPanel />
       <ProfileForm />
       <ExperienceForm />

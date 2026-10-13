@@ -8,6 +8,7 @@ browser (`localStorage`).
 
 - Structured form editor (personal details, experience, education, skills, projects, certifications, languages)
 - **Résumé strength** meter highlighting what to add next
+- **Job match** card — paste a job description (plus optional extra keywords) to see which extracted keywords your résumé already covers, copy the missing ones, or add them straight to your skills as a group
 - **Cover letter** tab with a "Generate from résumé" draft and matching PDF/DOCX/PNG export
 - **Application tracker** tab: wishlist → applied → interview → offer → rejected, with notes and CSV export
 - Live A4 preview that scales to fit the viewport, with **automatic multi-page pagination** and page indicators (PDF adds "Page x of y" footers)
