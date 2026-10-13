@@ -18,24 +18,36 @@ const CONTENT_WIDTH = 9026
 
 const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 
-const heading = (
-  text: string,
-  accent: string,
-  size = 22,
-  characterSpacing = 30,
-  before = 220,
-) =>
+interface HeadingOpts {
+  color: string
+  borderColor: string
+  size: number
+  characterSpacing: number
+  bold: boolean
+  borderSize: number
+  hasRule: boolean
+  before: number
+}
+
+const heading = (text: string, o: HeadingOpts) =>
   new Paragraph({
     heading: HeadingLevel.HEADING_2,
-    spacing: { before, after: 80 },
-    border: { bottom: { color: accent, size: 6, style: BorderStyle.SINGLE, space: 2 } },
+    spacing: { before: o.before, after: 80 },
+    border: {
+      bottom: {
+        color: o.borderColor,
+        size: o.hasRule ? o.borderSize : 0,
+        style: o.hasRule ? BorderStyle.SINGLE : BorderStyle.NONE,
+        space: 2,
+      },
+    },
     children: [
       new TextRun({
-        text: text.toUpperCase(),
-        bold: true,
-        size,
-        characterSpacing,
-        color: accent,
+        text,
+        bold: o.bold,
+        size: o.size,
+        characterSpacing: o.characterSpacing,
+        color: o.color,
       }),
     ],
   })
@@ -92,8 +104,25 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
   const glyph = BULLET_GLYPH[theme.bulletStyle]
   const headingSize = fs(Math.round(22 * theme.headingScale))
   const headingTracking = Math.round(theme.headingTracking * (headingSize / 2) * 20)
-  const headingFor = (text: string) =>
-    heading(text, accent, headingSize, headingTracking, theme.sectionSpacing * 15)
+  const toTitleCase = (text: string) => text.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+  const headingFor = (text: string) => {
+    const display =
+      theme.headingCase === 'uppercase'
+        ? text.toUpperCase()
+        : theme.headingCase === 'capitalize'
+          ? toTitleCase(text)
+          : text
+    return heading(display, {
+      color: accent,
+      borderColor: theme.ruleColor.replace('#', ''),
+      size: headingSize,
+      characterSpacing: headingTracking,
+      bold: theme.headingWeight >= 600,
+      borderSize: Math.max(2, Math.round(theme.ruleThickness * 6)),
+      hasRule: theme.headingRule,
+      before: theme.sectionSpacing * 15,
+    })
+  }
 
   const contactChildren: (TextRun | ExternalHyperlink)[] = []
   const addContact = (node: TextRun | ExternalHyperlink | string) => {
@@ -130,6 +159,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
           text: profile.fullName || 'Your Name',
           bold: true,
           size: fs(Math.round(44 * theme.nameScale)),
+          characterSpacing: Math.round(theme.nameTracking * (fs(Math.round(44 * theme.nameScale)) / 2) * 20),
           color: nameColor,
         }),
       ],

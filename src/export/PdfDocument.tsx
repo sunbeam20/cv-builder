@@ -19,17 +19,23 @@ const makeStyles = (theme: TemplateTheme) => {
       lineHeight: theme.lineHeight,
       color: '#111827',
     },
-    name: { fontSize: s(22 * theme.nameScale), fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
+    name: {
+      fontSize: s(22 * theme.nameScale),
+      fontFamily: theme.pdfFonts.bold,
+      color: theme.nameColor,
+      letterSpacing: theme.nameTracking * s(22 * theme.nameScale),
+    },
     headline: { marginTop: 2, fontSize: s(11.5), color: '#475569' },
     contact: { marginTop: 6, fontSize: s(9), color: '#475569' },
     link: { color: theme.linkColor, textDecoration: 'underline' },
     section: { marginTop: theme.sectionSpacing * 0.75 },
     sectionTitle: {
       fontSize: s(10 * theme.headingScale),
-      fontFamily: theme.pdfFonts.bold,
+      fontFamily: theme.headingWeight >= 600 ? theme.pdfFonts.bold : theme.pdfFonts.regular,
       letterSpacing: theme.headingTracking * s(10 * theme.headingScale),
-      textTransform: 'uppercase',
-      borderBottomWidth: theme.headingRule ? 0.75 : 0,
+      textTransform: theme.headingCase,
+      borderBottomWidth: theme.headingRule ? theme.ruleThickness * 0.75 : 0,
+      borderBottomColor: theme.ruleColor,
       paddingBottom: 3,
       marginBottom: 6,
     },
@@ -83,9 +89,7 @@ function Section({
 }) {
   return (
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: accent, borderBottomColor: accent }]}>
-        {title}
-      </Text>
+      <Text style={[styles.sectionTitle, { color: accent }]}>{title}</Text>
       {children}
     </View>
   )

@@ -1,5 +1,23 @@
 export type TemplateId = 'ats' | 'modern' | 'elegant' | 'teal' | 'mono' | 'burgundy'
 
+export type HeadingCase = 'uppercase' | 'capitalize' | 'none'
+
+export const HEADING_CASES: HeadingCase[] = ['uppercase', 'capitalize', 'none']
+
+export const HEADING_CASE_LABELS: Record<HeadingCase, string> = {
+  uppercase: 'UPPERCASE',
+  capitalize: 'Title Case',
+  none: 'As typed',
+}
+
+export const HEADING_WEIGHTS = [400, 600, 700] as const
+
+export const HEADING_WEIGHT_LABELS: Record<number, string> = {
+  400: 'Normal',
+  600: 'Semibold',
+  700: 'Bold',
+}
+
 export type BulletStyle = 'disc' | 'circle' | 'square' | 'dash' | 'none'
 
 export const BULLET_STYLES: BulletStyle[] = ['disc', 'circle', 'square', 'dash', 'none']
@@ -57,15 +75,34 @@ export interface TemplateTheme {
   sectionSpacing: number
   /** Bullet marker style */
   bulletStyle: BulletStyle
+  /** Text transform for section headings */
+  headingCase: HeadingCase
+  /** Font weight for section headings (400/600/700) */
+  headingWeight: number
+  /** Colour of the rule under section headings */
+  ruleColor: string
+  /** Rule thickness in px */
+  ruleThickness: number
+  /** Letter spacing for the name, in em */
+  nameTracking: number
   accentBar: boolean
   /** Draw a rule under section headings */
   headingRule: boolean
 }
 
+const TYPO_DEFAULTS = {
+  headingCase: 'uppercase',
+  headingWeight: 700,
+  ruleThickness: 1,
+  nameTracking: 0,
+} as const
+
 export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   ats: {
     id: 'ats',
     name: 'ATS Classic',
+    ruleColor: '#0f172a',
+    ...TYPO_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 16,
@@ -92,6 +129,8 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   modern: {
     id: 'modern',
     name: 'Modern Accent',
+    ruleColor: '#4f46e5',
+    ...TYPO_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 16,
@@ -118,6 +157,8 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   elegant: {
     id: 'elegant',
     name: 'Elegant Serif',
+    ruleColor: '#334155',
+    ...TYPO_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 18,
@@ -144,6 +185,8 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   teal: {
     id: 'teal',
     name: 'Teal Accent',
+    ruleColor: '#0d9488',
+    ...TYPO_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 16,
@@ -170,6 +213,8 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   mono: {
     id: 'mono',
     name: 'Technical Mono',
+    ruleColor: '#334155',
+    ...TYPO_DEFAULTS,
     nameScale: 1,
     headingScale: 1,
     sectionSpacing: 16,
@@ -196,6 +241,8 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   burgundy: {
     id: 'burgundy',
     name: 'Burgundy Serif',
+    ruleColor: '#9f1239',
+    ...TYPO_DEFAULTS,
     nameScale: 1.05,
     headingScale: 1.05,
     sectionSpacing: 18,
@@ -321,6 +368,11 @@ export interface Customization {
   headingScale?: number
   sectionSpacing?: number
   bulletStyle?: BulletStyle
+  headingCase?: HeadingCase
+  headingWeight?: number
+  ruleColor?: string
+  ruleThickness?: number
+  nameTracking?: number
   accent?: string
   nameColor?: string
   linkColor?: string
@@ -344,6 +396,10 @@ export const HEADING_SCALE_MIN = 0.7
 export const HEADING_SCALE_MAX = 1.6
 export const SECTION_SPACING_MIN = 8
 export const SECTION_SPACING_MAX = 32
+export const RULE_THICKNESS_MIN = 0.5
+export const RULE_THICKNESS_MAX = 3
+export const NAME_TRACKING_MIN = -0.05
+export const NAME_TRACKING_MAX = 0.2
 
 export function resolveTheme(base: TemplateTheme, custom: Customization = {}): TemplateTheme {
   const font = custom.fontId ? FONT_OPTIONS.find((f) => f.id === custom.fontId) : undefined
@@ -364,6 +420,11 @@ export function resolveTheme(base: TemplateTheme, custom: Customization = {}): T
     headingScale: custom.headingScale ?? base.headingScale,
     sectionSpacing: custom.sectionSpacing ?? base.sectionSpacing,
     bulletStyle: custom.bulletStyle ?? base.bulletStyle,
+    headingCase: custom.headingCase ?? base.headingCase,
+    headingWeight: custom.headingWeight ?? base.headingWeight,
+    ruleColor: custom.ruleColor ?? base.ruleColor,
+    ruleThickness: custom.ruleThickness ?? base.ruleThickness,
+    nameTracking: custom.nameTracking ?? base.nameTracking,
     accentBar: custom.accentBar ?? base.accentBar,
     headingRule: custom.headingRule ?? base.headingRule,
   }

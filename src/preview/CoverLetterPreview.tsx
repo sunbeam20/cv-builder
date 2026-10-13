@@ -62,8 +62,12 @@ export function CoverLetterPage({ letter, profile, pageRef, theme }: Props) {
       ) : null}
       <header>
         <h1
-          className="font-bold leading-tight tracking-tight"
-          style={{ fontSize: em(24 * theme.nameScale), color: theme.nameColor }}
+          className="font-bold leading-tight"
+          style={{
+            fontSize: em(24 * theme.nameScale),
+            letterSpacing: `${theme.nameTracking}em`,
+            color: theme.nameColor,
+          }}
         >
           {profile.fullName || 'Your Name'}
         </h1>

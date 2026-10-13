@@ -4,6 +4,10 @@ import {
   BULLET_LABELS,
   BULLET_STYLES,
   FONT_OPTIONS,
+  HEADING_CASES,
+  HEADING_CASE_LABELS,
+  HEADING_WEIGHTS,
+  HEADING_WEIGHT_LABELS,
   TEMPLATES,
   TEMPLATE_LIST,
   isTemplateId,
@@ -99,5 +103,25 @@ describe('resolveTheme', () => {
       expect(typeof BULLET_GLYPH[style]).toBe('string')
     }
     expect(BULLET_GLYPH.none).toBe('')
+  })
+
+  it('applies heading and name typography overrides', () => {
+    const theme = resolveTheme(TEMPLATES.ats, {
+      headingCase: 'capitalize',
+      headingWeight: 400,
+      ruleColor: '#123456',
+      ruleThickness: 2.5,
+      nameTracking: 0.1,
+    })
+    expect(theme.headingCase).toBe('capitalize')
+    expect(theme.headingWeight).toBe(400)
+    expect(theme.ruleColor).toBe('#123456')
+    expect(theme.ruleThickness).toBe(2.5)
+    expect(theme.nameTracking).toBe(0.1)
+  })
+
+  it('exposes labels for every heading case and weight', () => {
+    for (const value of HEADING_CASES) expect(HEADING_CASE_LABELS[value]).toBeTruthy()
+    for (const weight of HEADING_WEIGHTS) expect(HEADING_WEIGHT_LABELS[weight]).toBeTruthy()
   })
 })

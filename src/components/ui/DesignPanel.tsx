@@ -7,8 +7,12 @@ import {
   FONT_OPTIONS,
   FONT_SIZE_MAX,
   FONT_SIZE_MIN,
+  HEADING_CASE_LABELS,
+  HEADING_CASES,
   HEADING_SCALE_MAX,
   HEADING_SCALE_MIN,
+  HEADING_WEIGHTS,
+  HEADING_WEIGHT_LABELS,
   LINE_HEIGHT_MAX,
   LINE_HEIGHT_MIN,
   MARGIN_X_MAX,
@@ -17,13 +21,17 @@ import {
   MARGIN_Y_MIN,
   NAME_SCALE_MAX,
   NAME_SCALE_MIN,
+  NAME_TRACKING_MAX,
+  NAME_TRACKING_MIN,
+  RULE_THICKNESS_MAX,
+  RULE_THICKNESS_MIN,
   SECTION_SPACING_MAX,
   SECTION_SPACING_MIN,
   TEMPLATES,
   TRACKING_MAX,
   TRACKING_MIN,
 } from '../../lib/templates'
-import type { BulletStyle } from '../../lib/templates'
+import type { BulletStyle, HeadingCase } from '../../lib/templates'
 import { Field } from './inputs'
 
 function SliderField({
@@ -203,6 +211,57 @@ export function DesignPanel() {
                 ))}
               </select>
             </label>
+            <SliderField
+              label="Name letter spacing"
+              display={`${theme.nameTracking.toFixed(2)}em`}
+              value={theme.nameTracking}
+              min={NAME_TRACKING_MIN}
+              max={NAME_TRACKING_MAX}
+              step={0.01}
+              onChange={(nameTracking) => setCustomization({ nameTracking })}
+            />
+          </div>
+
+          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3">
+            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600">
+              Heading case
+              <select
+                aria-label="Heading case"
+                value={theme.headingCase}
+                onChange={(e) => setCustomization({ headingCase: e.target.value as HeadingCase })}
+                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+              >
+                {HEADING_CASES.map((value) => (
+                  <option key={value} value={value}>
+                    {HEADING_CASE_LABELS[value]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600">
+              Heading weight
+              <select
+                aria-label="Heading weight"
+                value={theme.headingWeight}
+                onChange={(e) => setCustomization({ headingWeight: Number(e.target.value) })}
+                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+              >
+                {HEADING_WEIGHTS.map((weight) => (
+                  <option key={weight} value={weight}>
+                    {HEADING_WEIGHT_LABELS[weight]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <SliderField
+              label="Rule thickness"
+              display={`${theme.ruleThickness.toFixed(1)}px`}
+              value={theme.ruleThickness}
+              min={RULE_THICKNESS_MIN}
+              max={RULE_THICKNESS_MAX}
+              step={0.5}
+              onChange={(ruleThickness) => setCustomization({ ruleThickness })}
+            />
           </div>
 
           <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3">
@@ -259,6 +318,11 @@ export function DesignPanel() {
               label="Links"
               value={theme.linkColor}
               onChange={(linkColor) => setCustomization({ linkColor })}
+            />
+            <ColorField
+              label="Heading rule"
+              value={theme.ruleColor}
+              onChange={(ruleColor) => setCustomization({ ruleColor })}
             />
           </div>
 

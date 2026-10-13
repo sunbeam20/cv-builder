@@ -28,12 +28,16 @@ const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url :
 function SectionTitle({ children, theme }: { children: ReactNode; theme: TemplateTheme }) {
   return (
     <h2
-      className={`mb-2 font-bold uppercase ${theme.headingRule ? 'border-b pb-1' : ''}`}
+      className={`mb-2 ${theme.headingRule ? 'pb-1' : ''}`}
       style={{
         fontSize: em(11 * theme.headingScale),
         letterSpacing: `${theme.headingTracking}em`,
+        fontWeight: theme.headingWeight,
+        textTransform: theme.headingCase,
         color: theme.accent,
-        ...(theme.headingRule ? { borderColor: theme.accent } : {}),
+        ...(theme.headingRule
+          ? { borderBottom: `${theme.ruleThickness}px solid ${theme.ruleColor}` }
+          : {}),
       }}
     >
       {children}
@@ -280,8 +284,12 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
       ) : null}
       <header>
         <h1
-          className="font-bold leading-tight tracking-tight"
-          style={{ fontSize: em(26 * theme.nameScale), color: theme.nameColor }}
+          className="font-bold leading-tight"
+          style={{
+            fontSize: em(26 * theme.nameScale),
+            letterSpacing: `${theme.nameTracking}em`,
+            color: theme.nameColor,
+          }}
         >
           {profile.fullName || 'Your Name'}
         </h1>

@@ -56,6 +56,7 @@ export async function exportCoverLetterDocx(
           text: profile.fullName || 'Your Name',
           bold: true,
           size: fs(Math.round(44 * theme.nameScale)),
+          characterSpacing: Math.round(theme.nameTracking * (fs(Math.round(44 * theme.nameScale)) / 2) * 20),
           color: theme.nameColor.replace('#', ''),
         }),
       ],
