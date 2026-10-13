@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
+  BULLET_GLYPH,
+  BULLET_LABELS,
+  BULLET_STYLES,
   FONT_OPTIONS,
   TEMPLATES,
   TEMPLATE_LIST,
@@ -75,5 +78,26 @@ describe('resolveTheme', () => {
     expect(theme.pageMarginX).toBe(40)
     expect(theme.lineHeight).toBe(1.6)
     expect(theme.headingTracking).toBe(0.2)
+  })
+
+  it('applies typography and bullet overrides', () => {
+    const theme = resolveTheme(TEMPLATES.ats, {
+      nameScale: 1.2,
+      headingScale: 0.9,
+      sectionSpacing: 24,
+      bulletStyle: 'dash',
+    })
+    expect(theme.nameScale).toBe(1.2)
+    expect(theme.headingScale).toBe(0.9)
+    expect(theme.sectionSpacing).toBe(24)
+    expect(theme.bulletStyle).toBe('dash')
+  })
+
+  it('provides a glyph for every bullet style', () => {
+    for (const style of BULLET_STYLES) {
+      expect(BULLET_LABELS[style]).toBeTruthy()
+      expect(typeof BULLET_GLYPH[style]).toBe('string')
+    }
+    expect(BULLET_GLYPH.none).toBe('')
   })
 })

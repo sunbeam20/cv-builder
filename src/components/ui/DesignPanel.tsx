@@ -2,19 +2,28 @@ import { Palette, RotateCcw, X } from 'lucide-react'
 import { useResumeStore } from '../../store/resumeStore'
 import { useResolvedTheme } from '../../lib/useResolvedTheme'
 import {
+  BULLET_LABELS,
+  BULLET_STYLES,
   FONT_OPTIONS,
   FONT_SIZE_MAX,
   FONT_SIZE_MIN,
+  HEADING_SCALE_MAX,
+  HEADING_SCALE_MIN,
   LINE_HEIGHT_MAX,
   LINE_HEIGHT_MIN,
   MARGIN_X_MAX,
   MARGIN_X_MIN,
   MARGIN_Y_MAX,
   MARGIN_Y_MIN,
+  NAME_SCALE_MAX,
+  NAME_SCALE_MIN,
+  SECTION_SPACING_MAX,
+  SECTION_SPACING_MIN,
   TEMPLATES,
   TRACKING_MAX,
   TRACKING_MIN,
 } from '../../lib/templates'
+import type { BulletStyle } from '../../lib/templates'
 import { Field } from './inputs'
 
 function SliderField({
@@ -150,6 +159,51 @@ export function DesignPanel() {
             step={1}
             onChange={(baseFontSize) => setCustomization({ baseFontSize })}
           />
+
+          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3">
+            <SliderField
+              label="Name size"
+              display={`${Math.round(theme.nameScale * 100)}%`}
+              value={theme.nameScale}
+              min={NAME_SCALE_MIN}
+              max={NAME_SCALE_MAX}
+              step={0.05}
+              onChange={(nameScale) => setCustomization({ nameScale })}
+            />
+            <SliderField
+              label="Heading size"
+              display={`${Math.round(theme.headingScale * 100)}%`}
+              value={theme.headingScale}
+              min={HEADING_SCALE_MIN}
+              max={HEADING_SCALE_MAX}
+              step={0.05}
+              onChange={(headingScale) => setCustomization({ headingScale })}
+            />
+            <SliderField
+              label="Section spacing"
+              display={`${theme.sectionSpacing}px`}
+              value={theme.sectionSpacing}
+              min={SECTION_SPACING_MIN}
+              max={SECTION_SPACING_MAX}
+              step={1}
+              onChange={(sectionSpacing) => setCustomization({ sectionSpacing })}
+            />
+            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600">
+              Bullet style
+              <select
+                aria-label="Bullet style"
+                value={theme.bulletStyle}
+                onChange={(e) => setCustomization({ bulletStyle: e.target.value as BulletStyle })}
+                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+              >
+                {BULLET_STYLES.map((style) => (
+                  <option key={style} value={style}>
+                    {BULLET_LABELS[style]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
 
           <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3">
             <SliderField

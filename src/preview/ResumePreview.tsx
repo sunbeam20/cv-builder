@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode, RefObject } from 'react'
 import type { Resume, SectionId } from '../types'
 import type { TemplateTheme } from '../lib/templates'
 import { SECTION_LABELS, formatRange } from '../lib/helpers'
+import { BULLET_GLYPH } from '../lib/templates'
 import { A4_WIDTH, A4_HEIGHT, useFitScale } from './useFitScale'
 
 export { A4_WIDTH, A4_HEIGHT } from './useFitScale'
@@ -29,7 +30,7 @@ function SectionTitle({ children, theme }: { children: ReactNode; theme: Templat
     <h2
       className={`mb-2 font-bold uppercase ${theme.headingRule ? 'border-b pb-1' : ''}`}
       style={{
-        fontSize: em(11),
+        fontSize: em(11 * theme.headingScale),
         letterSpacing: `${theme.headingTracking}em`,
         color: theme.accent,
         ...(theme.headingRule ? { borderColor: theme.accent } : {}),
@@ -40,17 +41,23 @@ function SectionTitle({ children, theme }: { children: ReactNode; theme: Templat
   )
 }
 
-function Bullets({ items }: { items: string[] }) {
+function Bullets({ items, theme }: { items: string[]; theme: TemplateTheme }) {
   const bullets = items.map((b) => b.trim()).filter(Boolean)
   if (bullets.length === 0) return null
+  const glyph = BULLET_GLYPH[theme.bulletStyle]
   return (
-    <ul className="mt-1 list-disc space-y-0.5 pl-4">
+    <div className="mt-1 flex flex-col gap-0.5 pl-1">
       {bullets.map((bullet, i) => (
-        <li key={i} className="text-slate-700" style={{ fontSize: em(11) }}>
-          {bullet}
-        </li>
+        <div key={i} className="flex text-slate-700" style={{ fontSize: em(11) }}>
+          {glyph ? (
+            <span className="mr-1.5 shrink-0" style={{ width: '0.9em' }}>
+              {glyph}
+            </span>
+          ) : null}
+          <span>{bullet}</span>
+        </div>
       ))}
-    </ul>
+    </div>
   )
 }
 
@@ -114,7 +121,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
 
   const sections: Record<SectionId, ReactNode> = {
     summary: profile.summary.trim() ? (
-      <section className="mt-4">
+      <section style={{ marginTop: theme.sectionSpacing }}>
         <SectionTitle theme={theme}>{SECTION_LABELS.summary}</SectionTitle>
         <p className="text-slate-700" style={{ fontSize: em(11) }}>
           {profile.summary}
@@ -124,7 +131,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
 
     experience:
       experience.length > 0 ? (
-        <section className="mt-4">
+        <section style={{ marginTop: theme.sectionSpacing }}>
           <SectionTitle theme={theme}>{SECTION_LABELS.experience}</SectionTitle>
           <div className="flex flex-col gap-3">
             {experience.map((exp) => (
@@ -140,7 +147,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
                 <p className="italic text-slate-600" style={{ fontSize: em(11) }}>
                   {[exp.company, exp.location].map((s) => s.trim()).filter(Boolean).join(', ')}
                 </p>
-                <Bullets items={exp.bullets} />
+                <Bullets items={exp.bullets} theme={theme} />
               </div>
             ))}
           </div>
@@ -149,7 +156,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
 
     education:
       education.length > 0 ? (
-        <section className="mt-4">
+        <section style={{ marginTop: theme.sectionSpacing }}>
           <SectionTitle theme={theme}>{SECTION_LABELS.education}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {education.map((edu) => (
@@ -179,7 +186,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
 
     skills:
       skills.length > 0 ? (
-        <section className="mt-4">
+        <section style={{ marginTop: theme.sectionSpacing }}>
           <SectionTitle theme={theme}>{SECTION_LABELS.skills}</SectionTitle>
           <div className="flex flex-col gap-1">
             {skills.map((group) => (
@@ -196,7 +203,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
 
     projects:
       projects.length > 0 ? (
-        <section className="mt-4">
+        <section style={{ marginTop: theme.sectionSpacing }}>
           <SectionTitle theme={theme}>{SECTION_LABELS.projects}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {projects.map((project) => (
@@ -220,7 +227,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
                     {project.description}
                   </p>
                 ) : null}
-                <Bullets items={project.bullets} />
+                <Bullets items={project.bullets} theme={theme} />
               </div>
             ))}
           </div>
@@ -229,7 +236,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
 
     certifications:
       certifications.length > 0 ? (
-        <section className="mt-4">
+        <section style={{ marginTop: theme.sectionSpacing }}>
           <SectionTitle theme={theme}>{SECTION_LABELS.certifications}</SectionTitle>
           <div className="flex flex-col gap-1">
             {certifications.map((cert) => (
@@ -245,7 +252,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
 
     languages:
       languages.length > 0 ? (
-        <section className="mt-4">
+        <section style={{ marginTop: theme.sectionSpacing }}>
           <SectionTitle theme={theme}>{SECTION_LABELS.languages}</SectionTitle>
           <p className="text-slate-700" style={{ fontSize: em(11) }}>
             {languages
@@ -274,7 +281,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
       <header>
         <h1
           className="font-bold leading-tight tracking-tight"
-          style={{ fontSize: em(26), color: theme.nameColor }}
+          style={{ fontSize: em(26 * theme.nameScale), color: theme.nameColor }}
         >
           {profile.fullName || 'Your Name'}
         </h1>

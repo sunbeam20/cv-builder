@@ -55,7 +55,7 @@ export async function exportCoverLetterDocx(
         new TextRun({
           text: profile.fullName || 'Your Name',
           bold: true,
-          size: fs(44),
+          size: fs(Math.round(44 * theme.nameScale)),
           color: theme.nameColor.replace('#', ''),
         }),
       ],

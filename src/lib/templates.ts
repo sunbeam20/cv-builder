@@ -1,5 +1,26 @@
 export type TemplateId = 'ats' | 'modern' | 'elegant' | 'teal' | 'mono' | 'burgundy'
 
+export type BulletStyle = 'disc' | 'circle' | 'square' | 'dash' | 'none'
+
+export const BULLET_STYLES: BulletStyle[] = ['disc', 'circle', 'square', 'dash', 'none']
+
+export const BULLET_LABELS: Record<BulletStyle, string> = {
+  disc: 'Disc •',
+  circle: 'Circle ◦',
+  square: 'Square ▪',
+  dash: 'Dash –',
+  none: 'None',
+}
+
+/** Glyph rendered before each bullet in preview/PDF for a given style. */
+export const BULLET_GLYPH: Record<BulletStyle, string> = {
+  disc: '\u2022',
+  circle: '\u25E6',
+  square: '\u25AA',
+  dash: '\u2013',
+  none: '',
+}
+
 export interface TemplateTheme {
   id: TemplateId
   name: string
@@ -28,6 +49,14 @@ export interface TemplateTheme {
   lineHeight: number
   /** Letter spacing for section headings, in em */
   headingTracking: number
+  /** Multiplier applied to the name size */
+  nameScale: number
+  /** Multiplier applied to section heading sizes */
+  headingScale: number
+  /** Vertical space above each section, in px */
+  sectionSpacing: number
+  /** Bullet marker style */
+  bulletStyle: BulletStyle
   accentBar: boolean
   /** Draw a rule under section headings */
   headingRule: boolean
@@ -37,6 +66,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   ats: {
     id: 'ats',
     name: 'ATS Classic',
+    nameScale: 1,
+    headingScale: 1,
+    sectionSpacing: 16,
+    bulletStyle: 'disc',
     fontFamily: 'Helvetica, Arial, sans-serif',
     pdfFonts: {
       regular: 'Helvetica',
@@ -59,6 +92,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   modern: {
     id: 'modern',
     name: 'Modern Accent',
+    nameScale: 1,
+    headingScale: 1,
+    sectionSpacing: 16,
+    bulletStyle: 'disc',
     fontFamily: 'Helvetica, Arial, sans-serif',
     pdfFonts: {
       regular: 'Helvetica',
@@ -81,6 +118,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   elegant: {
     id: 'elegant',
     name: 'Elegant Serif',
+    nameScale: 1,
+    headingScale: 1,
+    sectionSpacing: 18,
+    bulletStyle: 'circle',
     fontFamily: 'Georgia, "Times New Roman", Times, serif',
     pdfFonts: {
       regular: 'Times-Roman',
@@ -103,6 +144,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   teal: {
     id: 'teal',
     name: 'Teal Accent',
+    nameScale: 1,
+    headingScale: 1,
+    sectionSpacing: 16,
+    bulletStyle: 'disc',
     fontFamily: 'Helvetica, Arial, sans-serif',
     pdfFonts: {
       regular: 'Helvetica',
@@ -125,6 +170,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   mono: {
     id: 'mono',
     name: 'Technical Mono',
+    nameScale: 1,
+    headingScale: 1,
+    sectionSpacing: 16,
+    bulletStyle: 'square',
     fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
     pdfFonts: {
       regular: 'Courier',
@@ -147,6 +196,10 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
   burgundy: {
     id: 'burgundy',
     name: 'Burgundy Serif',
+    nameScale: 1.05,
+    headingScale: 1.05,
+    sectionSpacing: 18,
+    bulletStyle: 'disc',
     fontFamily: '"Palatino Linotype", Palatino, Georgia, serif',
     pdfFonts: {
       regular: 'Times-Roman',
@@ -264,6 +317,10 @@ export interface Customization {
   pageMarginX?: number
   lineHeight?: number
   headingTracking?: number
+  nameScale?: number
+  headingScale?: number
+  sectionSpacing?: number
+  bulletStyle?: BulletStyle
   accent?: string
   nameColor?: string
   linkColor?: string
@@ -281,6 +338,12 @@ export const LINE_HEIGHT_MIN = 1.2
 export const LINE_HEIGHT_MAX = 1.8
 export const TRACKING_MIN = 0
 export const TRACKING_MAX = 0.3
+export const NAME_SCALE_MIN = 0.7
+export const NAME_SCALE_MAX = 1.6
+export const HEADING_SCALE_MIN = 0.7
+export const HEADING_SCALE_MAX = 1.6
+export const SECTION_SPACING_MIN = 8
+export const SECTION_SPACING_MAX = 32
 
 export function resolveTheme(base: TemplateTheme, custom: Customization = {}): TemplateTheme {
   const font = custom.fontId ? FONT_OPTIONS.find((f) => f.id === custom.fontId) : undefined
@@ -297,6 +360,10 @@ export function resolveTheme(base: TemplateTheme, custom: Customization = {}): T
     pageMarginX: custom.pageMarginX ?? base.pageMarginX,
     lineHeight: custom.lineHeight ?? base.lineHeight,
     headingTracking: custom.headingTracking ?? base.headingTracking,
+    nameScale: custom.nameScale ?? base.nameScale,
+    headingScale: custom.headingScale ?? base.headingScale,
+    sectionSpacing: custom.sectionSpacing ?? base.sectionSpacing,
+    bulletStyle: custom.bulletStyle ?? base.bulletStyle,
     accentBar: custom.accentBar ?? base.accentBar,
     headingRule: custom.headingRule ?? base.headingRule,
   }

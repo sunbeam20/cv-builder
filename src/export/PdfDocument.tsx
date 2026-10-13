@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import type { Resume, SectionId } from '../types'
 import type { TemplateTheme } from '../lib/templates'
 import { SECTION_LABELS, formatRange } from '../lib/helpers'
+import { BULLET_GLYPH } from '../lib/templates'
 
 const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 
@@ -18,15 +19,15 @@ const makeStyles = (theme: TemplateTheme) => {
       lineHeight: theme.lineHeight,
       color: '#111827',
     },
-    name: { fontSize: s(22), fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
+    name: { fontSize: s(22 * theme.nameScale), fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
     headline: { marginTop: 2, fontSize: s(11.5), color: '#475569' },
     contact: { marginTop: 6, fontSize: s(9), color: '#475569' },
     link: { color: theme.linkColor, textDecoration: 'underline' },
-    section: { marginTop: 14 },
+    section: { marginTop: theme.sectionSpacing * 0.75 },
     sectionTitle: {
-      fontSize: s(10),
+      fontSize: s(10 * theme.headingScale),
       fontFamily: theme.pdfFonts.bold,
-      letterSpacing: theme.headingTracking * s(10),
+      letterSpacing: theme.headingTracking * s(10 * theme.headingScale),
       textTransform: 'uppercase',
       borderBottomWidth: theme.headingRule ? 0.75 : 0,
       paddingBottom: 3,
@@ -54,14 +55,14 @@ const makeStyles = (theme: TemplateTheme) => {
 
 type Styles = ReturnType<typeof makeStyles>
 
-function Bullets({ items, styles }: { items: string[]; styles: Styles }) {
+function Bullets({ items, styles, glyph }: { items: string[]; styles: Styles; glyph: string }) {
   const bullets = items.map((b) => b.trim()).filter(Boolean)
   if (bullets.length === 0) return null
   return (
     <View>
       {bullets.map((bullet, i) => (
         <View key={i} style={styles.bulletRow}>
-          <Text style={styles.bulletDot}>{'\u2022'}</Text>
+          {glyph ? <Text style={styles.bulletDot}>{glyph}</Text> : null}
           <Text style={styles.bulletText}>{bullet}</Text>
         </View>
       ))}
@@ -104,6 +105,7 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
   } = resume
 
   const styles = makeStyles(theme)
+  const glyph = BULLET_GLYPH[theme.bulletStyle]
 
   const contactNodes: ReactNode[] = []
   const addContact = (node: ReactNode) => {
@@ -159,7 +161,7 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
               <Text style={styles.subtitle}>
                 {[exp.company, exp.location].map((s) => s.trim()).filter(Boolean).join(', ')}
               </Text>
-              <Bullets items={exp.bullets} styles={styles} />
+              <Bullets items={exp.bullets} styles={styles} glyph={glyph} />
             </View>
           ))}
         </Section>
@@ -214,7 +216,7 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
               {project.description.trim() ? (
                 <Text style={styles.body}>{project.description}</Text>
               ) : null}
-              <Bullets items={project.bullets} styles={styles} />
+              <Bullets items={project.bullets} styles={styles} glyph={glyph} />
             </View>
           ))}
         </Section>

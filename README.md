@@ -12,7 +12,7 @@ browser (`localStorage`).
 - **Application tracker** tab: wishlist → applied → interview → offer → rejected, with notes and CSV export
 - Live A4 preview that scales to fit the viewport, with **automatic multi-page pagination** and page indicators (PDF adds "Page x of y" footers)
 - Six templates: **ATS Classic**, **Modern Accent**, **Elegant Serif**, **Teal Accent**, **Technical Mono**, **Burgundy Serif** — each with matching PDF/DOCX fonts, chosen from a thumbnail picker
-- **Design panel** to override the template: font family (six web-safe faces), base font size (9–13px), page margins (vertical/horizontal), line height, heading letter spacing, accent/name/link colors, and the accent bar / heading rule toggles — applied consistently to preview, PDF, and DOCX
+- **Design panel** to override the template: font family (six web-safe faces), base font size (9–13px), page margins (vertical/horizontal), line height, heading letter spacing, name/heading size, section spacing, bullet style (disc/circle/square/dash/none), accent/name/link colors, and the accent bar / heading rule toggles — applied consistently to preview, PDF, and DOCX
 - **Clickable, colored hyperlinks** for email, website, profile links, and project links in preview, PDF, and DOCX
 - Drag-and-drop reordering for sections, entries, links, and bullet points (order flows through preview, PDF, and DOCX)
 - Show/hide any section to tailor the CV per application

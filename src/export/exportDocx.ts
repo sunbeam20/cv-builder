@@ -12,15 +12,22 @@ import {
 import type { Resume, SectionId } from '../types'
 import type { TemplateTheme } from '../lib/templates'
 import { SECTION_LABELS, downloadBlob, formatRange, slug } from '../lib/helpers'
+import { BULLET_GLYPH } from '../lib/templates'
 
 const CONTENT_WIDTH = 9026
 
 const normalizeUrl = (url: string): string => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 
-const heading = (text: string, accent: string, size = 22, characterSpacing = 30) =>
+const heading = (
+  text: string,
+  accent: string,
+  size = 22,
+  characterSpacing = 30,
+  before = 220,
+) =>
   new Paragraph({
     heading: HeadingLevel.HEADING_2,
-    spacing: { before: 220, after: 80 },
+    spacing: { before, after: 80 },
     border: { bottom: { color: accent, size: 6, style: BorderStyle.SINGLE, space: 2 } },
     children: [
       new TextRun({
@@ -49,16 +56,19 @@ const row = (left: string, right: string) =>
     children: [new TextRun({ text: left, bold: true }), new TextRun({ text: `\t${right}` })],
   })
 
-const bullets = (items: string[]) =>
+const bullets = (items: string[], glyph: string) =>
   items
     .map((b) => b.trim())
     .filter(Boolean)
     .map(
       (text) =>
         new Paragraph({
-          bullet: { level: 0 },
           spacing: { after: 20 },
-          children: [new TextRun({ text })],
+          ...(glyph ? { indent: { left: 260, hanging: 260 } } : {}),
+          children: [
+            ...(glyph ? [new TextRun({ text: `${glyph}  ` })] : []),
+            new TextRun({ text }),
+          ],
         }),
     )
 
@@ -79,9 +89,11 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
   const nameColor = theme.nameColor.replace('#', '')
   const linkColor = theme.linkColor.replace('#', '')
   const fs = (halfPoints: number) => Math.round(halfPoints * (theme.baseFontSize / 11))
-  const headingSize = fs(22)
+  const glyph = BULLET_GLYPH[theme.bulletStyle]
+  const headingSize = fs(Math.round(22 * theme.headingScale))
   const headingTracking = Math.round(theme.headingTracking * (headingSize / 2) * 20)
-  const headingFor = (text: string) => heading(text, accent, headingSize, headingTracking)
+  const headingFor = (text: string) =>
+    heading(text, accent, headingSize, headingTracking, theme.sectionSpacing * 15)
 
   const contactChildren: (TextRun | ExternalHyperlink)[] = []
   const addContact = (node: TextRun | ExternalHyperlink | string) => {
@@ -117,7 +129,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
         new TextRun({
           text: profile.fullName || 'Your Name',
           bold: true,
-          size: fs(44),
+          size: fs(Math.round(44 * theme.nameScale)),
           color: nameColor,
         }),
       ],
@@ -148,7 +160,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
               return [
                 row(exp.role || 'Role', formatRange(exp.start, exp.end, exp.current)),
                 ...(sub ? [line([new TextRun({ text: sub, italics: true })], 40)] : []),
-                ...bullets(exp.bullets),
+                ...bullets(exp.bullets, glyph),
               ]
             }),
           ]
@@ -212,7 +224,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
                 ...(project.description.trim()
                   ? [line([new TextRun({ text: project.description })], 40)]
                   : []),
-                ...bullets(project.bullets),
+                ...bullets(project.bullets, glyph),
               ]
             }),
           ]

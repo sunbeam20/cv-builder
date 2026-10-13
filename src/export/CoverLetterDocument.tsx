@@ -17,7 +17,7 @@ const makeStyles = (theme: TemplateTheme) => {
       lineHeight: theme.lineHeight,
       color: '#334155',
     },
-    name: { fontSize: s(22), fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
+    name: { fontSize: s(22 * theme.nameScale), fontFamily: theme.pdfFonts.bold, color: theme.nameColor },
     headline: { marginTop: 2, fontSize: s(11.5), color: '#475569' },
     contact: { marginTop: 6, fontSize: s(9), color: '#475569' },
     link: { color: theme.linkColor, textDecoration: 'underline' },
