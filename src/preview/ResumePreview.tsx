@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode, RefObject } from 'react'
-import type { Resume } from '../types'
+import type { Resume, SectionId } from '../types'
 import type { TemplateTheme } from '../lib/templates'
-import { formatRange } from '../lib/helpers'
+import { SECTION_LABELS, formatRange } from '../lib/helpers'
 
 export const A4_WIDTH = 794
 export const A4_HEIGHT = 1123
@@ -39,7 +39,16 @@ function Bullets({ items }: { items: string[] }) {
 }
 
 export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
-  const { profile, experience, education, skills, projects, certifications, languages } = resume
+  const {
+    profile,
+    sectionOrder,
+    experience,
+    education,
+    skills,
+    projects,
+    certifications,
+    languages,
+  } = resume
 
   const contactParts = [
     profile.location,
@@ -51,36 +60,18 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
     .map((s) => s.trim())
     .filter(Boolean)
 
-  return (
-    <div ref={pageRef} className="resume-page relative shadow-xl ring-1 ring-slate-200">
-      {theme.accentBar ? (
-        <div className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.accent }} />
-      ) : null}
-      <header>
-        <h1
-          className="text-[26px] font-bold leading-tight tracking-tight"
-          style={{ color: theme.nameColor }}
-        >
-          {profile.fullName || 'Your Name'}
-        </h1>
-        {profile.headline ? (
-          <p className="mt-0.5 text-[13px] font-medium text-slate-600">{profile.headline}</p>
-        ) : null}
-        {contactParts.length > 0 ? (
-          <p className="mt-2 text-[10.5px] text-slate-600">{contactParts.join('  |  ')}</p>
-        ) : null}
-      </header>
+  const sections: Record<SectionId, ReactNode> = {
+    summary: profile.summary.trim() ? (
+      <section className="mt-4">
+        <SectionTitle accent={theme.accent}>{SECTION_LABELS.summary}</SectionTitle>
+        <p className="text-[11px] leading-relaxed text-slate-700">{profile.summary}</p>
+      </section>
+    ) : null,
 
-      {profile.summary.trim() ? (
+    experience:
+      experience.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>Professional Summary</SectionTitle>
-          <p className="text-[11px] leading-relaxed text-slate-700">{profile.summary}</p>
-        </section>
-      ) : null}
-
-      {experience.length > 0 ? (
-        <section className="mt-4">
-          <SectionTitle accent={theme.accent}>Experience</SectionTitle>
+          <SectionTitle accent={theme.accent}>{SECTION_LABELS.experience}</SectionTitle>
           <div className="flex flex-col gap-3">
             {experience.map((exp) => (
               <div key={exp.id}>
@@ -100,11 +91,12 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
             ))}
           </div>
         </section>
-      ) : null}
+      ) : null,
 
-      {education.length > 0 ? (
+    education:
+      education.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>Education</SectionTitle>
+          <SectionTitle accent={theme.accent}>{SECTION_LABELS.education}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {education.map((edu) => (
               <div key={edu.id}>
@@ -127,11 +119,12 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
             ))}
           </div>
         </section>
-      ) : null}
+      ) : null,
 
-      {skills.length > 0 ? (
+    skills:
+      skills.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>Skills</SectionTitle>
+          <SectionTitle accent={theme.accent}>{SECTION_LABELS.skills}</SectionTitle>
           <div className="flex flex-col gap-1">
             {skills.map((group) => (
               <p key={group.id} className="text-[11px] text-slate-700">
@@ -143,11 +136,12 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
             ))}
           </div>
         </section>
-      ) : null}
+      ) : null,
 
-      {projects.length > 0 ? (
+    projects:
+      projects.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>Projects</SectionTitle>
+          <SectionTitle accent={theme.accent}>{SECTION_LABELS.projects}</SectionTitle>
           <div className="flex flex-col gap-2.5">
             {projects.map((project) => (
               <div key={project.id}>
@@ -167,11 +161,12 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
             ))}
           </div>
         </section>
-      ) : null}
+      ) : null,
 
-      {certifications.length > 0 ? (
+    certifications:
+      certifications.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>Certifications</SectionTitle>
+          <SectionTitle accent={theme.accent}>{SECTION_LABELS.certifications}</SectionTitle>
           <div className="flex flex-col gap-1">
             {certifications.map((cert) => (
               <p key={cert.id} className="text-[11px] text-slate-700">
@@ -182,11 +177,12 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
             ))}
           </div>
         </section>
-      ) : null}
+      ) : null,
 
-      {languages.length > 0 ? (
+    languages:
+      languages.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle accent={theme.accent}>Languages</SectionTitle>
+          <SectionTitle accent={theme.accent}>{SECTION_LABELS.languages}</SectionTitle>
           <p className="text-[11px] text-slate-700">
             {languages
               .map((l) => [l.name, l.proficiency].filter(Boolean).join(' '))
@@ -194,7 +190,34 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
               .join('  •  ')}
           </p>
         </section>
+      ) : null,
+  }
+
+  return (
+    <div ref={pageRef} className="resume-page relative shadow-xl ring-1 ring-slate-200">
+      {theme.accentBar ? (
+        <div className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.accent }} />
       ) : null}
+      <header>
+        <h1
+          className="text-[26px] font-bold leading-tight tracking-tight"
+          style={{ color: theme.nameColor }}
+        >
+          {profile.fullName || 'Your Name'}
+        </h1>
+        {profile.headline ? (
+          <p className="mt-0.5 text-[13px] font-medium text-slate-600">{profile.headline}</p>
+        ) : null}
+        {contactParts.length > 0 ? (
+          <p className="mt-2 text-[10.5px] text-slate-600">{contactParts.join('  |  ')}</p>
+        ) : null}
+      </header>
+
+      {sectionOrder.map((id) => (
+        <div key={id} className="contents">
+          {sections[id]}
+        </div>
+      ))}
     </div>
   )
 }

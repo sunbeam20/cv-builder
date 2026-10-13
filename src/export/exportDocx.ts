@@ -7,9 +7,9 @@ import {
   TabStopType,
   TextRun,
 } from 'docx'
-import type { Resume } from '../types'
+import type { Resume, SectionId } from '../types'
 import type { TemplateTheme } from '../lib/templates'
-import { downloadBlob, formatRange, slug } from '../lib/helpers'
+import { SECTION_LABELS, downloadBlob, formatRange, slug } from '../lib/helpers'
 
 const CONTENT_WIDTH = 9026
 
@@ -36,10 +36,7 @@ const row = (left: string, right: string) =>
   new Paragraph({
     tabStops: [{ type: TabStopType.RIGHT, position: CONTENT_WIDTH }],
     spacing: { after: 20 },
-    children: [
-      new TextRun({ text: left, bold: true }),
-      new TextRun({ text: `\t${right}` }),
-    ],
+    children: [new TextRun({ text: left, bold: true }), new TextRun({ text: `\t${right}` })],
   })
 
 const bullets = (items: string[]) =>
@@ -56,7 +53,16 @@ const bullets = (items: string[]) =>
     )
 
 export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<void> {
-  const { profile, experience, education, skills, projects, certifications, languages } = resume
+  const {
+    profile,
+    sectionOrder,
+    experience,
+    education,
+    skills,
+    projects,
+    certifications,
+    languages,
+  } = resume
 
   const accent = theme.accent.replace('#', '')
   const nameColor = theme.nameColor.replace('#', '')
@@ -71,9 +77,7 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
     .map((s) => s.trim())
     .filter(Boolean)
 
-  const children: Paragraph[] = []
-
-  children.push(
+  const header: Paragraph[] = [
     new Paragraph({
       spacing: { after: 40 },
       children: [
@@ -85,85 +89,132 @@ export async function exportDocx(resume: Resume, theme: TemplateTheme): Promise<
         }),
       ],
     }),
-  )
+  ]
 
   if (profile.headline.trim()) {
-    children.push(line([new TextRun({ text: profile.headline, size: 24, color: '475569' })], 40))
+    header.push(line([new TextRun({ text: profile.headline, size: 24, color: '475569' })], 40))
   }
   if (contactParts.length > 0) {
-    children.push(
+    header.push(
       line([new TextRun({ text: contactParts.join('  |  '), size: 18, color: '475569' })]),
     )
   }
 
-  if (profile.summary.trim()) {
-    children.push(heading('Professional Summary', accent))
-    children.push(line([new TextRun({ text: profile.summary })]))
+  const blocks: Record<SectionId, Paragraph[]> = {
+    summary: profile.summary.trim()
+      ? [heading(SECTION_LABELS.summary, accent), line([new TextRun({ text: profile.summary })])]
+      : [],
+
+    experience:
+      experience.length > 0
+        ? [
+            heading(SECTION_LABELS.experience, accent),
+            ...experience.flatMap((exp) => {
+              const sub = [exp.company, exp.location]
+                .map((s) => s.trim())
+                .filter(Boolean)
+                .join(', ')
+              return [
+                row(exp.role || 'Role', formatRange(exp.start, exp.end, exp.current)),
+                ...(sub ? [line([new TextRun({ text: sub, italics: true })], 40)] : []),
+                ...bullets(exp.bullets),
+              ]
+            }),
+          ]
+        : [],
+
+    education:
+      education.length > 0
+        ? [
+            heading(SECTION_LABELS.education, accent),
+            ...education.flatMap((edu) => {
+              const sub =
+                [edu.degree, edu.field]
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+                  .join(', ') + (edu.location ? ` — ${edu.location}` : '')
+              return [
+                row(edu.school || 'School', formatRange(edu.start, edu.end, false)),
+                ...(sub ? [line([new TextRun({ text: sub, italics: true })], 40)] : []),
+                ...(edu.details.trim() ? [line([new TextRun({ text: edu.details })])] : []),
+              ]
+            }),
+          ]
+        : [],
+
+    skills:
+      skills.length > 0
+        ? [
+            heading(SECTION_LABELS.skills, accent),
+            ...skills.map((group) =>
+              line([
+                ...(group.category
+                  ? [new TextRun({ text: `${group.category}: `, bold: true })]
+                  : []),
+                new TextRun({ text: group.items.join(', ') }),
+              ]),
+            ),
+          ]
+        : [],
+
+    projects:
+      projects.length > 0
+        ? [
+            heading(SECTION_LABELS.projects, accent),
+            ...projects.flatMap((project) => {
+              const title = project.link.trim()
+                ? `${project.name}  (${project.link})`
+                : project.name
+              return [
+                line([new TextRun({ text: title, bold: true })], 40),
+                ...(project.description.trim()
+                  ? [line([new TextRun({ text: project.description })], 40)]
+                  : []),
+                ...bullets(project.bullets),
+              ]
+            }),
+          ]
+        : [],
+
+    certifications:
+      certifications.length > 0
+        ? [
+            heading(SECTION_LABELS.certifications, accent),
+            ...certifications.map((cert) =>
+              line([
+                new TextRun({
+                  text: `${cert.name}${cert.issuer ? ` — ${cert.issuer}` : ''}${
+                    cert.date ? ` (${cert.date})` : ''
+                  }`,
+                }),
+              ]),
+            ),
+          ]
+        : [],
+
+    languages:
+      languages.length > 0
+        ? [
+            heading(SECTION_LABELS.languages, accent),
+            line(
+              [
+                new TextRun({
+                  text: languages
+                    .map((l) => [l.name, l.proficiency].filter(Boolean).join(' '))
+                    .filter(Boolean)
+                    .join('  •  '),
+                }),
+              ],
+              0,
+            ),
+          ]
+        : [],
   }
 
-  if (experience.length > 0) {
-    children.push(heading('Experience', accent))
-    for (const exp of experience) {
-      children.push(row(exp.role || 'Role', formatRange(exp.start, exp.end, exp.current)))
-      const sub = [exp.company, exp.location].map((s) => s.trim()).filter(Boolean).join(', ')
-      if (sub) children.push(line([new TextRun({ text: sub, italics: true })], 40))
-      children.push(...bullets(exp.bullets))
-    }
-  }
-
-  if (education.length > 0) {
-    children.push(heading('Education', accent))
-    for (const edu of education) {
-      children.push(row(edu.school || 'School', formatRange(edu.start, edu.end, false)))
-      const sub =
-        [edu.degree, edu.field].map((s) => s.trim()).filter(Boolean).join(', ') +
-        (edu.location ? ` — ${edu.location}` : '')
-      if (sub) children.push(line([new TextRun({ text: sub, italics: true })], 40))
-      if (edu.details.trim()) children.push(line([new TextRun({ text: edu.details })]))
-    }
-  }
-
-  if (skills.length > 0) {
-    children.push(heading('Skills', accent))
-    for (const group of skills) {
-      children.push(
-        line([
-          ...(group.category ? [new TextRun({ text: `${group.category}: `, bold: true })] : []),
-          new TextRun({ text: group.items.join(', ') }),
-        ]),
-      )
-    }
-  }
-
-  if (projects.length > 0) {
-    children.push(heading('Projects', accent))
-    for (const project of projects) {
-      const title = project.link.trim() ? `${project.name}  (${project.link})` : project.name
-      children.push(line([new TextRun({ text: title, bold: true })], 40))
-      if (project.description.trim())
-        children.push(line([new TextRun({ text: project.description })], 40))
-      children.push(...bullets(project.bullets))
-    }
-  }
-
-  if (certifications.length > 0) {
-    children.push(heading('Certifications', accent))
-    for (const cert of certifications) {
-      const text = `${cert.name}${cert.issuer ? ` — ${cert.issuer}` : ''}${
-        cert.date ? ` (${cert.date})` : ''
-      }`
-      children.push(line([new TextRun({ text })]))
-    }
-  }
-
-  if (languages.length > 0) {
-    children.push(heading('Languages', accent))
-    const text = languages
-      .map((l) => [l.name, l.proficiency].filter(Boolean).join(' '))
-      .filter(Boolean)
-      .join('  •  ')
-    children.push(line([new TextRun({ text })], 0))
-  }
+  const children: Paragraph[] = [
+    ...header,
+    ...sectionOrder.flatMap((id) => blocks[id] ?? []),
+  ]
 
   const doc = new Document({
     creator: profile.fullName || 'CV Builder',

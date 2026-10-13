@@ -25,4 +25,19 @@ describe('resumeSchema', () => {
     bad.experience[0].bullets = 'not-an-array'
     expect(resumeSchema.safeParse(bad).success).toBe(false)
   })
+
+  it('defaults sectionOrder when missing', () => {
+    const input = emptyResume() as Record<string, unknown>
+    delete input.sectionOrder
+    const parsed = resumeSchema.parse(input)
+    expect(parsed.sectionOrder).toEqual([
+      'summary',
+      'experience',
+      'education',
+      'skills',
+      'projects',
+      'certifications',
+      'languages',
+    ])
+  })
 })

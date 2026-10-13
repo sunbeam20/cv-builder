@@ -1,5 +1,5 @@
 import type { Resume } from '../types'
-import { uid } from './helpers'
+import { DEFAULT_SECTION_ORDER, uid } from './helpers'
 
 export const sampleResume = (): Resume => ({
   profile: {
@@ -16,6 +16,7 @@ export const sampleResume = (): Resume => ({
       { id: uid(), label: 'GitHub', url: 'github.com/jordanavery' },
     ],
   },
+  sectionOrder: [...DEFAULT_SECTION_ORDER],
   experience: [
     {
       id: uid(),

@@ -65,8 +65,18 @@ export interface Language {
   proficiency: string
 }
 
+export type SectionId =
+  | 'summary'
+  | 'experience'
+  | 'education'
+  | 'skills'
+  | 'projects'
+  | 'certifications'
+  | 'languages'
+
 export interface Resume {
   profile: Profile
+  sectionOrder: SectionId[]
   experience: Experience[]
   education: Education[]
   skills: SkillGroup[]

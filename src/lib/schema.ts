@@ -1,6 +1,17 @@
 import { z } from 'zod'
+import { DEFAULT_SECTION_ORDER } from './helpers'
 
 const id = z.string()
+
+export const sectionIdSchema = z.enum([
+  'summary',
+  'experience',
+  'education',
+  'skills',
+  'projects',
+  'certifications',
+  'languages',
+])
 
 export const linkSchema = z.object({
   id,
@@ -71,6 +82,7 @@ export const languageSchema = z.object({
 
 export const resumeSchema = z.object({
   profile: profileSchema,
+  sectionOrder: z.array(sectionIdSchema).optional().default(() => [...DEFAULT_SECTION_ORDER]),
   experience: z.array(experienceSchema),
   education: z.array(educationSchema),
   skills: z.array(skillGroupSchema),

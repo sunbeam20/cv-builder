@@ -59,4 +59,21 @@ describe('resumeStore', () => {
     get().loadSample()
     expect(get().resume.experience.length).toBeGreaterThan(0)
   })
+
+  it('reorders sections', () => {
+    const before = [...get().resume.sectionOrder]
+    get().moveSection(0, 2)
+    const after = get().resume.sectionOrder
+    expect(after[0]).toBe(before[1])
+    expect(after[1]).toBe(before[2])
+    expect(after[2]).toBe(before[0])
+    expect(after).toHaveLength(before.length)
+  })
+
+  it('ignores out-of-range section moves', () => {
+    const before = [...get().resume.sectionOrder]
+    get().moveSection(-1, 3)
+    get().moveSection(0, 99)
+    expect(get().resume.sectionOrder).toEqual(before)
+  })
 })

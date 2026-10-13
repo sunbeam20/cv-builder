@@ -8,6 +8,7 @@ A fully client-side CV/resume builder with a live A4 preview and **ATS-friendly*
 - Structured form editor (personal details, experience, education, skills, projects, certifications, languages)
 - Live A4 preview that scales to fit the viewport
 - Two templates: **ATS Classic** (black, maximally parsable) and **Modern Accent** (indigo accent bar)
+- Drag-and-drop section reordering (order flows through preview, PDF, and DOCX)
 - Single-column, semantic layout optimized for applicant tracking systems
 - Export to PDF (real selectable text), DOCX, and PNG
 - Autosave to `localStorage`; import/export JSON; load sample data; reset

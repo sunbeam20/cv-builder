@@ -1,3 +1,25 @@
+import type { SectionId } from '../types'
+
+export const SECTION_LABELS: Record<SectionId, string> = {
+  summary: 'Professional Summary',
+  experience: 'Experience',
+  education: 'Education',
+  skills: 'Skills',
+  projects: 'Projects',
+  certifications: 'Certifications',
+  languages: 'Languages',
+}
+
+export const DEFAULT_SECTION_ORDER: SectionId[] = [
+  'summary',
+  'experience',
+  'education',
+  'skills',
+  'projects',
+  'certifications',
+  'languages',
+]
+
 export const uid = (): string =>
   typeof crypto !== 'undefined' && 'randomUUID' in crypto
     ? crypto.randomUUID()
@@ -14,6 +36,7 @@ export const emptyResume = () => ({
     summary: '',
     links: [],
   },
+  sectionOrder: [...DEFAULT_SECTION_ORDER],
   experience: [],
   education: [],
   skills: [],

@@ -5,10 +5,12 @@ import { SkillsForm } from './SkillsForm'
 import { ProjectsForm } from './ProjectsForm'
 import { CertificationsForm } from './CertificationsForm'
 import { LanguagesForm } from './LanguagesForm'
+import { SectionsPanel } from './SectionsPanel'
 
 export function EditorPanel() {
   return (
     <div className="flex flex-col gap-4">
+      <SectionsPanel />
       <ProfileForm />
       <ExperienceForm />
       <EducationForm />

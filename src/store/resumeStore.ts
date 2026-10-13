@@ -4,7 +4,7 @@ import { immer } from 'zustand/middleware/immer'
 import type { Draft } from 'immer'
 import type { Resume } from '../types'
 import type { TemplateId } from '../lib/templates'
-import { emptyResume } from '../lib/helpers'
+import { DEFAULT_SECTION_ORDER, emptyResume } from '../lib/helpers'
 import { sampleResume } from '../lib/sampleData'
 
 interface ResumeState {
@@ -15,6 +15,7 @@ interface ResumeState {
   loadSample: () => void
   reset: () => void
   setTemplate: (template: TemplateId) => void
+  moveSection: (from: number, to: number) => void
 }
 
 export const useResumeStore = create<ResumeState>()(
@@ -42,10 +43,32 @@ export const useResumeStore = create<ResumeState>()(
         set((state) => {
           state.template = template
         }),
+      moveSection: (from, to) =>
+        set((state) => {
+          const order = state.resume.sectionOrder
+          if (
+            from === to ||
+            from < 0 ||
+            to < 0 ||
+            from >= order.length ||
+            to >= order.length
+          ) {
+            return
+          }
+          const [item] = order.splice(from, 1)
+          order.splice(to, 0, item)
+        }),
     })),
     {
       name: 'cv-builder-v1',
-      version: 1,
+      version: 2,
+      migrate: (persisted, version) => {
+        const state = persisted as Partial<ResumeState> | undefined
+        if (version < 2 && state?.resume && !state.resume.sectionOrder) {
+          state.resume.sectionOrder = [...DEFAULT_SECTION_ORDER]
+        }
+        return state as ResumeState
+      },
     },
   ),
 )
