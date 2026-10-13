@@ -51,4 +51,10 @@ describe('ResumePreview', () => {
     )
     expect(container.querySelector('.resume-page')).toBeInTheDocument()
   })
+
+  it('shows a page indicator', () => {
+    const ref = createRef<HTMLDivElement>()
+    render(<ResumePreview resume={sampleResume()} pageRef={ref} theme={TEMPLATES.ats} />)
+    expect(screen.getByText(/Page 1 of 1/)).toBeInTheDocument()
+  })
 })

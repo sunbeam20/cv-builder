@@ -12,7 +12,7 @@ import {
   Upload,
 } from 'lucide-react'
 import { useResumeStore } from '../store/resumeStore'
-import { resumeSchema } from '../lib/schema'
+import { bundleSchema, resumeSchema } from '../lib/schema'
 import { downloadBlob, slug } from '../lib/helpers'
 import { TEMPLATES, TEMPLATE_LIST, isTemplateId } from '../lib/templates'
 
@@ -21,15 +21,21 @@ type Busy = 'pdf' | 'docx' | 'png' | null
 const buttonBase =
   'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-60'
 
+const tabBase = 'rounded px-2.5 py-1 text-xs font-medium transition'
+
 interface ToolbarProps {
   pageRef: RefObject<HTMLDivElement | null>
 }
 
 export function Toolbar({ pageRef }: ToolbarProps) {
   const resume = useResumeStore((s) => s.resume)
+  const coverLetter = useResumeStore((s) => s.coverLetter)
   const template = useResumeStore((s) => s.template)
+  const docType = useResumeStore((s) => s.docType)
+  const setDocType = useResumeStore((s) => s.setDocType)
   const setTemplate = useResumeStore((s) => s.setTemplate)
   const replace = useResumeStore((s) => s.replace)
+  const setCoverLetter = useResumeStore((s) => s.setCoverLetter)
   const loadSample = useResumeStore((s) => s.loadSample)
   const reset = useResumeStore((s) => s.reset)
   const openAiSettings = useResumeStore((s) => s.openAiSettings)
@@ -38,6 +44,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const theme = TEMPLATES[template]
+  const isCover = docType === 'cover'
 
   const run = async (kind: Busy, fn: () => Promise<void>) => {
     setError(null)
@@ -54,8 +61,17 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   const handleImport = async (file: File) => {
     setError(null)
     try {
-      const parsed = resumeSchema.parse(JSON.parse(await file.text()))
-      replace(parsed)
+      const raw = JSON.parse(await file.text())
+      const bundle = bundleSchema.safeParse(raw)
+      if (bundle.success) {
+        replace(bundle.data.resume)
+        if (bundle.data.coverLetter) setCoverLetter(bundle.data.coverLetter)
+        if (bundle.data.template && isTemplateId(bundle.data.template)) {
+          setTemplate(bundle.data.template)
+        }
+      } else {
+        replace(resumeSchema.parse(raw))
+      }
     } catch {
       setError('Invalid CV file')
     }
@@ -66,8 +82,11 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   }
 
   const handleExportJson = () => {
-    const json = JSON.stringify(resume, null, 2)
-    downloadBlob(new Blob([json], { type: 'application/json' }), `${slug(resume.profile.fullName)}.json`)
+    const json = JSON.stringify({ resume, coverLetter, template }, null, 2)
+    downloadBlob(
+      new Blob([json], { type: 'application/json' }),
+      `${slug(resume.profile.fullName)}.json`,
+    )
   }
 
   return (
@@ -75,9 +94,26 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-2 px-4 py-2.5">
         <div className="mr-auto flex items-center gap-2">
           <span className="text-sm font-semibold text-slate-800">CV Builder</span>
-          <span className="hidden rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 sm:inline">
-            ATS-friendly
-          </span>
+          <div className="flex rounded-md border border-slate-200 p-0.5">
+            <button
+              type="button"
+              onClick={() => setDocType('resume')}
+              className={`${tabBase} ${
+                isCover ? 'text-slate-500 hover:bg-slate-50' : 'bg-indigo-600 text-white'
+              }`}
+            >
+              Résumé
+            </button>
+            <button
+              type="button"
+              onClick={() => setDocType('cover')}
+              className={`${tabBase} ${
+                isCover ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-50'
+              }`}
+            >
+              Cover letter
+            </button>
+          </div>
           <select
             aria-label="Template"
             value={template}
@@ -100,8 +136,13 @@ export function Toolbar({ pageRef }: ToolbarProps) {
           disabled={busy !== null}
           onClick={() =>
             run('pdf', async () => {
-              const { exportPdf } = await import('../export/exportPdf')
-              await exportPdf(resume, theme)
+              if (isCover) {
+                const { exportCoverLetterPdf } = await import('../export/exportCoverLetterPdf')
+                await exportCoverLetterPdf(coverLetter, resume.profile, theme)
+              } else {
+                const { exportPdf } = await import('../export/exportPdf')
+                await exportPdf(resume, theme)
+              }
             })
           }
         >
@@ -114,8 +155,13 @@ export function Toolbar({ pageRef }: ToolbarProps) {
           disabled={busy !== null}
           onClick={() =>
             run('docx', async () => {
-              const { exportDocx } = await import('../export/exportDocx')
-              await exportDocx(resume, theme)
+              if (isCover) {
+                const { exportCoverLetterDocx } = await import('../export/exportCoverLetterDocx')
+                await exportCoverLetterDocx(coverLetter, resume.profile, theme)
+              } else {
+                const { exportDocx } = await import('../export/exportDocx')
+                await exportDocx(resume, theme)
+              }
             })
           }
         >
@@ -131,7 +177,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
               const node = pageRef.current
               if (!node) return
               const { exportPng } = await import('../export/exportPng')
-              await exportPng(node, resume.profile.fullName)
+              await exportPng(node, resume.profile.fullName, isCover ? 'Cover_Letter' : 'CV')
             })
           }
         >

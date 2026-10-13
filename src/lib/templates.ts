@@ -1,4 +1,4 @@
-export type TemplateId = 'ats' | 'modern' | 'elegant'
+export type TemplateId = 'ats' | 'modern' | 'elegant' | 'teal' | 'mono' | 'burgundy'
 
 export interface TemplateTheme {
   id: TemplateId
@@ -70,8 +70,63 @@ export const TEMPLATES: Record<TemplateId, TemplateTheme> = {
     accentBar: false,
     headingRule: false,
   },
+  teal: {
+    id: 'teal',
+    name: 'Teal Accent',
+    fontFamily: 'Helvetica, Arial, sans-serif',
+    pdfFonts: {
+      regular: 'Helvetica',
+      bold: 'Helvetica-Bold',
+      italic: 'Helvetica-Oblique',
+      boldItalic: 'Helvetica-BoldOblique',
+    },
+    docxFont: 'Calibri',
+    accent: '#0d9488',
+    nameColor: '#0f766e',
+    accentBar: true,
+    headingRule: true,
+  },
+  mono: {
+    id: 'mono',
+    name: 'Technical Mono',
+    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+    pdfFonts: {
+      regular: 'Courier',
+      bold: 'Courier-Bold',
+      italic: 'Courier-Oblique',
+      boldItalic: 'Courier-BoldOblique',
+    },
+    docxFont: 'Consolas',
+    accent: '#334155',
+    nameColor: '#0f172a',
+    accentBar: false,
+    headingRule: true,
+  },
+  burgundy: {
+    id: 'burgundy',
+    name: 'Burgundy Serif',
+    fontFamily: '"Palatino Linotype", Palatino, Georgia, serif',
+    pdfFonts: {
+      regular: 'Times-Roman',
+      bold: 'Times-Bold',
+      italic: 'Times-Italic',
+      boldItalic: 'Times-BoldItalic',
+    },
+    docxFont: 'Palatino Linotype',
+    accent: '#9f1239',
+    nameColor: '#881337',
+    accentBar: true,
+    headingRule: false,
+  },
 }
 
-export const TEMPLATE_LIST: TemplateTheme[] = [TEMPLATES.ats, TEMPLATES.modern, TEMPLATES.elegant]
+export const TEMPLATE_LIST: TemplateTheme[] = [
+  TEMPLATES.ats,
+  TEMPLATES.modern,
+  TEMPLATES.elegant,
+  TEMPLATES.teal,
+  TEMPLATES.mono,
+  TEMPLATES.burgundy,
+]
 
 export const isTemplateId = (value: string): value is TemplateId => value in TEMPLATES

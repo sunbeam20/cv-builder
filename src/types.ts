@@ -84,3 +84,16 @@ export interface Resume {
   certifications: Certification[]
   languages: Language[]
 }
+
+export interface CoverLetter {
+  company: string
+  role: string
+  recipient: string
+  date: string
+  greeting: string
+  body: string
+  closing: string
+  signature: string
+}
+
+export type DocType = 'resume' | 'cover'

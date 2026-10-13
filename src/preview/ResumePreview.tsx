@@ -1,16 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { CSSProperties, ReactNode, RefObject } from 'react'
 import type { Resume, SectionId } from '../types'
 import type { TemplateTheme } from '../lib/templates'
 import { SECTION_LABELS, formatRange } from '../lib/helpers'
+import { A4_WIDTH, A4_HEIGHT, useFitScale } from './useFitScale'
 
-export const A4_WIDTH = 794
-export const A4_HEIGHT = 1123
+export { A4_WIDTH, A4_HEIGHT } from './useFitScale'
 
 interface PreviewProps {
   resume: Resume
   pageRef: RefObject<HTMLDivElement | null>
   theme: TemplateTheme
+}
+
+interface PageProps {
+  resume: Resume
+  theme: TemplateTheme
+  pageRef?: RefObject<HTMLDivElement | null>
 }
 
 function SectionTitle({
@@ -48,7 +54,7 @@ function Bullets({ items }: { items: string[] }) {
   )
 }
 
-export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
+export function ResumePage({ resume, theme, pageRef }: PageProps) {
   const {
     profile,
     sectionOrder,
@@ -237,44 +243,58 @@ export function ResumePage({ resume, pageRef, theme }: PreviewProps) {
 }
 
 export function ResumePreview({ resume, pageRef, theme }: PreviewProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [scale, setScale] = useState(1)
+  const { ref: containerRef, scale } = useFitScale()
+  const [pageCount, setPageCount] = useState(1)
 
   useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
+    const node = pageRef.current
+    if (!node) return
     const update = () => {
-      const width = el.clientWidth
-      if (width > 0) setScale(Math.min(1, width / A4_WIDTH))
+      const height = node.offsetHeight
+      setPageCount(Math.max(1, Math.ceil((height - 0.5) / A4_HEIGHT)))
     }
     update()
     const observer = new ResizeObserver(update)
-    observer.observe(el)
+    observer.observe(node)
     return () => observer.disconnect()
-  }, [])
-
-  const boxStyle: CSSProperties = {
-    width: A4_WIDTH * scale,
-    height: A4_HEIGHT * scale,
-    position: 'relative',
-  }
+  }, [pageRef, resume])
 
   const pageStyle: CSSProperties = {
     width: A4_WIDTH,
-    minHeight: A4_HEIGHT,
+    height: A4_HEIGHT,
     transform: `scale(${scale})`,
     transformOrigin: 'top left',
-    position: 'absolute',
-    top: 0,
-    left: 0,
+    overflow: 'hidden',
+    background: '#ffffff',
   }
 
   return (
     <div ref={containerRef} className="w-full">
-      <div className="preview-page-box mx-auto" style={boxStyle}>
-        <div className="preview-scaler" style={pageStyle}>
-          <ResumePage resume={resume} pageRef={pageRef} theme={theme} />
-        </div>
+      <div
+        aria-hidden
+        className="export-node pointer-events-none fixed left-[-10000px] top-0"
+        style={{ width: A4_WIDTH }}
+      >
+        <ResumePage resume={resume} pageRef={pageRef} theme={theme} />
+      </div>
+
+      <div className="paginated-preview mx-auto flex flex-col items-center gap-4">
+        {Array.from({ length: pageCount }).map((_, index) => (
+          <div
+            key={index}
+            className="preview-page-box relative shadow-xl ring-1 ring-slate-200"
+            style={{ width: A4_WIDTH * scale, height: A4_HEIGHT * scale }}
+          >
+            <div className="preview-scaler" style={pageStyle}>
+              <div style={{ transform: `translateY(${-index * A4_HEIGHT}px)` }}>
+                <ResumePage resume={resume} theme={theme} />
+              </div>
+            </div>
+            <div className="no-print mt-1 text-center text-[11px] font-medium text-slate-400">
+              Page {index + 1} of {pageCount}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

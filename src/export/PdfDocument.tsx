@@ -38,6 +38,13 @@ const makeStyles = (theme: TemplateTheme) =>
     bulletDot: { width: 10, fontSize: 10, color: '#334155' },
     bulletText: { flex: 1, fontSize: 10, color: '#334155' },
     skillLine: { fontSize: 10, color: '#334155', marginBottom: 1 },
+    pageNumber: {
+      position: 'absolute',
+      bottom: 22,
+      right: 54,
+      fontSize: 8,
+      color: '#94a3b8',
+    },
   })
 
 type Styles = ReturnType<typeof makeStyles>
@@ -209,6 +216,13 @@ export function PdfDocument({ resume, theme }: { resume: Resume; theme: Template
   return (
     <Document title={`${profile.fullName || 'Resume'} — CV`} author={profile.fullName}>
       <Page size="A4" style={styles.page}>
+        <Text
+          fixed
+          style={styles.pageNumber}
+          render={({ pageNumber, totalPages }) =>
+            totalPages > 1 ? `Page ${pageNumber} of ${totalPages}` : ''
+          }
+        />
         {theme.accentBar ? (
           <View
             fixed
