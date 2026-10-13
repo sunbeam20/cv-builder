@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { useResumeStore } from './resumeStore'
 import { emptyResume } from '../lib/helpers'
+import { emptyApplication } from '../lib/applications'
 import { sampleResume } from '../lib/sampleData'
 import type { Resume } from '../types'
 
@@ -116,5 +117,20 @@ describe('resumeStore', () => {
       d.company = 'Acme'
     })
     expect(get().coverLetter.company).toBe('Acme')
+  })
+
+  it('adds, updates and removes applications', () => {
+    get().setApplications([])
+    const app = { ...emptyApplication(), company: 'Acme', role: 'Engineer' }
+    get().addApplication(app)
+    expect(get().applications).toHaveLength(1)
+
+    get().updateApplication(app.id, (d) => {
+      d.status = 'offer'
+    })
+    expect(get().applications[0].status).toBe('offer')
+
+    get().removeApplication(app.id)
+    expect(get().applications).toHaveLength(0)
   })
 })

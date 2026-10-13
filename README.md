@@ -7,7 +7,9 @@ browser (`localStorage`).
 ## Features
 
 - Structured form editor (personal details, experience, education, skills, projects, certifications, languages)
+- **Résumé strength** meter highlighting what to add next
 - **Cover letter** tab with a "Generate from résumé" draft and matching PDF/DOCX/PNG export
+- **Application tracker** tab: wishlist → applied → interview → offer → rejected, with notes and CSV export
 - Live A4 preview that scales to fit the viewport, with **automatic multi-page pagination** and page indicators (PDF adds "Page x of y" footers)
 - Six templates: **ATS Classic**, **Modern Accent**, **Elegant Serif**, **Teal Accent**, **Technical Mono**, **Burgundy Serif** — each with matching PDF/DOCX fonts, chosen from a thumbnail picker
 - Drag-and-drop reordering for sections, entries, links, and bullet points (order flows through preview, PDF, and DOCX)
@@ -49,11 +51,12 @@ npm run dev      # http://localhost:5173
 ```
 src/
 ├─ components/
-│  ├─ editor/            # One form per CV section, CoverLetterForm + EditorPanel
+│  ├─ editor/            # One form per CV section, CompletenessCard, CoverLetterForm, EditorPanel
+│  ├─ tracker/           # Application tracker view
 │  ├─ ui/                # Field, inputs, cards, AiButton, TemplatePicker, modals
-│  └─ Toolbar.tsx        # Résumé/cover tabs, template picker, export/import/reset
+│  └─ Toolbar.tsx        # Résumé/cover/tracker tabs, template picker, export/import/reset
 ├─ export/               # PdfDocument/CoverLetterDocument + export{Pdf,Docx,Png}
-├─ lib/                  # helpers, Zod schema, templates, coverLetter, AI, sample data
+├─ lib/                  # helpers, Zod schema, templates, coverLetter, applications, AI, sample data
 ├─ preview/
 │  ├─ ResumePreview.tsx       # A4 pages + fit-to-width scaling + pagination
 │  ├─ CoverLetterPreview.tsx  # Cover-letter A4 preview

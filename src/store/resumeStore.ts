@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { Draft } from 'immer'
-import type { CoverLetter, DocType, Resume, SectionId } from '../types'
+import type { Application, CoverLetter, DocType, Resume, SectionId } from '../types'
 import type { TemplateId } from '../lib/templates'
 import { DEFAULT_SECTION_ORDER, emptyResume } from '../lib/helpers'
 import { DEFAULT_AI_SETTINGS, type AiSettings } from '../lib/ai'
@@ -18,6 +18,7 @@ let lastEditAt = 0
 interface ResumeState {
   resume: Resume
   coverLetter: CoverLetter
+  applications: Application[]
   template: TemplateId
   docType: DocType
   ai: AiSettings
@@ -36,6 +37,10 @@ interface ResumeState {
   toggleSection: (id: SectionId) => void
   updateCoverLetter: (recipe: (draft: Draft<CoverLetter>) => void) => void
   setCoverLetter: (letter: CoverLetter) => void
+  addApplication: (application: Application) => void
+  updateApplication: (id: string, recipe: (draft: Draft<Application>) => void) => void
+  removeApplication: (id: string) => void
+  setApplications: (applications: Application[]) => void
   setAi: (patch: Partial<AiSettings>) => void
   openAiSettings: () => void
   closeAiSettings: () => void
@@ -72,6 +77,7 @@ export const useResumeStore = create<ResumeState>()(
       return {
         resume: initialResume,
         coverLetter: emptyCoverLetter(initialResume.profile),
+        applications: [],
         template: 'ats',
         docType: 'resume',
         ai: { ...DEFAULT_AI_SETTINGS },
@@ -162,6 +168,24 @@ export const useResumeStore = create<ResumeState>()(
           set((state) => {
             state.coverLetter = letter
           }),
+        addApplication: (application) =>
+          set((state) => {
+            state.applications.unshift(application)
+          }),
+        updateApplication: (id, recipe) =>
+          set((state) => {
+            const application = state.applications.find((a) => a.id === id)
+            if (application) recipe(application)
+          }),
+        removeApplication: (id) =>
+          set((state) => {
+            const index = state.applications.findIndex((a) => a.id === id)
+            if (index !== -1) state.applications.splice(index, 1)
+          }),
+        setApplications: (applications) =>
+          set((state) => {
+            state.applications = applications
+          }),
         setAi: (patch) =>
           set((state) => {
             Object.assign(state.ai, patch)
@@ -178,15 +202,19 @@ export const useResumeStore = create<ResumeState>()(
     }),
     {
       name: 'cv-builder-v1',
-      version: 3,
+      version: 4,
       partialize: (state) => ({
         resume: state.resume,
         coverLetter: state.coverLetter,
+        applications: state.applications,
         template: state.template,
         ai: state.ai,
       }),
       migrate: (persisted, version) => {
         const state = persisted as Partial<ResumeState> | undefined
+        if (state && !state.applications) {
+          state.applications = []
+        }
         if (state?.resume) {
           if (!state.resume.sectionOrder) {
             state.resume.sectionOrder = [...DEFAULT_SECTION_ORDER]

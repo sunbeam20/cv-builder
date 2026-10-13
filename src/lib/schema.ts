@@ -103,9 +103,29 @@ export const resumeSchema = z.object({
   languages: z.array(languageSchema),
 })
 
+export const applicationStatusSchema = z.enum([
+  'wishlist',
+  'applied',
+  'interview',
+  'offer',
+  'rejected',
+])
+
+export const applicationSchema = z.object({
+  id,
+  company: z.string(),
+  role: z.string(),
+  location: z.string(),
+  url: z.string(),
+  status: applicationStatusSchema,
+  date: z.string(),
+  notes: z.string(),
+})
+
 export const bundleSchema = z.object({
   resume: resumeSchema,
   coverLetter: coverLetterSchema.optional(),
+  applications: z.array(applicationSchema).optional(),
   template: z.string().optional(),
 })
 

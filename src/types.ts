@@ -97,4 +97,17 @@ export interface CoverLetter {
   signature: string
 }
 
-export type DocType = 'resume' | 'cover'
+export type DocType = 'resume' | 'cover' | 'tracker'
+
+export type ApplicationStatus = 'wishlist' | 'applied' | 'interview' | 'offer' | 'rejected'
+
+export interface Application {
+  id: string
+  company: string
+  role: string
+  location: string
+  url: string
+  status: ApplicationStatus
+  date: string
+  notes: string
+}

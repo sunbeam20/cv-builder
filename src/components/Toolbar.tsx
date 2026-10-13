@@ -17,7 +17,14 @@ import { useResumeStore } from '../store/resumeStore'
 import { bundleSchema, resumeSchema } from '../lib/schema'
 import { downloadBlob, slug } from '../lib/helpers'
 import { TEMPLATES, isTemplateId } from '../lib/templates'
+import type { DocType } from '../types'
 import { TemplatePicker } from './ui/TemplatePicker'
+
+const TABS: { id: DocType; label: string }[] = [
+  { id: 'resume', label: 'Résumé' },
+  { id: 'cover', label: 'Cover letter' },
+  { id: 'tracker', label: 'Tracker' },
+]
 
 type Busy = 'pdf' | 'docx' | 'png' | null
 
@@ -33,12 +40,14 @@ interface ToolbarProps {
 export function Toolbar({ pageRef }: ToolbarProps) {
   const resume = useResumeStore((s) => s.resume)
   const coverLetter = useResumeStore((s) => s.coverLetter)
+  const applications = useResumeStore((s) => s.applications)
   const template = useResumeStore((s) => s.template)
   const docType = useResumeStore((s) => s.docType)
   const setDocType = useResumeStore((s) => s.setDocType)
   const setTemplate = useResumeStore((s) => s.setTemplate)
   const replace = useResumeStore((s) => s.replace)
   const setCoverLetter = useResumeStore((s) => s.setCoverLetter)
+  const setApplications = useResumeStore((s) => s.setApplications)
   const loadSample = useResumeStore((s) => s.loadSample)
   const reset = useResumeStore((s) => s.reset)
   const openAiSettings = useResumeStore((s) => s.openAiSettings)
@@ -52,6 +61,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
 
   const theme = TEMPLATES[template]
   const isCover = docType === 'cover'
+  const isTracker = docType === 'tracker'
 
   const run = async (kind: Busy, fn: () => Promise<void>) => {
     setError(null)
@@ -73,6 +83,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       if (bundle.success) {
         replace(bundle.data.resume)
         if (bundle.data.coverLetter) setCoverLetter(bundle.data.coverLetter)
+        if (bundle.data.applications) setApplications(bundle.data.applications)
         if (bundle.data.template && isTemplateId(bundle.data.template)) {
           setTemplate(bundle.data.template)
         }
@@ -89,7 +100,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   }
 
   const handleExportJson = () => {
-    const json = JSON.stringify({ resume, coverLetter, template }, null, 2)
+    const json = JSON.stringify({ resume, coverLetter, applications, template }, null, 2)
     downloadBlob(
       new Blob([json], { type: 'application/json' }),
       `${slug(resume.profile.fullName)}.json`,
@@ -102,24 +113,21 @@ export function Toolbar({ pageRef }: ToolbarProps) {
         <div className="mr-auto flex items-center gap-2">
           <span className="text-sm font-semibold text-slate-800">CV Builder</span>
           <div className="flex rounded-md border border-slate-200 p-0.5">
-            <button
-              type="button"
-              onClick={() => setDocType('resume')}
-              className={`${tabBase} ${
-                isCover ? 'text-slate-500 hover:bg-slate-50' : 'bg-indigo-600 text-white'
-              }`}
-            >
-              Résumé
-            </button>
-            <button
-              type="button"
-              onClick={() => setDocType('cover')}
-              className={`${tabBase} ${
-                isCover ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-50'
-              }`}
-            >
-              Cover letter
-            </button>
+            {TABS.map((tab) => {
+              const active = docType === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setDocType(tab.id)}
+                  className={`${tabBase} ${
+                    active ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-50'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              )
+            })}
           </div>
           <TemplatePicker />
           <div className="flex items-center gap-1">
@@ -149,7 +157,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
         <button
           type="button"
           className={`${buttonBase} bg-indigo-600 text-white hover:bg-indigo-700`}
-          disabled={busy !== null}
+          disabled={busy !== null || isTracker}
           onClick={() =>
             run('pdf', async () => {
               if (isCover) {
@@ -168,7 +176,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
         <button
           type="button"
           className={`${buttonBase} bg-slate-800 text-white hover:bg-slate-900`}
-          disabled={busy !== null}
+          disabled={busy !== null || isTracker}
           onClick={() =>
             run('docx', async () => {
               if (isCover) {
@@ -187,7 +195,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
         <button
           type="button"
           className={`${buttonBase} bg-slate-800 text-white hover:bg-slate-900`}
-          disabled={busy !== null}
+          disabled={busy !== null || isTracker}
           onClick={() =>
             run('png', async () => {
               const node = pageRef.current
@@ -206,6 +214,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
         <button
           type="button"
           className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+          disabled={isTracker}
           onClick={() => window.print()}
         >
           <Printer size={15} />
