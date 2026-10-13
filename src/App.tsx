@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Toolbar } from './components/Toolbar'
+import { AiSettingsModal } from './components/ui/AiSettingsModal'
 import { EditorPanel } from './components/editor/EditorPanel'
 import { ResumePreview } from './preview/ResumePreview'
 import { useResumeStore } from './store/resumeStore'
@@ -21,6 +22,7 @@ export default function App() {
           <ResumePreview resume={resume} pageRef={pageRef} theme={TEMPLATES[template]} />
         </div>
       </main>
+      <AiSettingsModal />
     </div>
   )
 }

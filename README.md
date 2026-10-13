@@ -11,6 +11,7 @@ A fully client-side CV/resume builder with a live A4 preview and **ATS-friendly*
 - Drag-and-drop reordering for both sections and individual entries (order flows through preview, PDF, and DOCX)
 - Single-column, semantic layout optimized for applicant tracking systems
 - Export to PDF (real selectable text), DOCX, and PNG
+- Optional **AI assist**: one-click "Improve" on your summary and bullet points via any OpenAI-compatible endpoint
 - Autosave to `localStorage`; import/export JSON; load sample data; reset
 - Lazy-loaded exports keep the initial bundle small
 
@@ -61,3 +62,11 @@ src/
 The template and PDF export deliberately avoid tables, columns, text boxes, headers/footers,
 and images for content. Text is real and selectable, headings are standard, and the reading
 order matches the visual order.
+
+## AI assist
+
+AI assist is optional and off by default. Open **AI** in the toolbar and enter an
+OpenAI-compatible API key, model, and base URL. The key is kept only in your browser's
+`localStorage` and is sent directly to the endpoint you configure — there is no backend.
+Leave the key blank to keep the "Improve" buttons disabled (clicking one will prompt you to
+configure a key).

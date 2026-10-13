@@ -115,6 +115,7 @@ export function ExperienceForm() {
                     </label>
                     <BulletsEditor
                       bullets={exp.bullets}
+                      aiContext={[exp.role, exp.company].filter(Boolean).join(' at ')}
                       onChange={(bullets) =>
                         update((d) => void (d.experience[index].bullets = bullets))
                       }

@@ -3,6 +3,7 @@ import { useResumeStore } from '../../store/resumeStore'
 import { uid } from '../../lib/helpers'
 import { Field, TextArea, TextInput } from '../ui/inputs'
 import { SectionCard } from '../ui/SectionCard'
+import { AiButton } from '../ui/AiButton'
 
 export function ProfileForm() {
   const profile = useResumeStore((s) => s.resume.profile)
@@ -54,7 +55,18 @@ export function ProfileForm() {
             onChange={(e) => update((d) => void (d.profile.website = e.target.value))}
           />
         </Field>
-        <Field label="Professional summary" className="sm:col-span-2">
+        <Field
+          label="Professional summary"
+          className="sm:col-span-2"
+          action={
+            <AiButton
+              text={profile.summary}
+              context={`${profile.headline || 'Professional'} — target role: ${profile.headline}`}
+              instruction="Write a concise 2–4 sentence professional summary in first person, no pronouns."
+              onResult={(text) => update((d) => void (d.profile.summary = text))}
+            />
+          }
+        >
           <TextArea
             rows={4}
             value={profile.summary}

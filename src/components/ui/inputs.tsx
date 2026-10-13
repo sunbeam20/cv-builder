@@ -3,14 +3,18 @@ import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from 'rea
 interface FieldProps {
   label: string
   hint?: string
+  action?: ReactNode
   children: ReactNode
   className?: string
 }
 
-export function Field({ label, hint, children, className = '' }: FieldProps) {
+export function Field({ label, hint, action, children, className = '' }: FieldProps) {
   return (
     <label className={`flex flex-col gap-1 ${className}`}>
-      <span className="text-xs font-medium text-slate-600">{label}</span>
+      <span className="flex items-center justify-between gap-2">
+        <span className="text-xs font-medium text-slate-600">{label}</span>
+        {action}
+      </span>
       {children}
       {hint ? <span className="text-[11px] text-slate-400">{hint}</span> : null}
     </label>

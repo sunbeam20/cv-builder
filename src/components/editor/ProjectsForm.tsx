@@ -75,6 +75,7 @@ export function ProjectsForm() {
                     </Field>
                     <BulletsEditor
                       bullets={project.bullets}
+                      aiContext={project.name}
                       onChange={(bullets) =>
                         update((d) => void (d.projects[index].bullets = bullets))
                       }

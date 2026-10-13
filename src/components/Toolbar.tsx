@@ -1,8 +1,19 @@
 import { useRef, useState } from 'react'
 import type { RefObject } from 'react'
-import { FileText, FileType, Image, Printer, RotateCcw, Sparkles, Upload } from 'lucide-react'
+import {
+  Download,
+  FileText,
+  FileType,
+  Image,
+  KeyRound,
+  Printer,
+  RotateCcw,
+  Sparkles,
+  Upload,
+} from 'lucide-react'
 import { useResumeStore } from '../store/resumeStore'
 import { resumeSchema } from '../lib/schema'
+import { downloadBlob, slug } from '../lib/helpers'
 import { TEMPLATES, TEMPLATE_LIST, isTemplateId } from '../lib/templates'
 
 type Busy = 'pdf' | 'docx' | 'png' | null
@@ -21,6 +32,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   const replace = useResumeStore((s) => s.replace)
   const loadSample = useResumeStore((s) => s.loadSample)
   const reset = useResumeStore((s) => s.reset)
+  const openAiSettings = useResumeStore((s) => s.openAiSettings)
   const [busy, setBusy] = useState<Busy>(null)
   const [error, setError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -51,6 +63,11 @@ export function Toolbar({ pageRef }: ToolbarProps) {
 
   const handleReset = () => {
     if (window.confirm('Clear all CV data? This cannot be undone.')) reset()
+  }
+
+  const handleExportJson = () => {
+    const json = JSON.stringify(resume, null, 2)
+    downloadBlob(new Blob([json], { type: 'application/json' }), `${slug(resume.profile.fullName)}.json`)
   }
 
   return (
@@ -139,6 +156,22 @@ export function Toolbar({ pageRef }: ToolbarProps) {
         >
           <Upload size={15} />
           Import
+        </button>
+        <button
+          type="button"
+          className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+          onClick={handleExportJson}
+        >
+          <Download size={15} />
+          JSON
+        </button>
+        <button
+          type="button"
+          className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+          onClick={openAiSettings}
+        >
+          <KeyRound size={15} />
+          AI
         </button>
         <button
           type="button"

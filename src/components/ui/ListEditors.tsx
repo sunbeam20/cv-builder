@@ -1,13 +1,20 @@
 import { Plus, X } from 'lucide-react'
 import { TextArea } from './inputs'
+import { AiButton } from './AiButton'
 
 interface BulletsEditorProps {
   bullets: string[]
   onChange: (bullets: string[]) => void
   placeholder?: string
+  aiContext?: string
 }
 
-export function BulletsEditor({ bullets, onChange, placeholder = 'Describe an achievement…' }: BulletsEditorProps) {
+export function BulletsEditor({
+  bullets,
+  onChange,
+  placeholder = 'Describe an achievement…',
+  aiContext,
+}: BulletsEditorProps) {
   const setAt = (index: number, value: string) => {
     const next = bullets.slice()
     next[index] = value
@@ -29,15 +36,23 @@ export function BulletsEditor({ bullets, onChange, placeholder = 'Describe an ac
             placeholder={placeholder}
             onChange={(e) => setAt(index, e.target.value)}
           />
-          <button
-            type="button"
-            title="Remove highlight"
-            aria-label="Remove highlight"
-            onClick={() => removeAt(index)}
-            className="mt-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
-          >
-            <X size={14} />
-          </button>
+          <div className="mt-1 flex shrink-0 flex-col items-end gap-1">
+            <AiButton
+              text={bullet}
+              context={aiContext}
+              instruction="Rewrite this resume bullet point to be concise and achievement-oriented."
+              onResult={(text) => setAt(index, text)}
+            />
+            <button
+              type="button"
+              title="Remove highlight"
+              aria-label="Remove highlight"
+              onClick={() => removeAt(index)}
+              className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+            >
+              <X size={14} />
+            </button>
+          </div>
         </div>
       ))}
       <button
