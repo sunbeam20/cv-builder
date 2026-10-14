@@ -42,6 +42,13 @@ export const useOfferStore = create<OfferState>()(
           state.currency = currency
         }),
     })),
-    { name: STORAGE_KEY, storage: createJSONStorage(() => localStorage), version: 1 },
+    { name: STORAGE_KEY, storage: createJSONStorage(() => localStorage), version: 2,
+      migrate: (persisted) => {
+        const state = persisted as { offers?: Partial<Offer>[] | undefined; currency?: string | undefined }
+        return {
+          offers: (state?.offers ?? []).map((offer) => ({ ...emptyOffer(), ...offer })),
+          currency: state?.currency ?? 'USD',
+        }
+      } },
   ),
 )

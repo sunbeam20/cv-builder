@@ -8,7 +8,7 @@ import { priorityLabel } from './model'
 import { Stars } from './ApplicationCard'
 
 const inputClass =
-  'w-full rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 function Field({
   label,
@@ -21,7 +21,7 @@ function Field({
 }) {
   return (
     <label className={`flex flex-col gap-1 ${className ?? ''}`}>
-      <span className="text-[11px] font-medium text-slate-500">{label}</span>
+      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">{label}</span>
       {children}
     </label>
   )
@@ -43,17 +43,17 @@ function Timeline({
     setNote('')
   }
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Timeline</p>
+    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3">
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Timeline</p>
       {events.length === 0 ? (
-        <p className="text-[11px] text-slate-400">No activity recorded yet.</p>
+        <p className="text-[11px] text-slate-400 dark:text-slate-500">No activity recorded yet.</p>
       ) : (
         <ol className="flex flex-col gap-1.5">
           {events.map((event) => (
-            <li key={event.id} className="flex items-center gap-2 text-[11px] text-slate-600">
+            <li key={event.id} className="flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300">
               <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
-              <span className="font-medium text-slate-700">{STATUS_LABELS[event.status]}</span>
-              <span className="text-slate-400">
+              <span className="font-medium text-slate-700 dark:text-slate-200">{STATUS_LABELS[event.status]}</span>
+              <span className="text-slate-400 dark:text-slate-500">
                 {new Date(event.at).toLocaleString(undefined, {
                   day: 'numeric',
                   month: 'short',
@@ -62,7 +62,7 @@ function Timeline({
                   minute: '2-digit',
                 })}
               </span>
-              {event.note ? <span className="text-slate-400">· {event.note}</span> : null}
+              {event.note ? <span className="text-slate-400 dark:text-slate-500">· {event.note}</span> : null}
             </li>
           ))}
         </ol>
@@ -71,7 +71,7 @@ function Timeline({
       {onAddNote ? (
         <div className="mt-2.5 flex items-center gap-2">
           <input
-            className="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 outline-none focus:border-indigo-500"
+            className="w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[11px] text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
             aria-label="Log a note"
             placeholder="Log a note (call, email, update…)"
             value={note}
@@ -87,7 +87,7 @@ function Timeline({
             type="button"
             onClick={add}
             disabled={note.trim() === ''}
-            className="shrink-0 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-medium text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="shrink-0 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[11px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Add
           </button>
@@ -161,14 +161,14 @@ export function ApplicationFormModal({
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="w-full max-w-2xl rounded-xl bg-white p-5 shadow-xl outline-none"
+        className="w-full max-w-2xl rounded-xl bg-white dark:bg-slate-900 p-5 shadow-xl outline-none"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-4 flex items-center gap-2">
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
             <ClipboardList size={16} />
           </span>
-          <h2 className="text-sm font-semibold text-slate-800">
+          <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
             {initial ? 'Edit application' : 'Add application'}
           </h2>
         </div>
@@ -211,12 +211,12 @@ export function ApplicationFormModal({
               </select>
             </Field>
             <Field label={`Priority${draft.priority ? ` · ${priorityLabel(draft.priority)}` : ''}`}>
-              <div className="flex h-[38px] items-center gap-2 rounded-md border border-slate-200 px-2.5">
+              <div className="flex h-[38px] items-center gap-2 rounded-md border border-slate-200 dark:border-slate-700 px-2.5">
                 <Stars value={draft.priority} onChange={(p) => set('priority', p)} size={18} />
                 <button
                   type="button"
                   onClick={() => set('priority', 0)}
-                  className="ml-auto text-[11px] text-slate-400 hover:text-slate-600"
+                  className="ml-auto text-[11px] text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   Clear
                 </button>
@@ -356,7 +356,7 @@ export function ApplicationFormModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md border border-slate-200 px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50"
+            className="rounded-md border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             Cancel
           </button>

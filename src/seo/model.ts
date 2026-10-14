@@ -4,6 +4,8 @@ export interface SeoInput {
   url: string
   siteName: string
   imageAlt: string
+  ogImage: string
+  favicon: string
 }
 
 export const LIMITS = { title: 60, description: 160 } as const
@@ -14,6 +16,8 @@ export const emptySeo = (): SeoInput => ({
   url: 'https://example.com',
   siteName: 'Example',
   imageAlt: '',
+  ogImage: '',
+  favicon: '',
 })
 
 export function truncateText(text: string, max: number): string {
@@ -51,6 +55,7 @@ export function seoWarnings(input: SeoInput): string[] {
   else if (input.description.trim().length < 70)
     warnings.push('Description is short; 120–160 characters uses the space well.')
   if (!input.imageAlt.trim()) warnings.push('Add social image alt text for accessibility.')
+  if (!input.ogImage.trim()) warnings.push('Add a social share image (1200×630).')
   if (!/^https?:\/\/.+/.test(input.url.trim())) warnings.push('URL should start with http:// or https://.')
   return warnings
 }

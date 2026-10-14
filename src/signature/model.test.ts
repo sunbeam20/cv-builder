@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { emptySignature, signatureHtml, signatureText } from './model'
+import { emptySignature, signatureHtml, signatureText, signatureVCard } from './model'
 
 describe('signatureHtml', () => {
   it('includes name, role and company', () => {
@@ -21,6 +21,40 @@ describe('signatureHtml', () => {
 
   it('applies the accent colour', () => {
     expect(signatureHtml({ ...emptySignature(), accent: '#ff0000' })).toContain('#ff0000')
+  })
+
+  it('renders distinct markup per layout', () => {
+    const classic = signatureHtml({ ...emptySignature(), layout: 'classic' })
+    const compact = signatureHtml({ ...emptySignature(), layout: 'compact' })
+    const banner = signatureHtml({ ...emptySignature(), layout: 'banner' })
+    expect(compact).not.toBe(classic)
+    expect(banner).not.toBe(classic)
+    expect(banner).not.toBe(compact)
+  })
+
+  it('fills the banner with the accent colour', () => {
+    expect(signatureHtml({ ...emptySignature(), layout: 'banner', accent: '#ff0000' })).toContain('background:#ff0000')
+  })
+
+  it('adds a rounded photo for an image data URL', () => {
+    const html = signatureHtml({ ...emptySignature(), photo: 'data:image/png;base64,AAAA' })
+    expect(html).toContain('<img')
+    expect(html).toContain('border-radius:50%')
+  })
+
+  it('omits the photo when empty', () => {
+    expect(signatureHtml({ ...emptySignature(), photo: '' })).not.toContain('<img')
+  })
+})
+
+describe('signatureVCard', () => {
+  it('produces a valid vCard 3.0 with the contact details', () => {
+    const card = signatureVCard({ ...emptySignature(), name: 'Ada Lovelace' })
+    expect(card).toContain('BEGIN:VCARD')
+    expect(card).toContain('VERSION:3.0')
+    expect(card).toContain('FN:Ada Lovelace')
+    expect(card).toContain('END:VCARD')
+    expect(card).toContain('\r\n')
   })
 })
 

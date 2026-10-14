@@ -8,10 +8,12 @@ export const STORAGE_KEY = 'interview-prep-v1'
 interface InterviewState {
   answers: StarAnswer[]
   practiced: string[]
+  notes: Record<string, string>
   addAnswer: (answer?: StarAnswer) => string
   updateAnswer: (id: string, patch: Partial<StarAnswer>) => void
   removeAnswer: (id: string) => void
   markPracticed: (question: string) => void
+  setNote: (question: string, value: string) => void
   resetProgress: () => void
 }
 
@@ -20,6 +22,7 @@ export const useInterviewStore = create<InterviewState>()(
     immer((set) => ({
       answers: [],
       practiced: [],
+      notes: {},
 
       addAnswer: (answer) => {
         const next = answer ?? emptyAnswer()
@@ -46,11 +49,24 @@ export const useInterviewStore = create<InterviewState>()(
           if (!state.practiced.includes(question)) state.practiced.push(question)
         }),
 
+      setNote: (question, value) =>
+        set((state) => {
+          state.notes[question] = value
+        }),
+
       resetProgress: () =>
         set((state) => {
           state.practiced = []
         }),
     })),
-    { name: STORAGE_KEY, storage: createJSONStorage(() => localStorage), version: 1 },
+    {
+      name: STORAGE_KEY,
+      storage: createJSONStorage(() => localStorage),
+      version: 2,
+      migrate: (persisted, _version) => {
+        const state = (persisted ?? {}) as Partial<InterviewState>
+        return { ...state, notes: state.notes ?? {} } as InterviewState
+      },
+    },
   ),
 )

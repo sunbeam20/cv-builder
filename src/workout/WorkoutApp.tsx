@@ -16,9 +16,9 @@ import {
 } from './model'
 
 const inputClass =
-  'rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 const smallInput =
-  'w-16 rounded-md border border-slate-200 bg-white px-2 py-1 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'w-16 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 export function WorkoutApp() {
   const workouts = useWorkoutStore((s) => s.workouts)
@@ -96,17 +96,17 @@ export function WorkoutApp() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader icon={Dumbbell} title="Workout Logger" subtitle="Record your workouts and watch your progress add up." />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-6">
-        <section className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="flex flex-col gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
           <div className="flex flex-wrap items-end gap-3">
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               Date
               <input aria-label="Date" type="date" className={inputClass} value={date} onChange={(e) => setDate(e.target.value)} />
             </label>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               Workout
               <input
                 aria-label="Workout name"
@@ -122,7 +122,7 @@ export function WorkoutApp() {
                   key={template.name}
                   type="button"
                   onClick={() => applyTemplate(template.name)}
-                  className="rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-500 hover:bg-slate-50"
+                  className="rounded-full border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   {template.name}
                 </button>
@@ -132,7 +132,7 @@ export function WorkoutApp() {
 
           <div className="flex flex-col gap-2">
             {exercises.map((exercise) => (
-              <div key={exercise.id} className="rounded-lg border border-slate-200 bg-slate-50 p-2.5">
+              <div key={exercise.id} className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-2.5">
                 <div className="flex items-center gap-2">
                   <input
                     aria-label="Exercise name"
@@ -144,14 +144,14 @@ export function WorkoutApp() {
                     type="button"
                     aria-label={`Remove ${exercise.name}`}
                     onClick={() => removeExercise(exercise.id)}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-400 hover:border-red-300 hover:text-red-600"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 hover:border-red-300 hover:text-red-600 dark:hover:text-red-400"
                   >
                     <X size={14} />
                   </button>
                 </div>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   {exercise.sets.map((set, index) => (
-                    <span key={index} className="inline-flex items-center gap-1 rounded-md bg-white px-2 py-1 text-xs text-slate-500">
+                    <span key={index} className="inline-flex items-center gap-1 rounded-md bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-500 dark:text-slate-400">
                       <input
                         aria-label={`${exercise.name} set ${index + 1} reps`}
                         type="number"
@@ -173,7 +173,7 @@ export function WorkoutApp() {
                         type="button"
                         aria-label={`Remove ${exercise.name} set ${index + 1}`}
                         onClick={() => removeSet(exercise.id, index)}
-                        className="text-slate-400 hover:text-red-500"
+                        className="text-slate-400 dark:text-slate-500 hover:text-red-500"
                       >
                         <X size={12} />
                       </button>
@@ -182,7 +182,7 @@ export function WorkoutApp() {
                   <button
                     type="button"
                     onClick={() => addSet(exercise.id)}
-                    className="inline-flex items-center gap-1 rounded-md border border-dashed border-slate-300 px-2 py-1 text-xs text-slate-500 hover:bg-white"
+                    className="inline-flex items-center gap-1 rounded-md border border-dashed border-slate-300 dark:border-slate-600 px-2 py-1 text-xs text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900"
                   >
                     <Plus size={12} /> set
                   </button>
@@ -192,7 +192,7 @@ export function WorkoutApp() {
           </div>
 
           <div className="flex flex-wrap items-end gap-3">
-            <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               Add exercise
               <input
                 aria-label="Add exercise"
@@ -203,14 +203,14 @@ export function WorkoutApp() {
                 onKeyDown={(e) => e.key === 'Enter' && addExercise(newExercise)}
               />
             </label>
-            <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               Note
               <input aria-label="Workout note" className={inputClass} value={note} onChange={(e) => setNote(e.target.value)} />
             </label>
             <button
               type="button"
               onClick={() => addExercise(newExercise)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               <Plus size={15} /> Exercise
             </button>
@@ -232,9 +232,9 @@ export function WorkoutApp() {
               { label: 'Total sets', value: String(summary.totalSets) },
               { label: 'Avg volume', value: `${summary.averageVolume.toLocaleString()} kg` },
             ].map((card) => (
-              <div key={card.label} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-                <p className="text-lg font-bold text-slate-800">{card.value}</p>
-                <p className="text-[11px] text-slate-400">{card.label}</p>
+              <div key={card.label} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-sm">
+                <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{card.value}</p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500">{card.label}</p>
               </div>
             ))}
           </section>
@@ -242,36 +242,36 @@ export function WorkoutApp() {
 
         <section className="flex flex-col gap-2">
           {sorted.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-400">
+            <p className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-8 text-center text-sm text-slate-400 dark:text-slate-500">
               No workouts yet. Pick a template or add an exercise to get started.
             </p>
           ) : (
             sorted.map((workout) => (
-              <div key={workout.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+              <div key={workout.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-slate-800">{workout.name}</span>
-                  <span className="text-xs text-slate-400">{workout.date}</span>
-                  <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600">
+                  <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">{workout.name}</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">{workout.date}</span>
+                  <span className="rounded-full bg-indigo-50 dark:bg-indigo-950 px-2 py-0.5 text-xs font-medium text-indigo-600 dark:text-indigo-400">
                     {workoutSets(workout)} sets
                   </span>
-                  <span className="text-xs text-slate-400">{workoutVolume(workout).toLocaleString()} kg</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">{workoutVolume(workout).toLocaleString()} kg</span>
                   <button
                     type="button"
                     aria-label={`Delete ${workout.name} on ${workout.date}`}
                     onClick={() => removeWorkout(workout.id)}
-                    className="ml-auto inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                    className="ml-auto inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
                   >
                     <Trash2 size={14} />
                   </button>
                 </div>
-                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-slate-500">
+                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400">
                   {workout.exercises.map((exercise) => (
                     <span key={exercise.id}>
                       {exercise.name}: {exercise.sets.map((set) => `${set.reps}×${set.weight}`).join(', ')}
                     </span>
                   ))}
                 </div>
-                {workout.note ? <p className="mt-1 text-xs text-slate-400">{workout.note}</p> : null}
+                {workout.note ? <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">{workout.note}</p> : null}
               </div>
             ))
           )}

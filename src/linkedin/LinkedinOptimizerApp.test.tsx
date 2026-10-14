@@ -12,6 +12,12 @@ describe('LinkedinOptimizerApp', () => {
     expect(screen.getByLabelText('Profile score')).not.toHaveTextContent('0%')
   })
 
+  it('exposes AI improve and review actions', () => {
+    render(<LinkedinOptimizerApp />)
+    expect(screen.getAllByRole('button', { name: /Improve/i })).toHaveLength(2)
+    expect(screen.getByRole('button', { name: /Review/i })).toBeInTheDocument()
+  })
+
   it('suggests a headline', () => {
     render(<LinkedinOptimizerApp />)
     fireEvent.change(screen.getByLabelText('Skills'), { target: { value: 'Figma, Research, Prototyping' } })

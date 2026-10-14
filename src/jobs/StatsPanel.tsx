@@ -14,14 +14,14 @@ const STATUS_BAR: Record<ApplicationStatus, string> = {
 
 function StatCard({ icon, label, value, hint }: { icon: React.ReactNode; label: string; value: string; hint?: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3.5 py-3 shadow-sm">
-      <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+    <div className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-3 shadow-sm">
+      <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
         {icon}
       </span>
       <div className="min-w-0">
-        <p className="truncate text-[11px] font-medium text-slate-400">{label}</p>
-        <p className="text-lg font-semibold leading-tight text-slate-800">{value}</p>
-        {hint ? <p className="truncate text-[10px] text-slate-400">{hint}</p> : null}
+        <p className="truncate text-[11px] font-medium text-slate-400 dark:text-slate-500">{label}</p>
+        <p className="text-lg font-semibold leading-tight text-slate-800 dark:text-slate-100">{value}</p>
+        {hint ? <p className="truncate text-[10px] text-slate-400 dark:text-slate-500">{hint}</p> : null}
       </div>
     </div>
   )
@@ -90,13 +90,13 @@ export function StatsPanel({
       </div>
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Pipeline</h3>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Pipeline</h3>
           {liveTotal === 0 ? (
-            <p className="text-xs text-slate-400">No active applications yet.</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">No active applications yet.</p>
           ) : (
             <>
-              <div className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 {APPLICATION_STATUSES.map((status) =>
                   statusCounts[status] > 0 ? (
                     <span
@@ -108,12 +108,12 @@ export function StatsPanel({
                   ) : null,
                 )}
               </div>
-              <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-slate-600">
+              <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-slate-600 dark:text-slate-300">
                 {APPLICATION_STATUSES.map((status) => (
                   <li key={status} className="flex items-center gap-2">
                     <span className={`h-2 w-2 rounded-full ${STATUS_BAR[status]}`} />
                     <span className="flex-1">{STATUS_LABELS[status]}</span>
-                    <span className="font-semibold text-slate-800">{statusCounts[status]}</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-100">{statusCounts[status]}</span>
                   </li>
                 ))}
               </ul>
@@ -121,8 +121,8 @@ export function StatsPanel({
           )}
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
             Applications per week
           </h3>
           <div className="flex h-20 items-end gap-1.5">
@@ -135,16 +135,16 @@ export function StatsPanel({
               />
             ))}
           </div>
-          <p className="mt-2 text-right text-[10px] text-slate-400">12 weeks ago → this week</p>
+          <p className="mt-2 text-right text-[10px] text-slate-400 dark:text-slate-500">12 weeks ago → this week</p>
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
             30-day goal
           </h3>
-          <label className="ml-auto flex items-center gap-1.5 text-[11px] text-slate-500">
+          <label className="ml-auto flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
             Target
             <input
               type="number"
@@ -153,23 +153,23 @@ export function StatsPanel({
               aria-label="Application goal"
               value={goal}
               onChange={(e) => onSetGoal(Number(e.target.value))}
-              className="w-16 rounded-md border border-slate-200 px-2 py-1 text-[11px] text-slate-700 outline-none focus:border-indigo-500"
+              className="w-16 rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
             />
           </label>
         </div>
         <div className="mt-2 flex items-center gap-3">
-          <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+          <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
             <span
               className={`block h-full rounded-full ${stats.thisMonth >= goal ? 'bg-emerald-500' : 'bg-indigo-500'}`}
               style={{ width: `${goal > 0 ? Math.min(100, (stats.thisMonth / goal) * 100) : 0}%` }}
             />
           </div>
-          <span className="text-xs font-semibold text-slate-700">
+          <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
             {stats.thisMonth}
-            <span className="font-normal text-slate-400"> / {goal}</span>
+            <span className="font-normal text-slate-400 dark:text-slate-500"> / {goal}</span>
           </span>
         </div>
-        <p className="mt-1.5 text-[10px] text-slate-400">
+        <p className="mt-1.5 text-[10px] text-slate-400 dark:text-slate-500">
           {goal === 0
             ? 'Set a target to track your pace.'
             : stats.thisMonth >= goal
@@ -181,13 +181,13 @@ export function StatsPanel({
       {stats.followUpsDue > 0 || stats.stale > 0 ? (
         <div className="flex flex-wrap gap-2 text-[11px]">
           {stats.followUpsDue > 0 ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 font-medium text-amber-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-950 px-2.5 py-1 font-medium text-amber-700">
               <Clock size={12} />
               {stats.followUpsDue} follow-up{stats.followUpsDue === 1 ? '' : 's'} due
             </span>
           ) : null}
           {stats.stale > 0 ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1 font-medium text-rose-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 dark:bg-rose-950 px-2.5 py-1 font-medium text-rose-700">
               <TriangleAlert size={12} />
               {stats.stale} going stale
             </span>

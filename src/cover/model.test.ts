@@ -33,6 +33,15 @@ describe('renderLetter', () => {
   })
 })
 
+describe('letter style defaults', () => {
+  it('defaults to sans, an accent colour and a margin', () => {
+    const letter = emptyLetter()
+    expect(letter.font).toBe('sans')
+    expect(letter.accent).toMatch(/^#/)
+    expect(letter.margin).toBeGreaterThan(0)
+  })
+})
+
 describe('letterTitle / wordCount / sortLetters', () => {
   it('builds a readable title', () => {
     expect(letterTitle(letter())).toBe('Engineer · Acme')

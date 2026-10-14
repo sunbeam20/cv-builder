@@ -32,6 +32,27 @@ describe('logoSvg', () => {
     const svg = logoSvg({ ...emptyLogo(), shape: 'none' })
     expect(svg).not.toContain('<circle')
   })
+
+  it('renders the icon path when an icon is selected', () => {
+    const svg = logoSvg({ ...emptyLogo(), icon: 'bolt' })
+    expect(svg).toContain('<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"')
+  })
+
+  it('omits the icon path when no icon is selected', () => {
+    expect(logoSvg({ ...emptyLogo(), icon: '' })).not.toContain('<path d=')
+  })
+
+  it('emits a linear gradient when enabled', () => {
+    const svg = logoSvg({ ...emptyLogo(), gradient: true, secondary: '#0ea5e9' })
+    expect(svg).toContain('linearGradient')
+    expect(svg).toContain('#0ea5e9')
+  })
+
+  it('renders a distinct inline layout', () => {
+    const stacked = logoSvg({ ...emptyLogo(), layout: 'stacked' })
+    const inline = logoSvg({ ...emptyLogo(), layout: 'inline' })
+    expect(inline).not.toBe(stacked)
+  })
 })
 
 describe('badgePath', () => {

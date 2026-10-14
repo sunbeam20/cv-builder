@@ -46,11 +46,11 @@ export function JsonApp() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader icon={Braces} title="JSON & CSV Studio" subtitle="Format, validate, and convert between JSON and CSV." />
 
       <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6">
-        <div className="inline-flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
+        <div className="inline-flex flex-wrap gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-1">
           {MODES.map((option) => (
             <button
               key={option.id}
@@ -58,7 +58,7 @@ export function JsonApp() {
               aria-pressed={mode === option.id}
               onClick={() => setMode(option.id)}
               className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-                mode === option.id ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'
+                mode === option.id ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               {option.label}
@@ -69,11 +69,11 @@ export function JsonApp() {
         <div className="grid gap-4 md:grid-cols-2">
           <section className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400">Input</span>
+              <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Input</span>
               <button
                 type="button"
                 onClick={() => setInput(mode === 'csv-json' ? 'name,role\nAda,Engineer' : SAMPLE)}
-                className="text-xs text-slate-400 hover:text-indigo-600"
+                className="text-xs text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"
               >
                 Load sample
               </button>
@@ -83,19 +83,19 @@ export function JsonApp() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               spellCheck={false}
-              className="min-h-[45vh] w-full resize-y rounded-xl border border-slate-200 bg-white p-4 font-mono text-sm text-slate-700 outline-none focus:border-indigo-500"
+              className="min-h-[45vh] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 font-mono text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
             />
           </section>
 
           <section className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400">Output</span>
+              <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Output</span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={copy}
                   disabled={!output}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40"
                 >
                   <Copy size={13} /> Copy
                 </button>
@@ -103,7 +103,7 @@ export function JsonApp() {
                   type="button"
                   onClick={download}
                   disabled={!output}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40"
                 >
                   <Download size={13} /> Download
                 </button>
@@ -115,12 +115,12 @@ export function JsonApp() {
                 readOnly
                 value={output}
                 spellCheck={false}
-                className="min-h-[45vh] w-full resize-y rounded-xl border border-emerald-200 bg-white p-4 font-mono text-sm text-slate-700 outline-none"
+                className="min-h-[45vh] w-full resize-y rounded-xl border border-emerald-200 bg-white dark:bg-slate-900 p-4 font-mono text-sm text-slate-700 dark:text-slate-200 outline-none"
               />
             ) : (
               <p
                 role="alert"
-                className="min-h-[45vh] rounded-xl border border-red-200 bg-red-50 p-4 font-mono text-sm text-red-600"
+                className="min-h-[45vh] rounded-xl border border-red-200 bg-red-50 dark:bg-red-950 p-4 font-mono text-sm text-red-600 dark:text-red-400"
               >
                 {result.error}
               </p>

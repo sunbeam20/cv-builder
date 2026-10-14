@@ -51,28 +51,34 @@ hero preview by adding a case in `ToolPreview`; otherwise it falls back to a gen
   paragraphs, in classic Latin or modern English, with an optional “Lorem ipsum…” opener and one-click copy.
 - **Color Studio** (`#/color-studio`) — build a Tailwind-style colour ramp from any base colour, check
   WCAG contrast ratios, and copy the result as CSS variables or a Tailwind palette. Runs in the browser.
-- **Cover Letter Builder** (`#/cover-letter`) — manage multiple letters with reusable tone presets and a
-  sample body, a live preview, and copy / download / print-to-PDF export.
-- **Interview Prep** (`#/interview-prep`) — a 16-question bank across behavioural, technical, culture, and
-  closing categories, with a timed practice mode, STAR hints, and saved STAR answers.
+- **Cover Letter Builder** (`#/cover-letter`) — manage multiple letters with reusable tone presets, a sample
+  body, and AI-assisted rewrites of the opening and body. Font, accent colour, and margin controls drive a
+  live preview, with real PDF export plus copy, download, and print.
+- **Interview Prep** (`#/interview-prep`) — a 30-question bank spanning five role packs (general, software,
+  product, sales, design), with a timed practice mode, STAR hints, live answer feedback and scoring, progress
+  tracking, and per-question practice notes.
 - **LinkedIn Optimizer** (`/linkedin`) — score your headline, about section, and skills against length,
-  first-person, action-verb, quantified-result, and keyword checks, with headline suggestions.
+  first-person, action-verb, quantified-result, and keyword checks. AI rewrites your headline and about, and
+  an AI review panel returns a polished summary with reach-boosting suggestions.
 - **CV ↔ Job Matcher** (`/job-matcher`) — paste a job description to score your CV, see matched vs missing
   keywords (plus custom extras), and save past analyses. Reuses the same keyword engine as the ATS Scanner.
-- **Offer Comparison** (`/offer-compare`) — compare offers on base, bonus, equity, and benefits, with
-  cost-of-living-adjusted totals and your best offer highlighted.
-- **Logo & Icon Maker** (`/logo-maker`) — monogram/wordmark logos with shapes, palettes, and fonts, exported
-  as SVG or PNG. Everything is generated as inline SVG.
-- **Email Signature Builder** (`/email-signature`) — build a table-based HTML signature with accent colour
-  and social links, then copy rich HTML or plain text.
-- **Favicon Generator** (`/favicon`) — letter-based favicons in square, rounded, or circular shapes, previewed
-  at 16–512px, with SVG/PNG export and a copy-ready `<link>` tag.
+- **Offer Comparison** (`/offer-compare`) — compare offers on base, bonus, equity (with vesting and cliff),
+  and benefits, with after-tax and cost-of-living-adjusted totals, a four-year projection chart, and your
+  best offer highlighted.
+- **Logo & Icon Maker** (`/logo-maker`) — monogram, icon, and wordmark logos with twelve built-in icons,
+  shapes, palettes, fonts, stacked/inline layouts, and optional gradients, exported as SVG or PNG.
+  Everything is generated as inline SVG.
+- **Email Signature Builder** (`/email-signature`) — build a signature in classic, compact, or banner
+  layouts with accent colour, social links, and an optional photo, then copy rich HTML or plain text or
+  download a vCard.
+- **Favicon Generator** (`/favicon`) — start from a letter or your own image, in square, rounded, or circular
+  shapes, previewed at 16–512px, with SVG/PNG/ICO export, a packaged ZIP, link tags, and a web app manifest.
 - **SEO & Social Preview** (`/seo-preview`) — length checks and live Google, X/Twitter, and Facebook/Open
-  Graph previews with copy-ready meta tags.
-- **Expense Splitter** (`/split-bill`) — add people and shared expenses, split each evenly across its
-  participants, and settle up with the fewest transfers.
-- **Invoice Generator** (`/invoice`) — line items, tax, and totals with saved sender details and past
-  invoices, printed to PDF from the preview.
+  Graph previews, including your uploaded share image and favicon, with copy-ready meta tags.
+- **Expense Splitter** (`/split-bill`) — add people and shared expenses and split each one evenly, by
+  percentage, by exact amounts, or by shares, with validation and a fewest-transfers settle-up you can copy.
+- **Invoice Generator** (`/invoice`) — line items, tax, and totals with a company logo, status tracking,
+  payment details, and duplication of past invoices, exported as a real PDF or printed from the preview.
 - **Habit Tracker** (`/habits`), **Sleep Tracker** (`/sleep`), **Mood & Gratitude Journal** (`/mood`),
   **Workout Logger** (`/workout`), and **Medicine Reminder** (`/medicine`) — the *Health & life* suite, each
   with its own local store, streaks/averages, and progress views.
@@ -244,17 +250,17 @@ src/
 ├─ diff/                 # Text Diff tool (DiffApp.tsx, diff.ts + tests)
 ├─ lorem/                # Lorem Ipsum Generator tool (LoremApp.tsx, lorem.ts + tests)
 ├─ color/                # Color Studio tool (ColorApp.tsx, color.ts + tests)
-├─ cover/                # Cover Letter Builder tool (CoverLetterApp.tsx, model.ts, store.ts + tests)
+├─ cover/                # Cover Letter Builder tool (CoverLetterApp.tsx, CoverLetterPdf.tsx, model.ts, store.ts + tests)
 ├─ interview/            # Interview Prep tool (InterviewApp.tsx, model.ts, store.ts + tests)
 ├─ linkedin/             # LinkedIn Optimizer tool (LinkedinOptimizerApp.tsx, model.ts + tests)
 ├─ cvjob/                # CV ↔ Job Matcher tool (CvJobMatcherApp.tsx, model.ts, store.ts + tests)
 ├─ offer/                # Offer Comparison tool (OfferCompareApp.tsx, model.ts, store.ts + tests)
 ├─ logo/                 # Logo & Icon Maker tool (LogoApp.tsx, model.ts, store.ts + tests)
 ├─ signature/            # Email Signature Builder tool (SignatureApp.tsx, model.ts + tests)
-├─ favicon/              # Favicon Generator tool (FaviconApp.tsx, model.ts, store.ts + tests)
+├─ favicon/              # Favicon Generator tool (FaviconApp.tsx, model.ts, store.ts, ico.ts, zip.ts + tests)
 ├─ seo/                  # SEO & Social Preview tool (SeoPreviewApp.tsx, model.ts + tests)
 ├─ split/                # Expense Splitter tool (SplitApp.tsx, model.ts, store.ts + tests)
-├─ invoice/              # Invoice Generator tool (InvoiceApp.tsx, model.ts, store.ts + tests)
+├─ invoice/              # Invoice Generator tool (InvoiceApp.tsx, InvoicePdf.tsx, model.ts, store.ts + tests)
 ├─ habits/ sleep/ mood/ workout/ medicine/   # Health & life tools (App + model + store + tests)
 ├─ focus/ kanban/ notes/ json/ datetime/     # Productivity tools (App + model + store + tests)
 ├─ components/

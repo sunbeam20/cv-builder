@@ -44,22 +44,22 @@ function loadDraft(): Draft {
 }
 
 const STATUS_META: Record<AtsStatus, { icon: typeof CheckCircle2; className: string }> = {
-  pass: { icon: CheckCircle2, className: 'text-emerald-600' },
-  warn: { icon: AlertTriangle, className: 'text-amber-600' },
-  fail: { icon: XCircle, className: 'text-rose-600' },
+  pass: { icon: CheckCircle2, className: 'text-emerald-600 dark:text-emerald-400' },
+  warn: { icon: AlertTriangle, className: 'text-amber-600 dark:text-amber-400' },
+  fail: { icon: XCircle, className: 'text-rose-600 dark:text-rose-400' },
 }
 
 const tone = (score: number): { bar: string; text: string } => {
-  if (score >= 85) return { bar: 'bg-emerald-500', text: 'text-emerald-600' }
+  if (score >= 85) return { bar: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' }
   if (score >= 70) return { bar: 'bg-lime-500', text: 'text-lime-600' }
-  if (score >= 50) return { bar: 'bg-amber-500', text: 'text-amber-600' }
-  return { bar: 'bg-rose-500', text: 'text-rose-600' }
+  if (score >= 50) return { bar: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400' }
+  return { bar: 'bg-rose-500', text: 'text-rose-600 dark:text-rose-400' }
 }
 
 function ScoreHeader({ report }: { report: ReturnType<typeof analyzeAts> }) {
   const colors = tone(report.score)
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
       <div className="flex items-center gap-4">
         <div
           className={`flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-full border-4 ${
@@ -71,15 +71,15 @@ function ScoreHeader({ report }: { report: ReturnType<typeof analyzeAts> }) {
           }`}
         >
           <span className={`text-2xl font-bold ${colors.text}`}>{report.score}</span>
-          <span className="text-[10px] font-medium text-slate-400">/ 100</span>
+          <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">/ 100</span>
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-base font-semibold text-slate-800">ATS score: {report.grade}</h2>
-          <p className="mt-0.5 text-xs text-slate-500">
+          <h2 className="text-base font-semibold text-slate-800 dark:text-slate-100">ATS score: {report.grade}</h2>
+          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
             {report.wordCount} words · {report.issues.length} suggestion
             {report.issues.length === 1 ? '' : 's'} to review
           </p>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
             <div
               className={`h-full rounded-full transition-all ${colors.bar}`}
               style={{ width: `${report.score}%` }}
@@ -171,15 +171,15 @@ export function AtsApp() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
+      <header className="sticky top-0 z-20 border-b border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
           <button
             type="button"
             aria-label={`Go to ${BRAND} home`}
             title="All tools"
             onClick={() => goHome()}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             <ArrowLeft size={15} />
           </button>
@@ -187,13 +187,13 @@ export function AtsApp() {
             <ScanSearch size={16} />
           </span>
           <div className="mr-auto min-w-0">
-            <h1 className="truncate text-sm font-semibold text-slate-800">ATS Scanner</h1>
-            <p className="hidden truncate text-[11px] text-slate-400 sm:block">
+            <h1 className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">ATS Scanner</h1>
+            <p className="hidden truncate text-[11px] text-slate-400 dark:text-slate-500 sm:block">
               Check how well your CV passes applicant tracking systems.
             </p>
           </div>
           <ToolMenu />
-          <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-600 sm:inline-flex">
+          <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950 px-2.5 py-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 sm:inline-flex">
             <Sparkles size={12} />
             Runs locally
           </span>
@@ -202,16 +202,16 @@ export function AtsApp() {
 
       <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <div className="flex flex-col gap-4">
-          <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="mr-auto flex items-center gap-2 text-sm font-semibold text-slate-800">
-                <FileText size={16} className="text-indigo-600" />
+              <h2 className="mr-auto flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
+                <FileText size={16} className="text-indigo-600 dark:text-indigo-400" />
                 Your résumé
               </h2>
               <button
                 type="button"
                 onClick={importFromCv}
-                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 <Link2 size={14} />
                 Import from CV Builder
@@ -219,7 +219,7 @@ export function AtsApp() {
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 <FileUp size={14} />
                 Upload
@@ -227,7 +227,7 @@ export function AtsApp() {
               <button
                 type="button"
                 onClick={loadExample}
-                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 <Sparkles size={14} />
                 Example
@@ -235,7 +235,7 @@ export function AtsApp() {
               <button
                 type="button"
                 onClick={clearAll}
-                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
               >
                 <Trash2 size={14} />
                 Clear
@@ -247,20 +247,20 @@ export function AtsApp() {
               value={text}
               onChange={(event) => setText(event.target.value)}
               placeholder="Paste your résumé text here, upload a file, or import from the CV Builder…"
-              className="mt-3 min-h-[280px] w-full resize-y rounded-lg border border-slate-300 bg-slate-50 p-3 font-mono text-xs leading-relaxed text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="mt-3 min-h-[280px] w-full resize-y rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 p-3 font-mono text-xs leading-relaxed text-slate-700 dark:text-slate-200 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
             />
-            <p className="mt-1.5 text-[11px] text-slate-400">
+            <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
               {wordTotal} word{wordTotal === 1 ? '' : 's'} · PDF, DOCX, TXT — or just paste
             </p>
           </section>
 
-          <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-              <Gauge size={16} className="text-indigo-600" />
+          <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+            <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
+              <Gauge size={16} className="text-indigo-600 dark:text-indigo-400" />
               Job description
-              <span className="font-normal text-slate-400">(optional)</span>
+              <span className="font-normal text-slate-400 dark:text-slate-500">(optional)</span>
             </h2>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               Add a job post to check keyword coverage against your résumé.
             </p>
             <textarea
@@ -268,7 +268,7 @@ export function AtsApp() {
               value={jobDescription}
               onChange={(event) => setJobDescription(event.target.value)}
               placeholder="Paste the job description here…"
-              className="mt-3 min-h-[120px] w-full resize-y rounded-lg border border-slate-300 bg-slate-50 p-3 text-xs text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="mt-3 min-h-[120px] w-full resize-y rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 p-3 text-xs text-slate-700 dark:text-slate-200 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
             />
           </section>
 
@@ -287,12 +287,12 @@ export function AtsApp() {
 
         <div className="flex flex-col gap-4">
           {!report ? (
-            <section className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+            <section className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-10 text-center">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
                 <ScanSearch size={24} />
               </span>
-              <h2 className="text-sm font-semibold text-slate-800">Ready to scan</h2>
-              <p className="max-w-xs text-xs leading-relaxed text-slate-500">
+              <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Ready to scan</h2>
+              <p className="max-w-xs text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                 Paste your résumé (or import it) and the ATS report appears here instantly —
                 contact details, sections, action verbs, metrics, formatting, and keyword match.
               </p>
@@ -304,47 +304,47 @@ export function AtsApp() {
               <button
                 type="button"
                 onClick={downloadReport}
-                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 <Download size={14} />
                 Download report
               </button>
 
               {report.keywords ? (
-                <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-semibold text-slate-800">Keyword match</h2>
+                    <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Keyword match</h2>
                     <span className={`text-sm font-bold ${tone(report.keywords.score).text}`}>
                       {report.keywords.score}%
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                     Where you land against the job description.
                   </p>
-                  <p className="mt-3 text-xs font-semibold text-emerald-600">Matched</p>
+                  <p className="mt-3 text-xs font-semibold text-emerald-600 dark:text-emerald-400">Matched</p>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {report.keywords.matched.length === 0 ? (
-                      <span className="text-xs text-slate-400">None yet</span>
+                      <span className="text-xs text-slate-400 dark:text-slate-500">None yet</span>
                     ) : (
                       report.keywords.matched.map((keyword) => (
                         <span
                           key={`m-${keyword}`}
-                          className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700"
+                          className="rounded-full bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 text-[11px] font-medium text-emerald-700"
                         >
                           {keyword}
                         </span>
                       ))
                     )}
                   </div>
-                  <p className="mt-3 text-xs font-semibold text-amber-600">Missing</p>
+                  <p className="mt-3 text-xs font-semibold text-amber-600 dark:text-amber-400">Missing</p>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {report.keywords.missing.length === 0 ? (
-                      <span className="text-xs text-slate-400">All covered</span>
+                      <span className="text-xs text-slate-400 dark:text-slate-500">All covered</span>
                     ) : (
                       report.keywords.missing.map((keyword) => (
                         <span
                           key={`x-${keyword}`}
-                          className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700"
+                          className="rounded-full bg-amber-50 dark:bg-amber-950 px-2 py-0.5 text-[11px] font-medium text-amber-700"
                         >
                           {keyword}
                         </span>
@@ -359,10 +359,10 @@ export function AtsApp() {
                 return (
                   <section
                     key={category.id}
-                    className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+                    className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm"
                   >
                     <div className="flex items-center justify-between">
-                      <h2 className="text-sm font-semibold text-slate-800">{category.label}</h2>
+                      <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">{category.label}</h2>
                       <span className={`text-sm font-bold ${colors.text}`}>{category.score}%</span>
                     </div>
                     <ul className="mt-3 flex flex-col gap-2">
@@ -373,8 +373,8 @@ export function AtsApp() {
                           <li key={item.id} className="flex items-start gap-2">
                             <Icon size={15} className={`mt-0.5 shrink-0 ${meta.className}`} />
                             <div className="min-w-0">
-                              <p className="text-xs font-medium text-slate-700">{item.label}</p>
-                              <p className="text-[11px] text-slate-500">{item.detail}</p>
+                              <p className="text-xs font-medium text-slate-700 dark:text-slate-200">{item.label}</p>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400">{item.detail}</p>
                             </div>
                           </li>
                         )

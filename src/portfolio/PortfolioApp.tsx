@@ -44,9 +44,9 @@ import { portfolioShareUrl } from './share'
 
 function Card({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-        <span className="text-indigo-600">{icon}</span>
+    <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+      <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
+        <span className="text-indigo-600 dark:text-indigo-400">{icon}</span>
         {title}
       </h2>
       <div className="mt-3 flex flex-col gap-3">{children}</div>
@@ -55,14 +55,14 @@ function Card({ title, icon, children }: { title: string; icon: ReactNode; child
 }
 
 function Label({ children }: { children: ReactNode }) {
-  return <span className="text-[11px] font-medium text-slate-500">{children}</span>
+  return <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">{children}</span>
 }
 
 const inputClass =
-  'w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-xs text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100'
+  'w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs text-slate-700 dark:text-slate-200 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100'
 
 const ghostButton =
-  'inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50'
+  'inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50'
 
 function Seg<T extends string>({
   value,
@@ -78,7 +78,7 @@ function Seg<T extends string>({
   return (
     <div className="flex flex-col gap-1">
       <Label>{label}</Label>
-      <div className="flex rounded-lg border border-slate-200 p-0.5">
+      <div className="flex rounded-lg border border-slate-200 dark:border-slate-700 p-0.5">
         {options.map((option) => (
           <button
             key={option.value}
@@ -86,7 +86,7 @@ function Seg<T extends string>({
             aria-pressed={value === option.value}
             onClick={() => onChange(option.value)}
             className={`flex flex-1 items-center justify-center gap-1 rounded-md px-2 py-1.5 text-xs font-medium transition ${
-              value === option.value ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-50'
+              value === option.value ? 'bg-indigo-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
           >
             {option.label}
@@ -114,7 +114,7 @@ function Toggle({
         onChange={(event) => onChange(event.target.checked)}
         className="h-3.5 w-3.5 accent-indigo-600"
       />
-      <span className="text-xs text-slate-600">{label}</span>
+      <span className="text-xs text-slate-600 dark:text-slate-300">{label}</span>
     </label>
   )
 }
@@ -135,10 +135,10 @@ function ListBox({
   children: ReactNode
 }) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
-        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500">
+        <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">{title}</h2>
+        <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {count}
         </span>
         <button type="button" onClick={onAdd} className={`ml-auto ${ghostButton}`}>
@@ -146,7 +146,7 @@ function ListBox({
           {addLabel}
         </button>
       </div>
-      {hint ? <p className="mt-1 text-[11px] text-slate-400">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{hint}</p> : null}
       <div className="mt-3 flex flex-col gap-3">{children}</div>
     </section>
   )
@@ -170,9 +170,9 @@ function EntryShell({
   children: ReactNode
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-3">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/60 p-3">
       <div className="mb-2 flex items-center gap-1">
-        <p className="mr-auto truncate text-xs font-medium text-slate-700">{title}</p>
+        <p className="mr-auto truncate text-xs font-medium text-slate-700 dark:text-slate-200">{title}</p>
         <IconButton title="Move up" onClick={onUp} disabled={upDisabled}>
           <ChevronUp size={14} />
         </IconButton>
@@ -307,15 +307,15 @@ export function PortfolioApp() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
+      <header className="sticky top-0 z-20 border-b border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
           <button
             type="button"
             aria-label={`Go to ${BRAND} home`}
             title="All tools"
             onClick={() => goHome()}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             <ArrowLeft size={15} />
           </button>
@@ -323,8 +323,8 @@ export function PortfolioApp() {
             <Globe size={16} />
           </span>
           <div className="mr-auto min-w-0">
-            <h1 className="truncate text-sm font-semibold text-slate-800">Portfolio Page</h1>
-            <p className="hidden truncate text-[11px] text-slate-400 sm:block">
+            <h1 className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">Portfolio Page</h1>
+            <p className="hidden truncate text-[11px] text-slate-400 dark:text-slate-500 sm:block">
               Design a page and share it with a single link.
             </p>
           </div>
@@ -342,13 +342,13 @@ export function PortfolioApp() {
 
       <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[minmax(0,400px)_minmax(0,1fr)]">
         <div className="flex flex-col gap-4">
-          <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 shadow-sm">
+          <div className="flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-0.5 shadow-sm">
             <button
               type="button"
               aria-pressed={tab === 'content'}
               onClick={() => setTab('content')}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition ${
-                tab === 'content' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-50'
+                tab === 'content' ? 'bg-indigo-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               <LayoutList size={14} />
@@ -359,7 +359,7 @@ export function PortfolioApp() {
               aria-pressed={tab === 'design'}
               onClick={() => setTab('design')}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition ${
-                tab === 'design' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-50'
+                tab === 'design' ? 'bg-indigo-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               <Palette size={14} />
@@ -383,7 +383,7 @@ export function PortfolioApp() {
                     <button
                       type="button"
                       onClick={clear}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
                     >
                       <Trash2 size={14} />
                       Clear
@@ -393,14 +393,14 @@ export function PortfolioApp() {
                 {hasContent ? (
                   <div className="grid grid-cols-2 gap-2">
                     {counts.map((count) => (
-                      <div key={count.label} className="rounded-lg bg-slate-50 px-3 py-2">
-                        <p className="text-sm font-semibold text-slate-800">{count.value}</p>
-                        <p className="text-[11px] text-slate-400">{count.label}</p>
+                      <div key={count.label} className="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
+                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{count.value}</p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500">{count.label}</p>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Import from the CV Builder, load the example, or just start typing below.
                   </p>
                 )}
@@ -430,7 +430,7 @@ export function PortfolioApp() {
                         <button
                           type="button"
                           onClick={() => patchData({ photo: '' })}
-                          className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+                          className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
                         >
                           <Trash2 size={14} />
                           Remove
@@ -507,7 +507,7 @@ export function PortfolioApp() {
                 onAdd={() => patchData({ links: [...data.links, { label: '', url: '' }] })}
               >
                 {data.links.length === 0 ? (
-                  <p className="text-xs text-slate-400">No links yet.</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">No links yet.</p>
                 ) : (
                   data.links.map((link, index) => (
                     <div key={index} className="flex items-end gap-2">
@@ -561,7 +561,7 @@ export function PortfolioApp() {
                 onAdd={() => patchData({ skills: [...data.skills, ''] })}
               >
                 {data.skills.length === 0 ? (
-                  <p className="text-xs text-slate-400">No skills yet.</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">No skills yet.</p>
                 ) : (
                   data.skills.map((skill, index) => (
                     <div key={index} className="flex items-center gap-2">
@@ -601,7 +601,7 @@ export function PortfolioApp() {
                 }
               >
                 {data.projects.length === 0 ? (
-                  <p className="text-xs text-slate-400">No projects yet.</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">No projects yet.</p>
                 ) : (
                   data.projects.map((project, index) => (
                     <EntryShell
@@ -697,7 +697,7 @@ export function PortfolioApp() {
                 }
               >
                 {data.experience.length === 0 ? (
-                  <p className="text-xs text-slate-400">No roles yet.</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">No roles yet.</p>
                 ) : (
                   data.experience.map((entry, index) => (
                     <EntryShell
@@ -824,7 +824,7 @@ export function PortfolioApp() {
                 }
               >
                 {data.education.length === 0 ? (
-                  <p className="text-xs text-slate-400">No education yet.</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">No education yet.</p>
                 ) : (
                   data.education.map((entry, index) => (
                     <EntryShell
@@ -910,7 +910,7 @@ export function PortfolioApp() {
               </ListBox>
 
               <Card title="Share" icon={<Share2 size={16} />}>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Your whole page is packed into the link — no account or server needed. Anyone who
                   opens it sees a read-only version.
                 </p>
@@ -942,8 +942,8 @@ export function PortfolioApp() {
                       onClick={() => updateSettings({ themeId: option.id })}
                       className={`flex flex-col items-center gap-1 rounded-lg border p-2 text-[11px] font-medium transition ${
                         option.id === settings.themeId
-                          ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-                          : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                          ? 'border-indigo-300 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                          : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       <span
@@ -960,7 +960,7 @@ export function PortfolioApp() {
                       type="color"
                       value={accent}
                       onChange={(event) => updateSettings({ accentColor: event.target.value })}
-                      className="h-9 w-16 cursor-pointer rounded-md border border-slate-300 bg-white p-1"
+                      className="h-9 w-16 cursor-pointer rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-1"
                     />
                   </Field>
                   <button
@@ -1041,10 +1041,10 @@ export function PortfolioApp() {
         </div>
 
         <div className="lg:sticky lg:top-[4.5rem] lg:self-start">
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
             <div className="mb-3 flex items-center gap-2">
-              <Eye size={15} className="text-indigo-600" />
-              <span className="text-xs font-medium text-slate-500">Live preview</span>
+              <Eye size={15} className="text-indigo-600 dark:text-indigo-400" />
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Live preview</span>
               <span
                 className="ml-auto inline-flex h-3 w-3 rounded-full"
                 style={{ backgroundColor: accent } as CSSProperties}
@@ -1054,15 +1054,15 @@ export function PortfolioApp() {
               <iframe
                 title="Portfolio preview"
                 srcDoc={html}
-                className="h-[72vh] w-full rounded-lg border border-slate-200 bg-white"
+                className="h-[72vh] w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
               />
             ) : (
-              <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-slate-300 p-10 text-center">
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+              <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-slate-300 dark:border-slate-600 p-10 text-center">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
                   <Globe size={24} />
                 </span>
-                <h2 className="text-sm font-semibold text-slate-800">Your page starts here</h2>
-                <p className="max-w-xs text-xs leading-relaxed text-slate-500">
+                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Your page starts here</h2>
+                <p className="max-w-xs text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                   Import your details, load the example, or type your own — a clean portfolio page
                   appears instantly, ready to share with a link.
                 </p>

@@ -4,7 +4,7 @@ import { ToolHeader } from '../components/ui/ToolHeader'
 import { CATEGORY_META, UNITS, convertUnit, formatNumber, type UnitCategory } from './convert'
 
 const selectClass =
-  'w-full rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 export function ConvertApp() {
   const [categoryId, setCategoryId] = useState<UnitCategory>('length')
@@ -34,7 +34,7 @@ export function ConvertApp() {
   const units = UNITS[categoryId]
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader icon={Ruler} title="Unit Converter" subtitle="Convert common units instantly, offline." />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-5 px-4 py-6">
@@ -47,7 +47,7 @@ export function ConvertApp() {
               className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                 c.id === categoryId
                   ? 'border-indigo-600 bg-indigo-600 text-white'
-                  : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50'
+                  : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:border-indigo-200 dark:hover:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-950'
               }`}
             >
               {c.label}
@@ -55,9 +55,9 @@ export function ConvertApp() {
           ))}
         </div>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
           <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-[1fr_auto_1fr]">
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               From
               <select
                 aria-label="From unit"
@@ -74,7 +74,7 @@ export function ConvertApp() {
               <input
                 aria-label="Value"
                 inputMode="decimal"
-                className="mt-1 w-full rounded-md border border-slate-200 bg-slate-50 px-2.5 py-2 text-lg font-semibold text-slate-800 outline-none focus:border-indigo-500"
+                className="mt-1 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-2 text-lg font-semibold text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-500"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
               />
@@ -85,12 +85,12 @@ export function ConvertApp() {
               onClick={swap}
               aria-label="Swap units"
               title="Swap units"
-              className="mx-auto inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50 sm:mb-6"
+              className="mx-auto inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 sm:mb-6"
             >
               <ArrowRightLeft size={15} />
             </button>
 
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               To
               <select
                 aria-label="To unit"
@@ -104,14 +104,14 @@ export function ConvertApp() {
                   </option>
                 ))}
               </select>
-              <output className="mt-1 block w-full truncate rounded-md border border-indigo-100 bg-indigo-50 px-2.5 py-2 text-lg font-semibold text-indigo-700">
+              <output className="mt-1 block w-full truncate rounded-md border border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950 px-2.5 py-2 text-lg font-semibold text-indigo-700 dark:text-indigo-300">
                 {result}
               </output>
             </label>
           </div>
         </section>
 
-        <p className="text-center text-[11px] text-slate-400">
+        <p className="text-center text-[11px] text-slate-400 dark:text-slate-500">
           US customary for volume and area; binary (1024) units for storage.
         </p>
       </main>

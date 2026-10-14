@@ -37,7 +37,14 @@ export const useInvoiceStore = create<InvoiceState>()(
           if (index !== -1) state.invoices.splice(index, 1)
         }),
     })),
-    { name: STORAGE_KEY, storage: createJSONStorage(() => localStorage), version: 1 },
+    { name: STORAGE_KEY, storage: createJSONStorage(() => localStorage), version: 2,
+      migrate: (persisted) => {
+        const state = persisted as { invoices?: Partial<Invoice>[] | undefined; from?: Partial<Party> | undefined }
+        return {
+          invoices: (state?.invoices ?? []).map((invoice) => ({ ...emptyInvoice(), ...invoice })),
+          from: { ...emptyParty(), ...state?.from },
+        }
+      } },
   ),
 )
 

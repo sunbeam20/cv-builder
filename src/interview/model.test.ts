@@ -4,6 +4,7 @@ import {
   answerFilled,
   composeStar,
   emptyAnswer,
+  feedbackFor,
   filterQuestions,
   randomQuestion,
 } from './model'
@@ -25,6 +26,39 @@ describe('filterQuestions', () => {
     expect(filterQuestions('all')).toHaveLength(QUESTION_BANK.length)
     expect(filterQuestions('technical').every((question) => question.category === 'technical')).toBe(true)
     expect(filterQuestions('technical').length).toBeGreaterThan(0)
+  })
+
+  it('filters by role pack keeping software and general questions', () => {
+    const questions = filterQuestions('all', 'software')
+    expect(questions.length).toBeGreaterThan(0)
+    expect(
+      questions.every(
+        (question) => question.packs.includes('software') || question.packs.includes('general'),
+      ),
+    ).toBe(true)
+  })
+})
+
+describe('feedbackFor', () => {
+  it('scores an empty answer low and returns tips', () => {
+    const feedback = feedbackFor(emptyAnswer('q'))
+    expect(feedback.score).toBeLessThanOrEqual(1)
+    expect(feedback.max).toBe(6)
+    expect(feedback.tips.length).toBeGreaterThan(0)
+  })
+
+  it('scores a strong first-person quantified answer highly with no tips', () => {
+    const strong = {
+      ...emptyAnswer('Q'),
+      situation: 'Our team was facing a serious reliability problem in production.',
+      task: 'I was asked to lead the investigation and fix the root cause.',
+      action:
+        'I traced the failing requests, added monitoring, and shipped a targeted fix that reduced errors.',
+      result: 'Error rates dropped by 42% within a week.',
+    }
+    const feedback = feedbackFor(strong)
+    expect(feedback.score).toBeGreaterThanOrEqual(5)
+    expect(feedback.tips).toHaveLength(0)
   })
 })
 

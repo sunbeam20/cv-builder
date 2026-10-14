@@ -36,7 +36,7 @@ function DraggableCard({ app, now, onOpen }: { app: Application; now: Date; onOp
           <button
             type="button"
             aria-label={`Drag ${app.company || 'application'}`}
-            className="mt-0.5 inline-flex h-5 w-4 shrink-0 cursor-grab touch-none items-center justify-center text-slate-300 hover:text-slate-500 active:cursor-grabbing"
+            className="mt-0.5 inline-flex h-5 w-4 shrink-0 cursor-grab touch-none items-center justify-center text-slate-300 hover:text-slate-500 dark:hover:text-slate-400 active:cursor-grabbing"
             {...attributes}
             {...listeners}
           >
@@ -63,19 +63,19 @@ function Column({
   return (
     <div
       ref={setNodeRef}
-      className={`flex w-64 shrink-0 flex-col rounded-xl border-t-4 bg-slate-100/70 p-2 transition ${COLUMN_ACCENT[status]} ${
-        isOver ? 'bg-indigo-50 ring-1 ring-indigo-200' : ''
+      className={`flex w-64 shrink-0 flex-col rounded-xl border-t-4 bg-slate-100/70 dark:bg-slate-800/70 p-2 transition ${COLUMN_ACCENT[status]} ${
+        isOver ? 'bg-indigo-50 dark:bg-indigo-950 ring-1 ring-indigo-200' : ''
       }`}
     >
       <div className="mb-2 flex items-center justify-between px-1">
-        <span className="text-xs font-semibold text-slate-600">{STATUS_LABELS[status]}</span>
-        <span className="rounded-full bg-white px-1.5 text-[11px] font-medium text-slate-500">
+        <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">{STATUS_LABELS[status]}</span>
+        <span className="rounded-full bg-white dark:bg-slate-900 px-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {apps.length}
         </span>
       </div>
       <div className="flex min-h-[3rem] flex-1 flex-col gap-2">
         {apps.length === 0 ? (
-          <p className="px-1 py-3 text-center text-[11px] text-slate-400">Drop here</p>
+          <p className="px-1 py-3 text-center text-[11px] text-slate-400 dark:text-slate-500">Drop here</p>
         ) : (
           apps.map((app) => (
             <DraggableCard key={app.id} app={app} now={now} onOpen={() => onOpen(app)} />

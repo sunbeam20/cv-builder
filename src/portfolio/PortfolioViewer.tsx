@@ -19,12 +19,12 @@ export function PortfolioViewer({ payload }: { payload: string }) {
 
   if (!draft) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50 p-6 text-center">
-        <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50 dark:bg-slate-800 p-6 text-center">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400">
           <AlertTriangle size={24} />
         </span>
-        <h1 className="text-base font-semibold text-slate-800">This portfolio link couldn’t be opened</h1>
-        <p className="max-w-sm text-xs leading-relaxed text-slate-500">
+        <h1 className="text-base font-semibold text-slate-800 dark:text-slate-100">This portfolio link couldn’t be opened</h1>
+        <p className="max-w-sm text-xs leading-relaxed text-slate-500 dark:text-slate-400">
           The link looks incomplete or was modified. Ask the sender for a fresh link, or create your
           own portfolio.
         </p>
@@ -41,12 +41,12 @@ export function PortfolioViewer({ payload }: { payload: string }) {
   }
 
   return (
-    <div className="relative min-h-screen bg-white">
+    <div className="relative min-h-screen bg-white dark:bg-slate-900">
       <iframe title="Portfolio" srcDoc={html} className="h-screen w-full border-0" />
       <button
         type="button"
         onClick={() => goHome()}
-        className="fixed bottom-4 right-4 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-[11px] font-medium text-slate-500 shadow-md backdrop-blur transition hover:text-indigo-600"
+        className="fixed bottom-4 right-4 rounded-full border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 px-3 py-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 shadow-md backdrop-blur transition hover:text-indigo-600 dark:hover:text-indigo-400"
       >
         Made with {BRAND}
       </button>

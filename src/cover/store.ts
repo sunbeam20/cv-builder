@@ -47,6 +47,22 @@ export const useCoverStore = create<CoverState>()(
           Object.assign(state.sender, patch)
         }),
     })),
-    { name: STORAGE_KEY, storage: createJSONStorage(() => localStorage), version: 1 },
+    {
+      name: STORAGE_KEY,
+      storage: createJSONStorage(() => localStorage),
+      version: 2,
+      migrate: (persistedState: any) => {
+        if (!persistedState) return persistedState
+        if (persistedState.letters && Array.isArray(persistedState.letters)) {
+          persistedState.letters = persistedState.letters.map((letter: any) => ({
+            font: 'sans',
+            accent: '#4f46e5',
+            margin: 56,
+            ...letter,
+          }))
+        }
+        return persistedState
+      },
+    },
   ),
 )

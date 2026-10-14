@@ -54,9 +54,9 @@ const ALIGN_ITEMS: Record<BannerVAlign, string> = {
 
 function Card({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-        <span className="text-indigo-600">{icon}</span>
+    <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+      <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
+        <span className="text-indigo-600 dark:text-indigo-400">{icon}</span>
         {title}
       </h2>
       <div className="mt-3 flex flex-col gap-3">{children}</div>
@@ -65,11 +65,11 @@ function Card({ title, icon, children }: { title: string; icon: ReactNode; child
 }
 
 function Label({ children }: { children: ReactNode }) {
-  return <span className="text-[11px] font-medium text-slate-500">{children}</span>
+  return <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">{children}</span>
 }
 
 const inputClass =
-  'w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-xs text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100'
+  'w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs text-slate-700 dark:text-slate-200 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100'
 
 function Seg<T extends string>({
   value,
@@ -85,7 +85,7 @@ function Seg<T extends string>({
   return (
     <div className="flex flex-col gap-1">
       <Label>{label}</Label>
-      <div className="flex rounded-lg border border-slate-200 p-0.5">
+      <div className="flex rounded-lg border border-slate-200 dark:border-slate-700 p-0.5">
         {options.map((option) => (
           <button
             key={option.value}
@@ -96,7 +96,7 @@ function Seg<T extends string>({
             className={`flex flex-1 items-center justify-center gap-1 rounded-md px-2 py-1.5 text-xs font-medium transition ${
               value === option.value
                 ? 'bg-indigo-600 text-white'
-                : 'text-slate-500 hover:bg-slate-50'
+                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
           >
             {option.label}
@@ -120,12 +120,12 @@ function ColorRow({
     <label className="flex items-center justify-between gap-2">
       <Label>{label}</Label>
       <span className="flex items-center gap-2">
-        <span className="font-mono text-[11px] uppercase text-slate-400">{value}</span>
+        <span className="font-mono text-[11px] uppercase text-slate-400 dark:text-slate-500">{value}</span>
         <input
           type="color"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="h-7 w-9 cursor-pointer rounded border border-slate-200 bg-white"
+          className="h-7 w-9 cursor-pointer rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
         />
       </span>
     </label>
@@ -248,15 +248,15 @@ export function BannerApp() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
+      <header className="sticky top-0 z-20 border-b border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
           <button
             type="button"
             aria-label={`Go to ${BRAND} home`}
             title="All tools"
             onClick={() => goHome()}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             <ArrowLeft size={15} />
           </button>
@@ -264,8 +264,8 @@ export function BannerApp() {
             <LayoutTemplate size={16} />
           </span>
           <div className="mr-auto min-w-0">
-            <h1 className="truncate text-sm font-semibold text-slate-800">Banner Maker</h1>
-            <p className="hidden truncate text-[11px] text-slate-400 sm:block">
+            <h1 className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">Banner Maker</h1>
+            <p className="hidden truncate text-[11px] text-slate-400 dark:text-slate-500 sm:block">
               Design social and LinkedIn banners in your browser.
             </p>
           </div>
@@ -273,7 +273,7 @@ export function BannerApp() {
           <button
             type="button"
             onClick={reset}
-            className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+            className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             <RotateCcw size={14} />
             Reset
@@ -351,7 +351,7 @@ export function BannerApp() {
                   key={theme.id}
                   type="button"
                   onClick={() => setDesign((prev) => applyTheme(prev, theme))}
-                  className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 p-2 text-[11px] font-medium text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50"
+                  className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 p-2 text-[11px] font-medium text-slate-600 dark:text-slate-300 transition hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950"
                 >
                   <span
                     className="h-6 w-full rounded"
@@ -381,7 +381,7 @@ export function BannerApp() {
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   <ImagePlus size={14} />
                   {hasCustomBgImage ? 'Replace image' : 'Upload image'}
@@ -390,7 +390,7 @@ export function BannerApp() {
                   <button
                     type="button"
                     onClick={() => update({ imageUrl: '' })}
-                    className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
                   >
                     <Trash2 size={14} />
                     Remove
@@ -469,7 +469,7 @@ export function BannerApp() {
                 onChange={(event) => update({ showBadge: event.target.checked })}
                 className="h-3.5 w-3.5 accent-indigo-600"
               />
-              <span className="text-xs text-slate-600">Show badge</span>
+              <span className="text-xs text-slate-600 dark:text-slate-300">Show badge</span>
             </label>
             <label className="flex flex-col gap-1">
               <Label>Font</Label>
@@ -534,7 +534,7 @@ export function BannerApp() {
           <button
             type="button"
             onClick={importFromCv}
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             <Link2 size={14} />
             Import name &amp; headline from CV Builder
@@ -542,16 +542,16 @@ export function BannerApp() {
         </div>
 
         <div className="lg:sticky lg:top-[4.5rem] lg:self-start">
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
             <div className="mb-3 flex items-center gap-2">
-              <Sparkles size={15} className="text-indigo-600" />
-              <span className="text-xs font-medium text-slate-500">
+              <Sparkles size={15} className="text-indigo-600 dark:text-indigo-400" />
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                 Preview · {design.width}×{design.height}px
               </span>
             </div>
             <div ref={wrapperRef} className="w-full">
               <div
-                className="mx-auto overflow-hidden rounded-lg shadow-lg ring-1 ring-slate-200"
+                className="mx-auto overflow-hidden rounded-lg shadow-lg ring-1 ring-slate-200 dark:ring-slate-700"
                 style={{ width: design.width * scale, height: design.height * scale }}
               >
                 <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}>

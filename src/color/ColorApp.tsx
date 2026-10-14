@@ -22,12 +22,12 @@ function Swatch({ hex, label, onPick }: { hex: string; label: string; onPick?: (
       type="button"
       onClick={onPick ? () => onPick(hex) : copy}
       title={hex}
-      className="flex flex-col items-stretch overflow-hidden rounded-lg border border-slate-200 text-left shadow-sm"
+      className="flex flex-col items-stretch overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 text-left shadow-sm"
     >
       <span className="h-16 w-full" style={{ backgroundColor: hex }} />
-      <span className="bg-white px-2 py-1">
-        <span className="block text-[10px] font-medium text-slate-400">{label}</span>
-        <span className="block font-mono text-[11px] text-slate-600">{hex}</span>
+      <span className="bg-white dark:bg-slate-900 px-2 py-1">
+        <span className="block text-[10px] font-medium text-slate-400 dark:text-slate-500">{label}</span>
+        <span className="block font-mono text-[11px] text-slate-600 dark:text-slate-300">{hex}</span>
       </span>
     </button>
   )
@@ -63,7 +63,7 @@ export function ColorApp() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader
         icon={Palette}
         title="Color Studio"
@@ -71,9 +71,9 @@ export function ColorApp() {
       />
 
       <main className="mx-auto flex max-w-4xl flex-col gap-5 px-4 py-6">
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
           <div className="flex flex-wrap items-end gap-4">
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               Base color
               <span className="flex items-center gap-2">
                 <input
@@ -81,13 +81,13 @@ export function ColorApp() {
                   aria-label="Base color picker"
                   value={parseHex(baseHex) ? baseHex : '#4f46e5'}
                   onChange={(e) => setBaseHex(e.target.value)}
-                  className="h-9 w-10 cursor-pointer rounded border border-slate-200"
+                  className="h-9 w-10 cursor-pointer rounded border border-slate-200 dark:border-slate-700"
                 />
                 <input
                   aria-label="Base color hex"
                   value={baseHex}
                   onChange={(e) => setBaseHex(e.target.value)}
-                  className="w-28 rounded-md border border-slate-200 px-2.5 py-2 font-mono text-sm text-slate-700 outline-none focus:border-indigo-500"
+                  className="w-28 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-2 font-mono text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
                 />
               </span>
             </label>
@@ -100,29 +100,29 @@ export function ColorApp() {
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-3 text-sm font-semibold text-slate-700">Contrast checker</h2>
+        <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Contrast checker</h2>
           <div className="flex flex-wrap items-end gap-4">
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               Text
               <input
                 aria-label="Text color"
                 value={fgHex}
                 onChange={(e) => setFgHex(e.target.value)}
-                className="w-28 rounded-md border border-slate-200 px-2.5 py-2 font-mono text-sm text-slate-700 outline-none focus:border-indigo-500"
+                className="w-28 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-2 font-mono text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
               />
             </label>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               Background
               <input
                 aria-label="Background color"
                 value={bgHex}
                 onChange={(e) => setBgHex(e.target.value)}
-                className="w-28 rounded-md border border-slate-200 px-2.5 py-2 font-mono text-sm text-slate-700 outline-none focus:border-indigo-500"
+                className="w-28 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-2 font-mono text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
               />
             </label>
             <div
-              className="flex h-16 flex-1 items-center justify-center rounded-lg border border-slate-200 px-4 text-sm font-medium"
+              className="flex h-16 flex-1 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 px-4 text-sm font-medium"
               style={{
                 color: fg ? rgbToHex(fg) : '#000',
                 backgroundColor: bg ? rgbToHex(bg) : '#fff',
@@ -131,7 +131,7 @@ export function ColorApp() {
               The quick brown fox
             </div>
             <div className="flex flex-col items-center gap-0.5">
-              <span className="text-lg font-semibold text-slate-800">
+              <span className="text-lg font-semibold text-slate-800 dark:text-slate-100">
                 {ratio !== null ? `${ratio.toFixed(2)}:1` : '—'}
               </span>
               <span
@@ -139,8 +139,8 @@ export function ColorApp() {
                   level === 'Fail'
                     ? 'bg-rose-100 text-rose-700'
                     : level
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : 'bg-slate-100 text-slate-500'
+                      ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                 }`}
               >
                 {level ?? 'Invalid'}
@@ -149,16 +149,16 @@ export function ColorApp() {
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2">
-            <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5">
+        <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-4 py-2">
+            <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-0.5">
               {(['css', 'tailwind'] as OutputFormat[]).map((f) => (
                 <button
                   key={f}
                   type="button"
                   onClick={() => setFormat(f)}
                   className={`rounded-md px-3 py-1 text-xs font-medium capitalize transition ${
-                    format === f ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'
+                    format === f ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   {f === 'css' ? 'CSS variables' : 'Tailwind'}
@@ -168,18 +168,18 @@ export function ColorApp() {
             <button
               type="button"
               onClick={copyOutput}
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-indigo-600 hover:bg-indigo-50"
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950"
             >
               {copied ? <Check size={13} /> : <Copy size={13} />}
               {copied ? 'Copied' : 'Copy'}
             </button>
           </div>
-          <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-slate-700">
+          <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-slate-700 dark:text-slate-200">
             {output}
           </pre>
         </section>
 
-        <p className="text-center text-[11px] text-slate-400">
+        <p className="text-center text-[11px] text-slate-400 dark:text-slate-500">
           Click any swatch to copy its hex. Contrast follows the WCAG 2.1 formula.
         </p>
       </main>

@@ -40,15 +40,15 @@ import { BoardView } from './BoardView'
 import { ApplicationFormModal } from './ApplicationFormModal'
 
 const STATUS_CHIP: Record<ApplicationStatus, string> = {
-  wishlist: 'bg-slate-100 text-slate-600',
+  wishlist: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300',
   applied: 'bg-sky-100 text-sky-700',
   interview: 'bg-amber-100 text-amber-700',
-  offer: 'bg-emerald-100 text-emerald-700',
+  offer: 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700',
   rejected: 'bg-rose-100 text-rose-700',
 }
 
 const ghostButton =
-  'inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50'
+  'inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50'
 
 type ViewMode = 'list' | 'board'
 
@@ -344,7 +344,7 @@ export function JobTrackerApp() {
   })
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader
         icon={ClipboardList}
         title="Job Tracker"
@@ -383,16 +383,16 @@ export function JobTrackerApp() {
       <main className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-6">
         <StatsPanel apps={applications} now={now} goal={goal} onSetGoal={setGoal} />
 
-        <section className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+        <section className="flex flex-col gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-sm">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex rounded-lg border border-slate-200 p-0.5">
+            <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-0.5">
               {(['list', 'board'] as ViewMode[]).map((mode) => (
                 <button
                   key={mode}
                   type="button"
                   onClick={() => setView(mode)}
                   className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium capitalize transition ${
-                    view === mode ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'
+                    view === mode ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   {mode === 'list' ? <List size={13} /> : <Columns3 size={13} />}
@@ -402,7 +402,7 @@ export function JobTrackerApp() {
             </div>
 
             <label className="relative min-w-[12rem] flex-1">
-              <Search size={14} className="pointer-events-none absolute left-2.5 top-2.5 text-slate-400" />
+              <Search size={14} className="pointer-events-none absolute left-2.5 top-2.5 text-slate-400 dark:text-slate-500" />
               <input
                 ref={searchRef}
                 type="search"
@@ -410,7 +410,7 @@ export function JobTrackerApp() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search company, role, notes, tags…"
-                className="w-full rounded-md border border-slate-200 bg-white py-2 pl-8 pr-3 text-sm text-slate-700 outline-none focus:border-indigo-500"
+                className="w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 pl-8 pr-3 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
               />
             </label>
 
@@ -418,7 +418,7 @@ export function JobTrackerApp() {
               aria-label="Sort"
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              className="rounded-md border border-slate-200 bg-white px-2 py-2 text-xs text-slate-600 outline-none focus:border-indigo-500"
+              className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-2 text-xs text-slate-600 dark:text-slate-300 outline-none focus:border-indigo-500"
             >
               {SORT_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -431,7 +431,7 @@ export function JobTrackerApp() {
               type="button"
               onClick={() => setStarredOnly((v) => !v)}
               aria-pressed={starredOnly}
-              className={`${ghostButton} ${starredOnly ? 'border-amber-300 bg-amber-50 text-amber-700' : ''}`}
+              className={`${ghostButton} ${starredOnly ? 'border-amber-300 bg-amber-50 dark:bg-amber-950 text-amber-700' : ''}`}
             >
               <Star size={13} />
               Starred
@@ -443,7 +443,7 @@ export function JobTrackerApp() {
               type="button"
               onClick={() => setFilter('all')}
               className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition ${
-                filter === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'
+                filter === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
               }`}
             >
               All: {applications.length}
@@ -466,7 +466,7 @@ export function JobTrackerApp() {
                 aria-label="Filter by tag"
                 value={tag ?? ''}
                 onChange={(e) => setTag(e.target.value || null)}
-                className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-600 outline-none focus:border-indigo-500"
+                className="rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1 text-[11px] text-slate-600 dark:text-slate-300 outline-none focus:border-indigo-500"
               >
                 <option value="">All tags</option>
                 {tags.map((t) => (
@@ -482,7 +482,7 @@ export function JobTrackerApp() {
               onClick={() => setFollowUpOnly((v) => !v)}
               aria-pressed={followUpOnly}
               className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition ${
-                followUpOnly ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-600'
+                followUpOnly ? 'bg-amber-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
               }`}
             >
               Follow-ups due
@@ -492,7 +492,7 @@ export function JobTrackerApp() {
               onClick={() => setNeedsAttention((v) => !v)}
               aria-pressed={needsAttention}
               className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition ${
-                needsAttention ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-600'
+                needsAttention ? 'bg-rose-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
               }`}
             >
               Needs attention
@@ -502,24 +502,24 @@ export function JobTrackerApp() {
               onClick={() => setIncludeArchived((v) => !v)}
               aria-pressed={includeArchived}
               className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition ${
-                includeArchived ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600'
+                includeArchived ? 'bg-slate-700 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
               }`}
             >
               Archived
             </button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 border-t border-slate-100 pt-3">
-            <span className="text-[11px] font-medium text-slate-400">Views</span>
+          <div className="flex flex-wrap items-center gap-1.5 border-t border-slate-100 dark:border-slate-800 pt-3">
+            <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500">Views</span>
             {savedViews.map((saved) => (
               <span
                 key={saved.id}
-                className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white py-1 pl-2.5 pr-1 text-[11px] text-slate-600"
+                className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-1 pl-2.5 pr-1 text-[11px] text-slate-600 dark:text-slate-300"
               >
                 <button
                   type="button"
                   onClick={() => applyView(saved)}
-                  className="font-medium hover:text-indigo-600"
+                  className="font-medium hover:text-indigo-600 dark:hover:text-indigo-400"
                 >
                   {saved.name}
                 </button>
@@ -548,7 +548,7 @@ export function JobTrackerApp() {
                       setViewName('')
                     }
                   }}
-                  className="w-32 rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-700 outline-none focus:border-indigo-500"
+                  className="w-32 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
                 />
                 <button
                   type="button"
@@ -563,7 +563,7 @@ export function JobTrackerApp() {
                     setSavingView(false)
                     setViewName('')
                   }}
-                  className="rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50"
+                  className="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   Cancel
                 </button>
@@ -572,18 +572,18 @@ export function JobTrackerApp() {
               <button
                 type="button"
                 onClick={() => setSavingView(true)}
-                className="rounded-full border border-dashed border-slate-300 px-2.5 py-1 text-[11px] font-medium text-slate-500 hover:border-indigo-300 hover:text-indigo-600"
+                className="rounded-full border border-dashed border-slate-300 dark:border-slate-600 px-2.5 py-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:border-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400"
               >
                 + Save current view
               </button>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
+          <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 dark:border-slate-800 pt-3">
             <button type="button" onClick={selectAllVisible} disabled={visible.length === 0} className={ghostButton}>
               {allVisibleSelected ? 'Clear selection' : 'Select all'}
             </button>
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-slate-400 dark:text-slate-500">
               {applications.length} total · {visible.length} shown
             </span>
             <div className="ml-auto flex flex-wrap items-center gap-2">
@@ -609,7 +609,7 @@ export function JobTrackerApp() {
                 type="button"
                 onClick={clearAllApplications}
                 disabled={applications.length === 0}
-                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Trash2 size={13} />
                 Clear all
@@ -617,15 +617,15 @@ export function JobTrackerApp() {
             </div>
           </div>
 
-          <p className="text-[10px] text-slate-400">
-            Shortcuts: <kbd className="rounded bg-slate-100 px-1">N</kbd> new ·{' '}
-            <kbd className="rounded bg-slate-100 px-1">/</kbd> search ·{' '}
-            <kbd className="rounded bg-slate-100 px-1">B</kbd> board / list
+          <p className="text-[10px] text-slate-400 dark:text-slate-500">
+            Shortcuts: <kbd className="rounded bg-slate-100 dark:bg-slate-800 px-1">N</kbd> new ·{' '}
+            <kbd className="rounded bg-slate-100 dark:bg-slate-800 px-1">/</kbd> search ·{' '}
+            <kbd className="rounded bg-slate-100 dark:bg-slate-800 px-1">B</kbd> board / list
           </p>
         </section>
 
         {selected.size > 0 ? (
-          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs text-indigo-800">
+          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950 px-3 py-2 text-xs text-indigo-800">
             <span className="font-semibold">{selected.size} selected</span>
             <select
               aria-label="Move selected to status"
@@ -634,7 +634,7 @@ export function JobTrackerApp() {
                 if (e.target.value) bulkSetStatus(e.target.value as ApplicationStatus)
                 e.target.value = ''
               }}
-              className="rounded-md border border-indigo-200 bg-white px-2 py-1 text-xs text-slate-600 outline-none"
+              className="rounded-md border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-600 dark:text-slate-300 outline-none"
             >
               <option value="">Move to…</option>
               {APPLICATION_STATUSES.map((s) => (
@@ -646,7 +646,7 @@ export function JobTrackerApp() {
             <button
               type="button"
               onClick={bulkArchive}
-              className="inline-flex items-center gap-1 rounded-md border border-indigo-200 bg-white px-2 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
+              className="inline-flex items-center gap-1 rounded-md border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 px-2 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900"
             >
               <Archive size={13} />
               Archive
@@ -654,7 +654,7 @@ export function JobTrackerApp() {
             <button
               type="button"
               onClick={bulkDelete}
-              className="inline-flex items-center gap-1 rounded-md border border-rose-200 bg-white px-2 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50"
+              className="inline-flex items-center gap-1 rounded-md border border-rose-200 bg-white dark:bg-slate-900 px-2 py-1 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950"
             >
               <Trash2 size={13} />
               Delete
@@ -662,7 +662,7 @@ export function JobTrackerApp() {
             <button
               type="button"
               onClick={() => setSelected(new Set())}
-              className="ml-auto text-[11px] font-medium text-indigo-600 hover:underline"
+              className="ml-auto text-[11px] font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
             >
               Clear
             </button>
@@ -670,9 +670,9 @@ export function JobTrackerApp() {
         ) : null}
 
         {applications.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
-            <p className="text-sm font-medium text-slate-600">No applications yet</p>
-            <p className="mt-1 text-xs text-slate-400">
+          <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-10 text-center">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No applications yet</p>
+            <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
               Add your first application, or import a CSV / JSON backup.
             </p>
             <button
@@ -685,7 +685,7 @@ export function JobTrackerApp() {
             </button>
           </div>
         ) : visible.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-xs text-slate-400">
+          <p className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-8 text-center text-xs text-slate-400 dark:text-slate-500">
             No applications match your filters.
           </p>
         ) : view === 'board' ? (

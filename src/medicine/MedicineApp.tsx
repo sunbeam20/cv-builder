@@ -13,7 +13,7 @@ import {
 } from './model'
 
 const inputClass =
-  'rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 export function MedicineApp() {
   const medicines = useMedicineStore((s) => s.medicines)
@@ -47,12 +47,12 @@ export function MedicineApp() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader icon={Pill} title="Medicine Reminder" subtitle="Keep track of doses, schedules, and refills." />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-6">
-        <section className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+        <section className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Medicine
             <input
               aria-label="Medicine name"
@@ -62,7 +62,7 @@ export function MedicineApp() {
               onChange={(e) => setName(e.target.value)}
             />
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Dosage
             <input
               aria-label="Dosage"
@@ -72,7 +72,7 @@ export function MedicineApp() {
               onChange={(e) => setDosage(e.target.value)}
             />
           </label>
-          <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Times
             <input
               aria-label="Dose times"
@@ -82,7 +82,7 @@ export function MedicineApp() {
               onChange={(e) => setTimes(e.target.value)}
             />
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Doses left
             <input
               aria-label="Doses left"
@@ -104,14 +104,14 @@ export function MedicineApp() {
         </section>
 
         {medicines.length > 0 ? (
-          <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center justify-between text-xs text-slate-500">
+          <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
               <span>Today’s doses</span>
               <span>
                 {progress.taken}/{progress.total} taken
               </span>
             </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               <div className="h-full rounded-full bg-emerald-500" style={{ width: `${progress.percent}%` }} />
             </div>
           </section>
@@ -119,26 +119,26 @@ export function MedicineApp() {
 
         <section className="flex flex-col gap-3">
           {medicines.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-400">
+            <p className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-8 text-center text-sm text-slate-400 dark:text-slate-500">
               No medicines yet. Add one above to build today’s checklist.
             </p>
           ) : (
             medicines.map((medicine) => {
               const doses = scheduledDoses(medicine, taken)
               return (
-                <div key={medicine.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div key={medicine.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
                   <div className="flex items-center gap-2">
-                    <span className="grid h-9 w-9 place-items-center rounded-lg bg-rose-50 text-rose-500">
+                    <span className="grid h-9 w-9 place-items-center rounded-lg bg-rose-50 dark:bg-rose-950 text-rose-500">
                       <Pill size={16} />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <h3 className="truncate text-sm font-semibold text-slate-800">{medicine.name}</h3>
-                      <p className="text-[11px] text-slate-400">
+                      <h3 className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{medicine.name}</h3>
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500">
                         {medicine.dosage || 'As directed'} · {medicine.remaining} doses left
                       </p>
                     </div>
                     {needsRefill(medicine) ? (
-                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-600">
+                      <span className="rounded-full bg-amber-50 dark:bg-amber-950 px-2 py-0.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
                         Refill soon
                       </span>
                     ) : null}
@@ -146,7 +146,7 @@ export function MedicineApp() {
                       type="button"
                       aria-label={`Delete ${medicine.name}`}
                       onClick={() => removeMedicine(medicine.id)}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -162,10 +162,10 @@ export function MedicineApp() {
                         onClick={() => toggleDose(medicine.id, today, dose.time)}
                         className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
                           dose.taken
-                            ? 'border-emerald-300 bg-emerald-50 text-emerald-600'
+                            ? 'border-emerald-300 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'
                             : dose.overdue
-                              ? 'border-amber-300 bg-amber-50 text-amber-600'
-                              : 'border-slate-200 text-slate-500 hover:bg-slate-50'
+                              ? 'border-amber-300 bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400'
+                              : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                         }`}
                       >
                         {dose.taken ? <Check size={13} /> : <span className="font-mono">{dose.time}</span>}
@@ -174,7 +174,7 @@ export function MedicineApp() {
                     ))}
                   </div>
                   {medicine.remaining <= REFILL_THRESHOLD ? (
-                    <p className="mt-2 text-[11px] text-amber-600">
+                    <p className="mt-2 text-[11px] text-amber-600 dark:text-amber-400">
                       Only {medicine.remaining} doses left — time to refill.
                     </p>
                   ) : null}

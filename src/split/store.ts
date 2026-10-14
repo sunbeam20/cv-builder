@@ -65,6 +65,25 @@ export const useSplitStore = create<SplitState>()(
           state.expenses = []
         }),
     })),
-    { name: STORAGE_KEY, storage: createJSONStorage(() => localStorage), version: 1 },
+    {
+      name: STORAGE_KEY,
+      storage: createJSONStorage(() => localStorage),
+      version: 2,
+      migrate: (persisted) => {
+        const state = persisted as
+          | {
+              groupName?: string
+              currency?: string
+              people?: Person[]
+              expenses?: Array<Omit<Expense, 'split'> & { split?: Expense['split'] }>
+            }
+          | undefined
+        const expenses: Expense[] = (Array.isArray(state?.expenses) ? state.expenses : []).map((expense) => ({
+          ...expense,
+          split: expense.split ?? { mode: 'even', values: {} },
+        }))
+        return { ...state, expenses }
+      },
+    },
   ),
 )

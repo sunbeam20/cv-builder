@@ -82,7 +82,7 @@ const pluralSparks = (count: number): string =>
 
 function Card({ children }: { children: ReactNode }) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       {children}
     </section>
   )
@@ -101,7 +101,7 @@ function Seg<T extends string>({
 }) {
   return (
     <Field label={label}>
-      <div className="flex rounded-lg border border-slate-200 p-0.5">
+      <div className="flex rounded-lg border border-slate-200 dark:border-slate-700 p-0.5">
         {options.map((option) => (
           <button
             key={option.value}
@@ -111,7 +111,7 @@ function Seg<T extends string>({
             className={`flex flex-1 items-center justify-center rounded-md px-2 py-1.5 text-xs font-medium transition ${
               value === option.value
                 ? 'bg-indigo-600 text-white'
-                : 'text-slate-500 hover:bg-slate-50'
+                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
           >
             {option.label}
@@ -123,7 +123,7 @@ function Seg<T extends string>({
 }
 
 const ghostButton =
-  'inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50'
+  'inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50'
 
 function Dialog({
   open,
@@ -155,19 +155,19 @@ function Dialog({
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className={`w-full ${width} rounded-xl bg-white p-5 shadow-xl outline-none`}
+        className={`w-full ${width} rounded-xl bg-white dark:bg-slate-900 p-5 shadow-xl outline-none`}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-            <span className="text-indigo-600">{icon}</span>
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
+            <span className="text-indigo-600 dark:text-indigo-400">{icon}</span>
             {title}
           </h2>
           <button
             type="button"
             aria-label={`Close ${title}`}
             onClick={onClose}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
           >
             <X size={16} />
           </button>
@@ -199,8 +199,8 @@ function BeveragePicker({
             onClick={() => onChange(id)}
             className={`flex flex-col items-center gap-1 rounded-lg border px-2 py-2 text-[11px] font-medium transition ${
               active
-                ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-                : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                ? 'border-indigo-300 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
           >
             <Icon size={16} />
@@ -365,8 +365,8 @@ function BackfillDialog({ open, onClose, initialAmountMl, initialBeverage, now, 
               onClick={() => setOffset(option)}
               className={`rounded-md border px-2 py-1.5 text-xs font-medium transition ${
                 offset.value === option.value
-                  ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-                  : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                  ? 'border-indigo-300 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                  : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               {option.label}
@@ -549,7 +549,7 @@ function CalculatorDialog({ open, onClose, initialGoal, onApply }: CalculatorDia
         ]}
       />
       {error ? <p className="text-xs font-medium text-red-500">{error}</p> : null}
-      <p className="rounded-lg bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700">
+      <p className="rounded-lg bg-indigo-50 dark:bg-indigo-950 px-3 py-2 text-sm font-semibold text-indigo-700 dark:text-indigo-300">
         {recommended === null
           ? 'Enter your profile to see a recommendation.'
           : `Recommended goal: ${recommended} ml`}
@@ -569,8 +569,8 @@ interface InsightsDialogProps {
 function StatRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between py-0.5">
-      <span className="text-xs text-slate-500">{label}</span>
-      <span className="text-xs font-semibold text-slate-800">{value}</span>
+      <span className="text-xs text-slate-500 dark:text-slate-400">{label}</span>
+      <span className="text-xs font-semibold text-slate-800 dark:text-slate-100">{value}</span>
     </div>
   )
 }
@@ -628,19 +628,19 @@ function InsightsDialog({ open, onClose, entries, target, now }: InsightsDialogP
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-xl bg-white p-5 shadow-xl outline-none"
+        className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-xl bg-white dark:bg-slate-900 p-5 shadow-xl outline-none"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-            <BarChart3 size={16} className="text-indigo-600" />
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
+            <BarChart3 size={16} className="text-indigo-600 dark:text-indigo-400" />
             Insights
           </h2>
           <button
             type="button"
             aria-label="Close Insights"
             onClick={onClose}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
           >
             <X size={16} />
           </button>
@@ -661,14 +661,14 @@ function InsightsDialog({ open, onClose, entries, target, now }: InsightsDialogP
           <div className="flex items-end gap-1 pt-2">
             {insights.lastSevenDaysMl.map((value, index) => (
               <div key={insights.weekLabels[index]} className="flex flex-1 flex-col items-center gap-1">
-                <div className="flex h-20 w-full items-end rounded bg-slate-100">
+                <div className="flex h-20 w-full items-end rounded bg-slate-100 dark:bg-slate-800">
                   <div
                     className="w-full rounded bg-indigo-500"
                     style={{ height: `${Math.max(6, Math.round((value / maxBar) * 100))}%` }}
                     title={`${insights.weekLabels[index]} ${value} ml`}
                   />
                 </div>
-                <span className="text-[10px] text-slate-400">{insights.weekLabels[index]}</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500">{insights.weekLabels[index]}</span>
               </div>
             ))}
           </div>
@@ -680,7 +680,7 @@ function InsightsDialog({ open, onClose, entries, target, now }: InsightsDialogP
                 <span
                   key={index}
                   title={hit ? 'Goal met' : 'Goal missed'}
-                  className={`h-2.5 w-2.5 rounded-sm ${hit ? 'bg-indigo-500' : 'bg-slate-200'}`}
+                  className={`h-2.5 w-2.5 rounded-sm ${hit ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-slate-700'}`}
                 />
               ))}
             </div>
@@ -691,21 +691,21 @@ function InsightsDialog({ open, onClose, entries, target, now }: InsightsDialogP
 
           <StatRow label="Hydration score" value={`${score}/100`} />
 
-          <div className="border-t border-slate-100 pt-3">
-            <h3 className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-              <Trophy size={14} className="text-indigo-600" />
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
+            <h3 className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200">
+              <Trophy size={14} className="text-indigo-600 dark:text-indigo-400" />
               Achievements
             </h3>
             {insights.achievements.length === 0 ? (
-              <p className="py-1 text-xs text-slate-400">No badges earned yet</p>
+              <p className="py-1 text-xs text-slate-400 dark:text-slate-500">No badges earned yet</p>
             ) : (
               insights.achievements.map(() => null)
             )}
             {insights.achievements.map((achievement) => (
               <div key={achievement.id} className="flex items-center gap-2 py-1">
                 <CheckCircle2 size={14} className="shrink-0 text-indigo-500" />
-                <span className="mr-auto text-xs text-slate-700">{achievement.title}</span>
-                <span className="text-[11px] text-slate-400">
+                <span className="mr-auto text-xs text-slate-700 dark:text-slate-200">{achievement.title}</span>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500">
                   {new Date(achievement.unlockedAt).getDate()}{' '}
                   {new Date(achievement.unlockedAt).toLocaleString('en', { month: 'short' })}
                 </span>
@@ -714,8 +714,8 @@ function InsightsDialog({ open, onClose, entries, target, now }: InsightsDialogP
           </div>
 
           <div>
-            <h3 className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-              <Trophy size={14} className="text-indigo-600" />
+            <h3 className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200">
+              <Trophy size={14} className="text-indigo-600 dark:text-indigo-400" />
               Challenges
             </h3>
             {challenges.map((challenge) => (
@@ -725,12 +725,12 @@ function InsightsDialog({ open, onClose, entries, target, now }: InsightsDialogP
                 ) : (
                   <Circle size={14} className="shrink-0 text-slate-300" />
                 )}
-                <span className="mr-auto text-xs text-slate-700">{challenge.title}</span>
+                <span className="mr-auto text-xs text-slate-700 dark:text-slate-200">{challenge.title}</span>
                 <span
                   className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
                     challenge.earned
-                      ? 'bg-indigo-50 text-indigo-600'
-                      : 'bg-slate-100 text-slate-400'
+                      ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500'
                   }`}
                 >
                   {challenge.earned ? 'Earned' : 'Open'}
@@ -838,15 +838,15 @@ export function HydrationApp({ now = () => new Date() }: HydrationAppProps = {})
   const editingEntry = editingId ? entries.find((entry) => entry.id === editingId) ?? null : null
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
+      <header className="sticky top-0 z-20 border-b border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-2.5">
           <button
             type="button"
             aria-label={`Go to ${BRAND} home`}
             title="All tools"
             onClick={() => goHome()}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             <ArrowLeft size={15} />
           </button>
@@ -854,8 +854,8 @@ export function HydrationApp({ now = () => new Date() }: HydrationAppProps = {})
             <Droplets size={16} />
           </span>
           <div className="mr-auto min-w-0">
-            <h1 className="truncate text-sm font-semibold text-slate-800">Hydration Tracker</h1>
-            <p className="hidden truncate text-[11px] text-slate-400 sm:block">
+            <h1 className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">Hydration Tracker</h1>
+            <p className="hidden truncate text-[11px] text-slate-400 dark:text-slate-500 sm:block">
               Log water and stay on goal.
             </p>
           </div>
@@ -882,12 +882,12 @@ export function HydrationApp({ now = () => new Date() }: HydrationAppProps = {})
 
       <main className="mx-auto flex max-w-2xl flex-col gap-4 px-4 py-6">
         <Card>
-          <p className="text-xs font-medium text-slate-500">Today</p>
-          <p className="text-2xl font-semibold text-slate-900">
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Today</p>
+          <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
             {formatVolume(progress.totalMl, target.unit)} of{' '}
-            <span className="text-slate-500">{formatVolume(target.targetMl, target.unit)}</span>
+            <span className="text-slate-500 dark:text-slate-400">{formatVolume(target.targetMl, target.unit)}</span>
           </p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
             <div
               className="h-full rounded-full bg-indigo-500 transition-all"
               style={{ width: `${progress.ratio * 100}%` }}
@@ -898,12 +898,12 @@ export function HydrationApp({ now = () => new Date() }: HydrationAppProps = {})
         {progress.caffeineMg > CAFFEINE_CAP_MG ? (
           <Card>
             <div className="flex items-start gap-3">
-              <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-500">
+              <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 dark:bg-red-950 text-red-500">
                 <Coffee size={16} />
               </span>
               <div>
-                <h2 className="text-sm font-semibold text-slate-800">Caffeine alert</h2>
-                <p className="text-xs text-slate-500">
+                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Caffeine alert</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   You had {progress.caffeineMg} mg of caffeine today — over the {CAFFEINE_CAP_MG} mg cap.
                 </p>
               </div>
@@ -914,12 +914,12 @@ export function HydrationApp({ now = () => new Date() }: HydrationAppProps = {})
         {paceDecision.shouldRemind ? (
           <Card>
             <div className="flex items-start gap-3">
-              <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-500">
+              <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-500">
                 <BarChart3 size={16} />
               </span>
               <div>
-                <h2 className="text-sm font-semibold text-slate-800">Pace reminder</h2>
-                <p className="text-xs text-slate-500">
+                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Pace reminder</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   You are {paceDecision.deficitMl} ml behind where you should be today — keep sipping.
                 </p>
               </div>
@@ -929,8 +929,8 @@ export function HydrationApp({ now = () => new Date() }: HydrationAppProps = {})
 
         <Card>
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-slate-800">Daily goal</h2>
-            <span className="text-sm font-semibold text-indigo-600">
+            <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Daily goal</h2>
+            <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
               {formatVolume(target.targetMl, target.unit)}
             </span>
             <div className="ml-auto flex flex-wrap items-center gap-2">
@@ -951,7 +951,7 @@ export function HydrationApp({ now = () => new Date() }: HydrationAppProps = {})
         </Card>
 
         <Card>
-          <h2 className="text-sm font-semibold text-slate-800">Quick log</h2>
+          <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Quick log</h2>
           <div className="mt-3">
             <BeveragePicker value={beverage} onChange={setBeverage} />
           </div>
@@ -967,8 +967,8 @@ export function HydrationApp({ now = () => new Date() }: HydrationAppProps = {})
                 }}
                 className={`rounded-lg border px-2 py-2 text-xs font-medium transition ${
                   quickMl === preset
-                    ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                    ? 'border-indigo-300 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 {formatVolume(preset, target.unit)}
@@ -989,28 +989,28 @@ export function HydrationApp({ now = () => new Date() }: HydrationAppProps = {})
 
         <Card>
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-slate-800">Today</h2>
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500">
+            <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Today</h2>
+            <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
               {todayEntries.length}
             </span>
           </div>
           <div className="mt-3 flex flex-col gap-2">
             {todayEntries.length === 0 ? (
-              <p className="text-xs text-slate-400">No intake yet — add your first glass of water.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">No intake yet — add your first glass of water.</p>
             ) : (
               todayEntries.map((entry) => {
                 const Icon = BEVERAGE_ICONS[entry.beverage] ?? Droplets
                 const showBeverage = entry.beverage !== 'water'
                 return (
-                  <div key={entry.id} className="flex items-center gap-3 rounded-lg border border-slate-100 px-3 py-2">
-                    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-500">
+                  <div key={entry.id} className="flex items-center gap-3 rounded-lg border border-slate-100 dark:border-slate-800 px-3 py-2">
+                    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-500">
                       <Icon size={15} />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-800">
+                      <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
                         {formatVolume(entry.amountMl, target.unit)}
                       </p>
-                      <p className="truncate text-[11px] text-slate-400">
+                      <p className="truncate text-[11px] text-slate-400 dark:text-slate-500">
                         {showBeverage ? `${beverageLabel(entry.beverage)} · ${formatTime(entry.loggedAt)}` : formatTime(entry.loggedAt)}
                       </p>
                     </div>

@@ -21,4 +21,16 @@ describe('FaviconApp', () => {
     fireEvent.change(screen.getByLabelText('Letters'), { target: { value: 'XY' } })
     expect((screen.getByLabelText('Letters') as HTMLInputElement).value).toBe('XY')
   })
+
+  it('shows the upload control in image mode', () => {
+    render(<FaviconApp />)
+    fireEvent.click(screen.getByText('Image'))
+    expect(screen.getByLabelText('Upload image')).toBeInTheDocument()
+  })
+
+  it('exposes the ICO and ZIP export buttons', () => {
+    render(<FaviconApp />)
+    expect(screen.getByText('ICO')).toBeInTheDocument()
+    expect(screen.getByText('ZIP')).toBeInTheDocument()
+  })
 })

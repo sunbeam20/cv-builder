@@ -18,7 +18,7 @@ import {
 
 const EMOJI_PRESETS = ['✅', '💧', '🏃', '📚', '🧘', '🥗', '😴', '✍️', '🎸', '🧹', '💊', '🚭']
 const selectClass =
-  'rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 function HabitCard({ habit }: { habit: Habit }) {
   const toggleDone = useHabitsStore((s) => s.toggleDone)
@@ -47,7 +47,7 @@ function HabitCard({ habit }: { habit: Habit }) {
   }
 
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <article className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       <div className="flex items-start gap-3">
         <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg text-xl ${style.bg}`}>
           <span className="drop-shadow">{habit.emoji}</span>
@@ -57,14 +57,14 @@ function HabitCard({ habit }: { habit: Habit }) {
             value={habit.name}
             aria-label={`Rename ${habit.name}`}
             onChange={(e) => updateHabit(habit.id, { name: e.target.value })}
-            className="w-full border-0 bg-transparent p-0 text-sm font-semibold text-slate-800 outline-none"
+            className="w-full border-0 bg-transparent p-0 text-sm font-semibold text-slate-800 dark:text-slate-100 outline-none"
           />
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-slate-400 dark:text-slate-500">
             Target {habit.targetPerWeek}×/week · {week.completed} this week
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-1 text-xs font-semibold ${style.text}`}>
+          <span className={`inline-flex items-center gap-1 rounded-full bg-slate-50 dark:bg-slate-800 px-2 py-1 text-xs font-semibold ${style.text}`}>
             <Flame size={13} />
             {streak}
           </span>
@@ -72,7 +72,7 @@ function HabitCard({ habit }: { habit: Habit }) {
             type="button"
             aria-label={`Delete ${habit.name}`}
             onClick={onDelete}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
           >
             <Trash2 size={14} />
           </button>
@@ -92,10 +92,10 @@ function HabitCard({ habit }: { habit: Habit }) {
               day.done
                 ? `${style.bg} border-transparent text-white`
                 : day.frozen
-                  ? 'border-sky-200 bg-sky-50 text-sky-500'
+                  ? 'border-sky-200 bg-sky-50 dark:bg-sky-950 text-sky-500'
                   : day.today
-                    ? 'border-slate-300 bg-slate-50 text-slate-600'
-                    : 'border-slate-200 text-slate-400 hover:bg-slate-50'
+                    ? 'border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
           >
             <span>{day.label}</span>
@@ -108,7 +108,7 @@ function HabitCard({ habit }: { habit: Habit }) {
         <button
           type="button"
           onClick={() => toggleFreeze(habit.id, todayKey)}
-          className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-[11px] font-medium text-slate-500 hover:bg-slate-50"
+          className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
         >
           <Snowflake size={13} />
           Freeze today
@@ -119,12 +119,12 @@ function HabitCard({ habit }: { habit: Habit }) {
               key={day.key}
               title={day.key}
               className={`h-3.5 w-3.5 rounded-sm ${
-                day.done ? style.bg : day.frozen ? 'bg-sky-200' : 'bg-slate-100'
+                day.done ? style.bg : day.frozen ? 'bg-sky-200' : 'bg-slate-100 dark:bg-slate-800'
               }`}
             />
           ))}
         </div>
-        <span className="inline-flex items-center gap-1 text-[11px] text-slate-400">
+        <span className="inline-flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500">
           <Trophy size={12} />
           best {best}
         </span>
@@ -158,7 +158,7 @@ export function HabitApp() {
   }, [habits])
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader
         icon={Repeat}
         title="Habit Tracker"
@@ -166,8 +166,8 @@ export function HabitApp() {
       />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-6">
-        <section className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+        <section className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Habit
             <input
               aria-label="Habit name"
@@ -178,7 +178,7 @@ export function HabitApp() {
               className={`${selectClass} w-52`}
             />
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Icon
             <select aria-label="Icon" className={selectClass} value={emoji} onChange={(e) => setEmoji(e.target.value)}>
               {EMOJI_PRESETS.map((preset) => (
@@ -188,7 +188,7 @@ export function HabitApp() {
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Per week
             <select
               aria-label="Per week"
@@ -203,7 +203,7 @@ export function HabitApp() {
               ))}
             </select>
           </label>
-          <div className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <div className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Color
             <div className="flex items-center gap-1.5 py-1.5">
               {HABIT_COLORS.map((option) => (
@@ -232,24 +232,24 @@ export function HabitApp() {
 
         {habits.length > 0 ? (
           <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-slate-200 bg-white p-3 text-center shadow-sm">
-              <p className="text-lg font-bold text-slate-800">{habits.length}</p>
-              <p className="text-[11px] text-slate-400">Active habits</p>
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-center shadow-sm">
+              <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{habits.length}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Active habits</p>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-3 text-center shadow-sm">
-              <p className="text-lg font-bold text-slate-800">{totals.doneToday}</p>
-              <p className="text-[11px] text-slate-400">Done today</p>
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-center shadow-sm">
+              <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{totals.doneToday}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Done today</p>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-3 text-center shadow-sm">
-              <p className="text-lg font-bold text-slate-800">{totals.best}</p>
-              <p className="text-[11px] text-slate-400">Best streak</p>
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-center shadow-sm">
+              <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{totals.best}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Best streak</p>
             </div>
           </section>
         ) : null}
 
         <section className="flex flex-col gap-3">
           {habits.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-400">
+            <p className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-8 text-center text-sm text-slate-400 dark:text-slate-500">
               Add your first habit above to start building streaks.
             </p>
           ) : (

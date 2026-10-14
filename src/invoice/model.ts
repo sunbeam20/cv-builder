@@ -22,6 +22,9 @@ export interface Invoice {
   items: LineItem[]
   taxRate: number
   notes: string
+  logo: string
+  status: 'draft' | 'sent' | 'paid'
+  paymentDetails: string
 }
 
 export interface Totals {
@@ -66,6 +69,16 @@ export const emptyInvoice = (number = nextInvoiceNumber()): Invoice => ({
   items: [emptyItem()],
   taxRate: 0,
   notes: 'Thank you for your business.',
+  logo: '',
+  status: 'draft',
+  paymentDetails: '',
+})
+
+export const duplicateInvoice = (invoice: Invoice, numbers: string[]): Invoice => ({
+  ...invoice,
+  id: uid(),
+  number: nextInvoiceNumber(numbers),
+  items: invoice.items.map((item) => ({ ...item, id: uid() })),
 })
 
 export const lineTotal = (item: LineItem): number => round(item.quantity * item.unitPrice)

@@ -4,7 +4,7 @@ import { ToolHeader } from '../components/ui/ToolHeader'
 import { generateLorem, type LoremMode, type LoremUnit } from './lorem'
 
 const selectClass =
-  'rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 /** Small deterministic PRNG so "Shuffle" produces a fresh, reproducible roll. */
 function mulberry32(seed: number): () => number {
@@ -42,7 +42,7 @@ export function LoremApp() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader
         icon={Type}
         title="Lorem Ipsum Generator"
@@ -50,8 +50,8 @@ export function LoremApp() {
       />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-6">
-        <section className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+        <section className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Unit
             <select
               aria-label="Unit"
@@ -65,7 +65,7 @@ export function LoremApp() {
             </select>
           </label>
 
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             How many
             <input
               aria-label="How many"
@@ -78,7 +78,7 @@ export function LoremApp() {
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Flavour
             <select
               aria-label="Flavour"
@@ -91,7 +91,7 @@ export function LoremApp() {
             </select>
           </label>
 
-          <label className="inline-flex items-center gap-1.5 pb-2 text-xs text-slate-600">
+          <label className="inline-flex items-center gap-1.5 pb-2 text-xs text-slate-600 dark:text-slate-300">
             <input
               type="checkbox"
               checked={startWithLorem}
@@ -103,20 +103,20 @@ export function LoremApp() {
           <button
             type="button"
             onClick={() => setSeed((s) => s + 1)}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             <RefreshCw size={14} />
             Shuffle
           </button>
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2">
-            <span className="text-xs font-medium text-slate-400">Output</span>
+        <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-4 py-2">
+            <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Output</span>
             <button
               type="button"
               onClick={copy}
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-indigo-600 hover:bg-indigo-50"
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950"
             >
               <Copy size={13} />
               {copied ? 'Copied' : 'Copy'}
@@ -124,7 +124,7 @@ export function LoremApp() {
           </div>
           <p
             aria-label="Generated text"
-            className="whitespace-pre-wrap p-4 text-sm leading-relaxed text-slate-700"
+            className="whitespace-pre-wrap p-4 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
           >
             {text}
           </p>

@@ -6,6 +6,8 @@ export interface Sender {
   links: string[]
 }
 
+export type LetterFont = 'sans' | 'serif'
+
 export interface CoverLetter {
   id: string
   company: string
@@ -16,6 +18,9 @@ export interface CoverLetter {
   body: string
   closing: string
   sender: Sender
+  font: LetterFont
+  accent: string
+  margin: number
   updatedAt: string
 }
 
@@ -33,6 +38,9 @@ export const emptyLetter = (): CoverLetter => ({
   body: '',
   closing: 'Sincerely,',
   sender: emptySender(),
+  font: 'sans',
+  accent: '#4f46e5',
+  margin: 56,
   updatedAt: new Date().toISOString(),
 })
 

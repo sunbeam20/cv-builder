@@ -29,6 +29,14 @@ export const useLogoStore = create<LogoState>()(
           state.config = emptyLogo()
         }),
     })),
-    { name: STORAGE_KEY, storage: createJSONStorage(() => localStorage), version: 1 },
+    {
+      name: STORAGE_KEY,
+      storage: createJSONStorage(() => localStorage),
+      version: 2,
+      migrate: (persisted) => {
+        const state = persisted as { config?: Partial<LogoConfig> }
+        return { ...(persisted as object), config: { ...emptyLogo(), ...(state.config ?? {}) } } as LogoState
+      },
+    },
   ),
 )

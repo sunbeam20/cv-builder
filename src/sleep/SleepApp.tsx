@@ -15,7 +15,7 @@ import {
 } from './model'
 
 const inputClass =
-  'rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 export function SleepApp() {
   const entries = useSleepStore((s) => s.entries)
@@ -49,24 +49,24 @@ export function SleepApp() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader icon={Moon} title="Sleep Tracker" subtitle="Log your sleep and spot your best rest patterns." />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-6">
-        <section className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+        <section className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Date
             <input aria-label="Date" type="date" className={inputClass} value={date} onChange={(e) => setDate(e.target.value)} />
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Bed time
             <input aria-label="Bed time" type="time" className={inputClass} value={bed} onChange={(e) => setBed(e.target.value)} />
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Wake time
             <input aria-label="Wake time" type="time" className={inputClass} value={wake} onChange={(e) => setWake(e.target.value)} />
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Quality
             <select
               aria-label="Quality"
@@ -81,7 +81,7 @@ export function SleepApp() {
               ))}
             </select>
           </label>
-          <label className="flex min-w-[10rem] flex-1 flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex min-w-[10rem] flex-1 flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Note
             <input
               aria-label="Note"
@@ -109,29 +109,29 @@ export function SleepApp() {
               { label: 'Avg bedtime', value: formatClock(summary.averageBedtime) },
               { label: 'Avg wake', value: formatClock(summary.averageWake) },
             ].map((card) => (
-              <div key={card.label} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-                <p className="text-lg font-bold text-slate-800">{card.value}</p>
-                <p className="text-[11px] text-slate-400">{card.label}</p>
+              <div key={card.label} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-sm">
+                <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{card.value}</p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500">{card.label}</p>
               </div>
             ))}
           </section>
         ) : null}
 
         {recent.length > 0 ? (
-          <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-xs font-medium text-slate-400">Last {recent.length} nights</h2>
+          <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+            <h2 className="mb-3 text-xs font-medium text-slate-400 dark:text-slate-500">Last {recent.length} nights</h2>
             <div className="flex items-end gap-2" style={{ height: 120 }}>
               {[...recent].reverse().map((entry) => {
                 const minutes = durationMinutes(entry.bed, entry.wake)
                 return (
                   <div key={entry.id} className="flex flex-1 flex-col items-center gap-1">
-                    <span className="text-[10px] text-slate-400">{formatDuration(minutes)}</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{formatDuration(minutes)}</span>
                     <div
                       className="w-full rounded-t-md bg-indigo-500"
                       style={{ height: `${Math.round((minutes / maxDuration) * 80)}px` }}
                       title={`${entry.date}: ${formatDuration(minutes)}`}
                     />
-                    <span className="text-[10px] text-slate-400">{entry.date.slice(5)}</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{entry.date.slice(5)}</span>
                   </div>
                 )
               })}
@@ -141,29 +141,29 @@ export function SleepApp() {
 
         <section className="flex flex-col gap-2">
           {sorted.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-400">
+            <p className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-8 text-center text-sm text-slate-400 dark:text-slate-500">
               No sleep logged yet. Add your first night above.
             </p>
           ) : (
             sorted.map((entry) => (
               <div
                 key={entry.id}
-                className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-sm"
               >
-                <span className="w-24 shrink-0 text-xs font-medium text-slate-500">{entry.date}</span>
-                <span className="text-sm text-slate-700">
+                <span className="w-24 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{entry.date}</span>
+                <span className="text-sm text-slate-700 dark:text-slate-200">
                   {entry.bed} → {entry.wake}
                 </span>
-                <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600">
+                <span className="rounded-full bg-indigo-50 dark:bg-indigo-950 px-2 py-0.5 text-xs font-medium text-indigo-600 dark:text-indigo-400">
                   {formatDuration(durationMinutes(entry.bed, entry.wake))}
                 </span>
-                <span className="text-xs text-slate-400">Q{entry.quality}</span>
-                {entry.note ? <span className="truncate text-xs text-slate-400">{entry.note}</span> : null}
+                <span className="text-xs text-slate-400 dark:text-slate-500">Q{entry.quality}</span>
+                {entry.note ? <span className="truncate text-xs text-slate-400 dark:text-slate-500">{entry.note}</span> : null}
                 <button
                   type="button"
                   aria-label={`Delete ${entry.date}`}
                   onClick={() => removeEntry(entry.id)}
-                  className="ml-auto inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                  className="ml-auto inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
                 >
                   <Trash2 size={14} />
                 </button>

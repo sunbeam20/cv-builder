@@ -7,12 +7,12 @@ import { useMatcherStore } from './store'
 import { analyseResume, parseExtraKeywords, type AnalysisReport } from './model'
 
 const inputClass =
-  'w-full rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 const toneClasses: Record<string, string> = {
-  low: 'text-red-600',
-  medium: 'text-amber-600',
-  high: 'text-emerald-600',
+  low: 'text-red-600 dark:text-red-400',
+  medium: 'text-amber-600 dark:text-amber-400',
+  high: 'text-emerald-600 dark:text-emerald-400',
 }
 
 export function CvJobMatcherApp() {
@@ -54,14 +54,14 @@ export function CvJobMatcherApp() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader icon={Target} title="CV ↔ Job Matcher" subtitle="Score your CV against a job description and spot keyword gaps." />
 
       <main className="mx-auto grid max-w-5xl gap-4 px-4 py-6 lg:grid-cols-2">
-        <section className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="flex flex-col gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Job description</span>
-            <span className="text-[11px] text-slate-400">{wordCount} words</span>
+            <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Job description</span>
+            <span className="text-[11px] text-slate-400 dark:text-slate-500">{wordCount} words</span>
           </div>
           <textarea
             aria-label="Job description"
@@ -71,7 +71,7 @@ export function CvJobMatcherApp() {
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
           />
-          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             Extra keywords (comma or newline separated)
             <input aria-label="Extra keywords" className={inputClass} value={extra} onChange={(e) => setExtra(e.target.value)} />
           </label>
@@ -86,19 +86,19 @@ export function CvJobMatcherApp() {
             <button
               type="button"
               onClick={loadSample}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+              className="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               Load sample CV
             </button>
           </div>
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-slate-400 dark:text-slate-500">
             Analysing: {resume.profile.fullName || 'empty CV'} · {resume.skills.reduce((n, g) => n + g.items.length, 0)} skills
           </p>
         </section>
 
         <section className="flex flex-col gap-4">
           {report ? (
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
               <div className="flex items-center gap-4">
                 <div
                   aria-label="Match score"
@@ -114,8 +114,8 @@ export function CvJobMatcherApp() {
                 </div>
                 <div>
                   <p className={`text-sm font-semibold ${toneClasses[report.band.tone]}`}>{report.band.label}</p>
-                  <p className="text-xs text-slate-500">{report.band.advice}</p>
-                  <p className="mt-1 text-[11px] text-slate-400">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{report.band.advice}</p>
+                  <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
                     {report.matched.length} of {report.keywords.length} keywords covered
                   </p>
                 </div>
@@ -123,11 +123,11 @@ export function CvJobMatcherApp() {
 
               <div className="mt-3 flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-400">Save this analysis</span>
+                  <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Save this analysis</span>
                   <button
                     type="button"
                     onClick={save}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-500"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500"
                   >
                     <Save size={13} /> Save
                   </button>
@@ -143,10 +143,10 @@ export function CvJobMatcherApp() {
 
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="mb-1 text-xs font-medium text-emerald-600">Matched</p>
+                  <p className="mb-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">Matched</p>
                   <div className="flex flex-wrap gap-1">
                     {report.matched.map((keyword) => (
-                      <span key={keyword} className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-700">
+                      <span key={keyword} className="rounded-full bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 text-[11px] text-emerald-700">
                         {keyword}
                       </span>
                     ))}
@@ -156,7 +156,7 @@ export function CvJobMatcherApp() {
                   <p className="mb-1 text-xs font-medium text-red-500">Missing</p>
                   <div className="flex flex-wrap gap-1">
                     {report.missing.map((keyword) => (
-                      <span key={keyword} className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] text-red-600">
+                      <span key={keyword} className="rounded-full bg-red-50 dark:bg-red-950 px-2 py-0.5 text-[11px] text-red-600 dark:text-red-400">
                         {keyword}
                       </span>
                     ))}
@@ -165,25 +165,25 @@ export function CvJobMatcherApp() {
               </div>
             </div>
           ) : (
-            <p className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-400">
+            <p className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-8 text-center text-sm text-slate-400 dark:text-slate-500">
               Paste a job description and hit analyse.
             </p>
           )}
 
           {history.length > 0 ? (
             <div className="flex flex-col gap-2">
-              <span className="text-xs font-medium text-slate-400">History</span>
+              <span className="text-xs font-medium text-slate-400 dark:text-slate-500">History</span>
               {history.map((item) => (
-                <div key={item.id} className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white p-2.5 text-sm">
+                <div key={item.id} className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2.5 text-sm">
                   <span className={`w-10 shrink-0 text-center font-semibold ${toneClasses[scoreBandTone(item.score)]}`}>
                     {item.score}%
                   </span>
-                  <span className="flex-1 truncate text-slate-700">{item.label}</span>
+                  <span className="flex-1 truncate text-slate-700 dark:text-slate-200">{item.label}</span>
                   <button
                     type="button"
                     aria-label="Delete analysis"
                     onClick={() => removeAnalysis(item.id)}
-                    className="text-slate-400 hover:text-red-500"
+                    className="text-slate-400 dark:text-slate-500 hover:text-red-500"
                   >
                     <Trash2 size={14} />
                   </button>

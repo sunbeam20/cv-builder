@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Copy, Mail, Plus, Trash2 } from 'lucide-react'
+import { Copy, Download, Mail, Plus, Trash2, Upload } from 'lucide-react'
 import { ToolHeader } from '../components/ui/ToolHeader'
 import { toast } from '../lib/toast'
-import { SOCIAL_PRESETS, emptySignature, signatureHtml, signatureText, uid, type SignatureInput } from './model'
+import { downloadBlob } from '../lib/helpers'
+import { LAYOUTS, SOCIAL_PRESETS, emptySignature, signatureHtml, signatureText, signatureVCard, uid, type SignatureInput, type SignatureLayout } from './model'
 
 const inputClass =
-  'w-full rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 export function SignatureApp() {
   const [input, setInput] = useState<SignatureInput>(emptySignature)
@@ -21,12 +22,23 @@ export function SignatureApp() {
     }
   }
 
+  const onPickPhoto = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please choose an image file')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => patch({ photo: String(reader.result) })
+    reader.onerror = () => toast.error('Couldn’t read that image')
+    reader.readAsDataURL(file)
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader icon={Mail} title="Email Signature" subtitle="Build a table-based HTML signature that works in any mail client." />
 
       <main className="mx-auto grid max-w-4xl gap-4 px-4 py-6 md:grid-cols-2">
-        <section className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="flex flex-col gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
           {(
             [
               ['name', 'Full name'],
@@ -38,24 +50,70 @@ export function SignatureApp() {
               ['location', 'Location'],
             ] as const
           ).map(([key, label]) => (
-            <label key={key} className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label key={key} className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               {label}
               <input aria-label={label} className={inputClass} value={input[key]} onChange={(e) => patch({ [key]: e.target.value })} />
             </label>
           ))}
 
-          <label className="flex items-center gap-2 text-xs font-medium text-slate-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
+            Layout
+            <select
+              aria-label="Layout"
+              className="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-2 text-sm text-slate-600 dark:text-slate-300"
+              value={input.layout}
+              onChange={(e) => patch({ layout: e.target.value as SignatureLayout })}
+            >
+              {LAYOUTS.map((layout) => (
+                <option key={layout.id} value={layout.id}>
+                  {layout.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Photo</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
+                <Upload size={14} /> Upload photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  aria-label="Upload photo"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) onPickPhoto(file)
+                    e.target.value = ''
+                  }}
+                />
+              </label>
+              {input.photo ? (
+                <button
+                  type="button"
+                  aria-label="Remove photo"
+                  onClick={() => patch({ photo: '' })}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
+                >
+                  <Trash2 size={14} /> Remove photo
+                </button>
+              ) : null}
+            </div>
+          </div>
+
+          <label className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
             Accent
-            <input aria-label="Accent" type="color" className="h-8 w-16 rounded-md border border-slate-200" value={input.accent} onChange={(e) => patch({ accent: e.target.value })} />
+            <input aria-label="Accent" type="color" className="h-8 w-16 rounded-md border border-slate-200 dark:border-slate-700" value={input.accent} onChange={(e) => patch({ accent: e.target.value })} />
           </label>
 
           <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-slate-400">Social links</span>
+            <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Social links</span>
             {input.socials.map((social) => (
               <div key={social.id} className="flex gap-1.5">
                 <select
                   aria-label="Network"
-                  className="rounded-md border border-slate-200 px-2 text-sm text-slate-600"
+                  className="rounded-md border border-slate-200 dark:border-slate-700 px-2 text-sm text-slate-600 dark:text-slate-300"
                   value={social.label}
                   onChange={(e) =>
                     patch({ socials: input.socials.map((entry) => (entry.id === social.id ? { ...entry, label: e.target.value } : entry)) })
@@ -79,7 +137,7 @@ export function SignatureApp() {
                   type="button"
                   aria-label="Remove social"
                   onClick={() => patch({ socials: input.socials.filter((entry) => entry.id !== social.id) })}
-                  className="px-1 text-slate-400 hover:text-red-500"
+                  className="px-1 text-slate-400 dark:text-slate-500 hover:text-red-500"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -88,7 +146,7 @@ export function SignatureApp() {
             <button
               type="button"
               onClick={() => patch({ socials: [...input.socials, { id: uid(), label: 'GitHub', url: '' }] })}
-              className="inline-flex items-center gap-1.5 self-start rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-500 hover:bg-slate-50"
+              className="inline-flex items-center gap-1.5 self-start rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               <Plus size={13} /> Add social
             </button>
@@ -96,8 +154,8 @@ export function SignatureApp() {
         </section>
 
         <section className="flex flex-col gap-3">
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <span className="text-xs font-medium text-slate-400">Preview</span>
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+            <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Preview</span>
             <div className="mt-3" dangerouslySetInnerHTML={{ __html: html }} />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -111,13 +169,20 @@ export function SignatureApp() {
             <button
               type="button"
               onClick={() => copy(signatureText(input), 'Text copied')}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               <Copy size={15} /> Copy plain text
             </button>
+            <button
+              type="button"
+              onClick={() => downloadBlob(new Blob([signatureVCard(input)], { type: 'text/vcard' }), 'contact.vcf')}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+            >
+              <Download size={15} /> Download vCard
+            </button>
           </div>
-          <details className="rounded-xl border border-slate-200 bg-white p-4 text-xs text-slate-500 shadow-sm">
-            <summary className="cursor-pointer font-medium text-slate-600">HTML source</summary>
+          <details className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-xs text-slate-500 dark:text-slate-400 shadow-sm">
+            <summary className="cursor-pointer font-medium text-slate-600 dark:text-slate-300">HTML source</summary>
             <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all font-mono text-[11px]">{html}</pre>
           </details>
         </section>

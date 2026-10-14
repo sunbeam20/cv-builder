@@ -30,4 +30,12 @@ describe('SplitApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Add person' }))
     expect(screen.getAllByText('Cara').length).toBeGreaterThan(0)
   })
+
+  it('reveals per-person inputs when choosing Exact', () => {
+    render(<SplitApp />)
+    expect(screen.queryByLabelText('You split value')).not.toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('Split mode'), { target: { value: 'exact' } })
+    expect(screen.getByLabelText('You split value')).toBeInTheDocument()
+    expect(screen.getByLabelText('Friend split value')).toBeInTheDocument()
+  })
 })

@@ -29,4 +29,17 @@ describe('CoverLetterApp', () => {
       "I'm applying for the {jobTitle} role at {company}. Here's why I think I'm a strong fit.",
     )
   })
+
+  it('changes font style via toggle', () => {
+    render(<CoverLetterApp />)
+    const fontSelect = screen.getByLabelText('Font')
+    expect(fontSelect).toHaveValue('sans')
+    fireEvent.change(fontSelect, { target: { value: 'serif' } })
+    expect(fontSelect).toHaveValue('serif')
+  })
+
+  it('shows Improve AI button', () => {
+    render(<CoverLetterApp />)
+    expect(screen.getAllByRole('button', { name: /Improve/i }).length).toBeGreaterThan(0)
+  })
 })

@@ -21,10 +21,10 @@ const TABS: { id: Tab; label: string }[] = [
 ]
 
 const inputClass =
-  'rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 const Card = ({ children }: { children: ReactNode }) => (
-  <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">{children}</div>
+  <div className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">{children}</div>
 )
 
 export function DateTimeApp() {
@@ -61,11 +61,11 @@ export function DateTimeApp() {
   const converted = localDateTime ? formatInTimeZone(new Date(localDateTime), targetZone) : ''
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader icon={CalendarClock} title="Date & Time Tools" subtitle="Work out date differences, ages, and time zones." />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-6">
-        <div className="inline-flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
+        <div className="inline-flex flex-wrap gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-1">
           {TABS.map((option) => (
             <button
               key={option.id}
@@ -73,7 +73,7 @@ export function DateTimeApp() {
               aria-pressed={tab === option.id}
               onClick={() => setTab(option.id)}
               className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-                tab === option.id ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'
+                tab === option.id ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               {option.label}
@@ -84,11 +84,11 @@ export function DateTimeApp() {
         {tab === 'diff' ? (
           <Card>
             <div className="flex flex-wrap items-end gap-3">
-              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
                 From
                 <input aria-label="From date" type="date" className={inputClass} value={diffFrom} onChange={(e) => setDiffFrom(e.target.value)} />
               </label>
-              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
                 To
                 <input aria-label="To date" type="date" className={inputClass} value={diffTo} onChange={(e) => setDiffTo(e.target.value)} />
               </label>
@@ -100,13 +100,13 @@ export function DateTimeApp() {
                   { label: 'Weeks', value: diff.totalWeeks },
                   { label: 'Weekend days', value: diff.weekendDays },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-lg font-bold text-slate-800">{item.value}</p>
-                    <p className="text-[11px] text-slate-400">{item.label}</p>
+                  <div key={item.label} className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                    <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{item.value}</p>
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500">{item.label}</p>
                   </div>
                 ))}
-                <div className="rounded-lg bg-indigo-50 p-3">
-                  <p className="text-lg font-bold text-indigo-700">
+                <div className="rounded-lg bg-indigo-50 dark:bg-indigo-950 p-3">
+                  <p className="text-lg font-bold text-indigo-700 dark:text-indigo-300">
                     {diff.years}y {diff.months}m {diff.days}d
                   </p>
                   <p className="text-[11px] text-indigo-400">Calendar span</p>
@@ -118,7 +118,7 @@ export function DateTimeApp() {
 
         {tab === 'age' ? (
           <Card>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
               Date of birth
               <input aria-label="Date of birth" type="date" className={`${inputClass} w-48`} value={birth} onChange={(e) => setBirth(e.target.value)} />
             </label>
@@ -129,9 +129,9 @@ export function DateTimeApp() {
                   { label: 'Total days', value: age.totalDays.toLocaleString() },
                   { label: 'Next birthday', value: `${age.nextBirthdayIn}d` },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-base font-bold text-slate-800">{item.value}</p>
-                    <p className="text-[11px] text-slate-400">{item.label}</p>
+                  <div key={item.label} className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                    <p className="text-base font-bold text-slate-800 dark:text-slate-100">{item.value}</p>
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500">{item.label}</p>
                   </div>
                 ))}
               </div>
@@ -142,12 +142,12 @@ export function DateTimeApp() {
         {tab === 'add' ? (
           <Card>
             <div className="flex flex-wrap items-end gap-3">
-              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
                 Starting date
                 <input aria-label="Starting date" type="date" className={inputClass} value={base} onChange={(e) => setBase(e.target.value)} />
               </label>
               {(['years', 'months', 'weeks', 'days'] as const).map((key) => (
-                <label key={key} className="flex flex-col gap-1 text-xs font-medium capitalize text-slate-600">
+                <label key={key} className="flex flex-col gap-1 text-xs font-medium capitalize text-slate-600 dark:text-slate-300">
                   {key}
                   <input
                     aria-label={key}
@@ -160,7 +160,7 @@ export function DateTimeApp() {
               ))}
             </div>
             {added ? (
-              <p aria-label="Result date" className="rounded-lg bg-indigo-50 p-3 text-lg font-bold text-indigo-700">
+              <p aria-label="Result date" className="rounded-lg bg-indigo-50 dark:bg-indigo-950 p-3 text-lg font-bold text-indigo-700 dark:text-indigo-300">
                 {toDateInput(added)}
               </p>
             ) : null}
@@ -170,7 +170,7 @@ export function DateTimeApp() {
         {tab === 'zones' ? (
           <Card>
             <div className="flex flex-wrap items-end gap-3">
-              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
                 Local time ({localZone})
                 <input
                   aria-label="Local time"
@@ -180,7 +180,7 @@ export function DateTimeApp() {
                   onChange={(e) => setLocalDateTime(e.target.value)}
                 />
               </label>
-              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+              <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
                 Target zone
                 <select aria-label="Target zone" className={inputClass} value={targetZone} onChange={(e) => setTargetZone(e.target.value)}>
                   {zones.map((zone) => (
@@ -191,7 +191,7 @@ export function DateTimeApp() {
                 </select>
               </label>
             </div>
-            <p aria-label="Converted time" className="rounded-lg bg-indigo-50 p-3 text-lg font-bold text-indigo-700">
+            <p aria-label="Converted time" className="rounded-lg bg-indigo-50 dark:bg-indigo-950 p-3 text-lg font-bold text-indigo-700 dark:text-indigo-300">
               {converted}
             </p>
           </Card>

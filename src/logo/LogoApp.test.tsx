@@ -27,4 +27,16 @@ describe('LogoApp', () => {
     fireEvent.click(screen.getByRole('button', { name: /Randomise/i }))
     expect(screen.getByLabelText('Tagline')).toHaveValue('Keep me')
   })
+
+  it('updates the preview when an icon is chosen', () => {
+    render(<LogoApp />)
+    fireEvent.click(screen.getByRole('button', { name: /Bolt icon/i }))
+    expect(screen.getByLabelText('Logo preview').innerHTML).toContain('<path d=')
+  })
+
+  it('toggles the gradient in the preview', () => {
+    render(<LogoApp />)
+    fireEvent.click(screen.getByLabelText('Gradient'))
+    expect(screen.getByLabelText('Logo preview').innerHTML).toContain('linearGradient')
+  })
 })

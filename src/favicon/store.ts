@@ -19,6 +19,16 @@ export const useFaviconStore = create<FaviconState>()(
           Object.assign(state.config, patch)
         }),
     })),
-    { name: STORAGE_KEY, storage: createJSONStorage(() => localStorage), version: 1 },
+    {
+      name: STORAGE_KEY,
+      storage: createJSONStorage(() => localStorage),
+      version: 2,
+      migrate: (persisted) => {
+        const state = persisted as { config?: Partial<FaviconConfig> } | undefined
+        return {
+          config: { ...emptyFavicon(), ...state?.config },
+        }
+      },
+    },
   ),
 )

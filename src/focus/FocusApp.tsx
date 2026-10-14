@@ -13,7 +13,7 @@ import {
 } from './model'
 
 const inputClass =
-  'w-20 rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500'
+  'w-20 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500'
 
 function chime() {
   try {
@@ -87,7 +87,7 @@ export function FocusApp() {
     label: string,
     min = 1,
   ) => (
-    <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+    <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-300">
       {label}
       <input
         aria-label={label}
@@ -101,14 +101,14 @@ export function FocusApp() {
   )
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800">
       <ToolHeader icon={Timer} title="Focus Timer" subtitle="A Pomodoro timer that keeps a record of your deep work." />
 
       <main className="mx-auto flex max-w-2xl flex-col gap-4 px-4 py-6">
-        <section className="flex flex-col items-center gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="flex flex-col items-center gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
           <span
             className={`rounded-full px-3 py-1 text-xs font-semibold ${
-              isWork ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600'
+              isWork ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400' : 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'
             }`}
           >
             {PHASE_LABELS[phase]}
@@ -129,7 +129,7 @@ export function FocusApp() {
                 strokeDashoffset={2 * Math.PI * 45 * (1 - progress / 100)}
               />
             </svg>
-            <span className="text-4xl font-bold tabular-nums text-slate-800" aria-label="Time remaining">
+            <span className="text-4xl font-bold tabular-nums text-slate-800 dark:text-slate-100" aria-label="Time remaining">
               {formatClock(remaining)}
             </span>
           </div>
@@ -148,13 +148,13 @@ export function FocusApp() {
             <button
               type="button"
               onClick={reset}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               <RotateCcw size={15} />
               Reset
             </button>
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-400 dark:text-slate-500">
             {completedWork} focus session{completedWork === 1 ? '' : 's'} this sitting
           </p>
         </section>
@@ -166,19 +166,19 @@ export function FocusApp() {
             { label: 'Total hours', value: `${summary.totalHours}h` },
             { label: 'Day streak', value: `${summary.streak}d` },
           ].map((card) => (
-            <div key={card.label} className="rounded-xl border border-slate-200 bg-white p-3 text-center shadow-sm">
-              <p className="text-lg font-bold text-slate-800">{card.value}</p>
-              <p className="text-[11px] text-slate-400">{card.label}</p>
+            <div key={card.label} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-center shadow-sm">
+              <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{card.value}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">{card.label}</p>
             </div>
           ))}
         </section>
 
-        <section className="flex flex-wrap items-end gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="flex flex-wrap items-end gap-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
           {settingField('workMin', 'Focus min')}
           {settingField('shortBreakMin', 'Short break')}
           {settingField('longBreakMin', 'Long break')}
           {settingField('cyclesBeforeLong', 'Cycles')}
-          <label className="inline-flex items-center gap-1.5 pb-2 text-xs text-slate-600">
+          <label className="inline-flex items-center gap-1.5 pb-2 text-xs text-slate-600 dark:text-slate-300">
             <input
               type="checkbox"
               aria-label="Auto-start next phase"
@@ -190,7 +190,7 @@ export function FocusApp() {
           <button
             type="button"
             onClick={clearSessions}
-            className="ml-auto pb-1 text-xs text-slate-400 hover:text-red-500"
+            className="ml-auto pb-1 text-xs text-slate-400 dark:text-slate-500 hover:text-red-500"
           >
             Clear history
           </button>
