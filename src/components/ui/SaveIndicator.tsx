@@ -21,7 +21,7 @@ export function SaveIndicator() {
   return (
     <span
       aria-live="polite"
-      className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400"
+      className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 dark:text-slate-500"
     >
       {status === 'saved' ? (
         <>

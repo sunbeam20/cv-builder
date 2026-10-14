@@ -12,13 +12,13 @@ interface EntryCardProps {
 
 export function EntryCard({ title, subtitle, handle, onRemove, children }: EntryCardProps) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50/40 p-3">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-800/40 p-3">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
           {handle}
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-slate-700">{title || 'Untitled'}</p>
-            {subtitle ? <p className="truncate text-xs text-slate-400">{subtitle}</p> : null}
+            <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">{title || 'Untitled'}</p>
+            {subtitle ? <p className="truncate text-xs text-slate-400 dark:text-slate-500">{subtitle}</p> : null}
           </div>
         </div>
         <IconButton onClick={onRemove} title="Remove" danger>

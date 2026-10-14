@@ -192,14 +192,14 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
             {experience.map((exp) => (
               <div key={exp.id}>
                 <div className="flex items-baseline justify-between gap-3">
-                  <p className="font-semibold text-slate-900" style={{ fontSize: em(11.5) }}>
+                  <p className="font-semibold text-slate-900 dark:text-slate-50" style={{ fontSize: em(11.5) }}>
                     {exp.role || 'Role'}
                   </p>
-                  <p className="shrink-0 text-slate-500" style={{ fontSize: em(10.5) }}>
+                  <p className="shrink-0 text-slate-500 dark:text-slate-400" style={{ fontSize: em(10.5) }}>
                     {formatRange(exp.start, exp.end, exp.current)}
                   </p>
                 </div>
-                <p className="italic text-slate-600" style={{ fontSize: em(11) }}>
+                <p className="italic text-slate-600 dark:text-slate-300" style={{ fontSize: em(11) }}>
                   {[exp.company, exp.location].map((s) => s.trim()).filter(Boolean).join(', ')}
                 </p>
                 <Bullets items={exp.bullets} theme={theme} />
@@ -217,14 +217,14 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
             {education.map((edu) => (
               <div key={edu.id}>
                 <div className="flex items-baseline justify-between gap-3">
-                  <p className="font-semibold text-slate-900" style={{ fontSize: em(11.5) }}>
+                  <p className="font-semibold text-slate-900 dark:text-slate-50" style={{ fontSize: em(11.5) }}>
                     {edu.school || 'School'}
                   </p>
-                  <p className="shrink-0 text-slate-500" style={{ fontSize: em(10.5) }}>
+                  <p className="shrink-0 text-slate-500 dark:text-slate-400" style={{ fontSize: em(10.5) }}>
                     {formatRange(edu.start, edu.end, false)}
                   </p>
                 </div>
-                <p className="italic text-slate-600" style={{ fontSize: em(11) }}>
+                <p className="italic text-slate-600 dark:text-slate-300" style={{ fontSize: em(11) }}>
                   {[edu.degree, edu.field].map((s) => s.trim()).filter(Boolean).join(', ')}
                   {edu.location ? ` — ${edu.location}` : ''}
                 </p>
@@ -247,7 +247,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
             {skills.map((group) => (
               <p key={group.id} style={{ fontSize: em(11) }}>
                 {group.category ? (
-                  <span className="font-semibold text-slate-900">{group.category}: </span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-50">{group.category}: </span>
                 ) : null}
                 {group.items.join(', ')}
               </p>
@@ -263,7 +263,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
           <div className="flex flex-col gap-2.5">
             {projects.map((project) => (
               <div key={project.id}>
-                <p className="font-semibold text-slate-900" style={{ fontSize: em(11.5) }}>
+                <p className="font-semibold text-slate-900 dark:text-slate-50" style={{ fontSize: em(11.5) }}>
                   {project.name}
                   {project.link.trim() ? (
                     <a
@@ -322,7 +322,7 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
   return (
     <div
       ref={pageRef}
-      className="resume-page relative shadow-xl ring-1 ring-slate-200"
+      className="resume-page relative shadow-xl ring-1 ring-slate-200 dark:ring-slate-700"
       style={{
         fontFamily: theme.fontFamily,
         fontSize: `${theme.baseFontSize}px`,
@@ -349,13 +349,13 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
                 {profile.fullName || 'Your Name'}
               </h1>
               {profile.headline ? (
-                <p className="mt-0.5 font-medium text-slate-600" style={{ fontSize: em(13) }}>
+                <p className="mt-0.5 font-medium text-slate-600 dark:text-slate-300" style={{ fontSize: em(13) }}>
                   {profile.headline}
                 </p>
               ) : null}
             </div>
             {contactNodes.length > 0 ? (
-              <div className="text-right text-slate-600" style={{ fontSize: em(10.5) }}>
+              <div className="text-right text-slate-600 dark:text-slate-300" style={{ fontSize: em(10.5) }}>
                 {contactNodes.map((node, index) => (
                   <div key={index}>{node}</div>
                 ))}
@@ -375,12 +375,12 @@ export function ResumePage({ resume, theme, pageRef }: PageProps) {
               {profile.fullName || 'Your Name'}
             </h1>
             {profile.headline ? (
-              <p className="mt-0.5 font-medium text-slate-600" style={{ fontSize: em(13) }}>
+              <p className="mt-0.5 font-medium text-slate-600 dark:text-slate-300" style={{ fontSize: em(13) }}>
                 {profile.headline}
               </p>
             ) : null}
             {contactNodes.length > 0 ? (
-              <p className="mt-2 text-slate-600" style={{ fontSize: em(10.5) }}>
+              <p className="mt-2 text-slate-600 dark:text-slate-300" style={{ fontSize: em(10.5) }}>
                 {contactNodes.map((node, index) => (
                   <span key={index}>
                     {index > 0 ? '  |  ' : ''}
@@ -444,7 +444,7 @@ export function ResumePreview({ resume, pageRef, theme }: PreviewProps) {
         {Array.from({ length: pageCount }).map((_, index) => (
           <div
             key={index}
-            className="preview-page-box relative shadow-xl ring-1 ring-slate-200"
+            className="preview-page-box relative shadow-xl ring-1 ring-slate-200 dark:ring-slate-700"
             style={{ width: A4_WIDTH * scale, height: A4_HEIGHT * scale }}
           >
             <div className="preview-scaler" style={pageStyle}>
@@ -452,7 +452,7 @@ export function ResumePreview({ resume, pageRef, theme }: PreviewProps) {
                 <ResumePage resume={resume} theme={theme} />
               </div>
             </div>
-            <div className="no-print mt-1 text-center text-[11px] font-medium text-slate-400">
+            <div className="no-print mt-1 text-center text-[11px] font-medium text-slate-400 dark:text-slate-500">
               Page {index + 1} of {pageCount}
             </div>
           </div>

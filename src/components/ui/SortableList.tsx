@@ -62,7 +62,7 @@ export function SortableItem({ id, label, children }: SortableItemProps) {
       type="button"
       title={`Reorder ${label}`}
       aria-label={`Reorder ${label}`}
-      className="inline-flex h-7 w-7 cursor-grab touch-none items-center justify-center rounded-md border border-slate-200 text-slate-400 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 active:cursor-grabbing"
+      className="inline-flex h-7 w-7 cursor-grab touch-none items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 transition hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950 hover:text-indigo-600 dark:hover:text-indigo-400 active:cursor-grabbing"
       {...attributes}
       {...listeners}
     >

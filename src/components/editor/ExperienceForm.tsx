@@ -37,7 +37,7 @@ export function ExperienceForm() {
       }
     >
       {experience.length === 0 ? (
-        <p className="text-xs text-slate-400">No roles yet. Click “Add role”.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">No roles yet. Click “Add role”.</p>
       ) : (
         <SortableList ids={experience.map((e) => e.id)} onReorder={reorder}>
           <div className="flex flex-col gap-3">
@@ -102,14 +102,14 @@ export function ExperienceForm() {
                         </Field>
                       </div>
                     </div>
-                    <label className="flex items-center gap-2 text-xs font-medium text-slate-600">
+                    <label className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
                       <input
                         type="checkbox"
                         checked={exp.current}
                         onChange={(e) =>
                           update((d) => void (d.experience[index].current = e.target.checked))
                         }
-                        className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-400"
+                        className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-400"
                       />
                       I currently work here
                     </label>

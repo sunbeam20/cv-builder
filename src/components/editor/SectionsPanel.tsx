@@ -58,13 +58,13 @@ function SortableRow({
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`flex items-center gap-2 rounded-md border bg-white px-2.5 py-1.5 ${
-        isDragging ? 'border-indigo-400 shadow-md' : 'border-slate-200'
+      className={`flex items-center gap-2 rounded-md border bg-white dark:bg-slate-900 px-2.5 py-1.5 ${
+        isDragging ? 'border-indigo-400 shadow-md' : 'border-slate-200 dark:border-slate-700'
       }`}
     >
       <button
         type="button"
-        className="cursor-grab touch-none text-slate-400 hover:text-slate-600 active:cursor-grabbing"
+        className="cursor-grab touch-none text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 active:cursor-grabbing"
         aria-label={`Reorder ${SECTION_LABELS[id]}`}
         {...attributes}
         {...listeners}
@@ -73,13 +73,13 @@ function SortableRow({
       </button>
       <span
         className={`flex-1 text-xs font-medium ${
-          hidden ? 'text-slate-400 line-through' : 'text-slate-700'
+          hidden ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-700 dark:text-slate-200'
         }`}
       >
         {SECTION_LABELS[id]}
       </span>
       {empty ? (
-        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-400">
+        <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-400 dark:text-slate-500">
           empty
         </span>
       ) : null}
@@ -89,7 +89,7 @@ function SortableRow({
         aria-pressed={!hidden}
         aria-label={`${hidden ? 'Show' : 'Hide'} ${SECTION_LABELS[id]}`}
         title={hidden ? 'Show in CV' : 'Hide from CV'}
-        className="inline-flex h-6 w-6 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+        className="inline-flex h-6 w-6 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
       >
         {hidden ? <EyeOff size={14} /> : <Eye size={14} />}
       </button>
@@ -117,7 +117,7 @@ export function SectionsPanel() {
 
   return (
     <SectionCard title="Section order" count={resume.sectionOrder.length} defaultOpen={false}>
-      <p className="mb-2 text-[11px] text-slate-400">
+      <p className="mb-2 text-[11px] text-slate-400 dark:text-slate-500">
         Drag to reorder sections, or toggle the eye to include/exclude them from the CV.
       </p>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

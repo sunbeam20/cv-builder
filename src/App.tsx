@@ -45,7 +45,7 @@ export default function App() {
       <Toolbar pageRef={pageRef} />
       <main className="mx-auto max-w-[1600px] px-4 py-6">
           <div className="mb-4 flex justify-center no-print lg:hidden">
-            <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 shadow-sm">
+            <div className="flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-0.5 shadow-sm">
               <button
                 type="button"
                 aria-pressed={mobileView === 'edit'}
@@ -53,7 +53,7 @@ export default function App() {
                 className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-xs font-medium transition ${
                   mobileView === 'edit'
                     ? 'bg-indigo-600 text-white'
-                    : 'text-slate-500 hover:bg-slate-50'
+                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 <PencilLine size={14} />
@@ -66,7 +66,7 @@ export default function App() {
                 className={`inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-xs font-medium transition ${
                   mobileView === 'preview'
                     ? 'bg-indigo-600 text-white'
-                    : 'text-slate-500 hover:bg-slate-50'
+                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 <Eye size={14} />

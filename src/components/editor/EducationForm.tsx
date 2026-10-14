@@ -36,7 +36,7 @@ export function EducationForm() {
       }
     >
       {education.length === 0 ? (
-        <p className="text-xs text-slate-400">No education yet. Click “Add education”.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">No education yet. Click “Add education”.</p>
       ) : (
         <SortableList ids={education.map((e) => e.id)} onReorder={reorder}>
           <div className="flex flex-col gap-3">

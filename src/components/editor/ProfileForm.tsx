@@ -95,7 +95,7 @@ export function ProfileForm() {
 
       <div className="mt-4">
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-medium text-slate-600">Links</span>
+          <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Links</span>
           <button
             type="button"
             onClick={() =>
@@ -103,14 +103,14 @@ export function ProfileForm() {
                 d.profile.links.push({ id: uid(), label: '', url: '' })
               })
             }
-            className="inline-flex items-center gap-1 rounded-md border border-dashed border-slate-300 px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:border-indigo-400 hover:text-indigo-600"
+            className="inline-flex items-center gap-1 rounded-md border border-dashed border-slate-300 dark:border-slate-600 px-2.5 py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400"
           >
             <Plus size={13} />
             Add link
           </button>
         </div>
         {profile.links.length === 0 ? (
-          <p className="text-xs text-slate-400">No links yet.</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">No links yet.</p>
         ) : (
           <SortableList ids={profile.links.map((l) => l.id)} onReorder={reorderLinks}>
             <div className="flex flex-col gap-2">
@@ -150,7 +150,7 @@ export function ProfileForm() {
                             d.profile.links.splice(index, 1)
                           })
                         }
-                        className="mb-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                        className="mb-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
                       >
                         <X size={14} />
                       </button>

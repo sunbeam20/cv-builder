@@ -35,7 +35,7 @@ const buttonBase =
   'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-60'
 
 const iconButton =
-  'inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40'
+  'inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40'
 
 interface ToolbarProps {
   pageRef: RefObject<HTMLDivElement | null>
@@ -189,7 +189,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
     <>
       <button
         type="button"
-        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        className={`${buttonBase} border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800`}
         disabled={busy !== null}
         onClick={() =>
           run('png', 'PNG', async () => {
@@ -205,7 +205,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       </button>
       <button
         type="button"
-        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        className={`${buttonBase} border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800`}
         onClick={() => window.print()}
       >
         <Printer size={15} />
@@ -213,7 +213,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       </button>
       <button
         type="button"
-        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        className={`${buttonBase} border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800`}
         onClick={() => fileRef.current?.click()}
       >
         <Upload size={15} />
@@ -221,7 +221,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       </button>
       <button
         type="button"
-        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        className={`${buttonBase} border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800`}
         onClick={handleExportJson}
       >
         <Download size={15} />
@@ -229,7 +229,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       </button>
       <button
         type="button"
-        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        className={`${buttonBase} border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800`}
         onClick={openAiSettings}
       >
         <KeyRound size={15} />
@@ -237,7 +237,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       </button>
       <button
         type="button"
-        className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50`}
+        className={`${buttonBase} border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800`}
         onClick={handleSample}
       >
         <Sparkles size={15} />
@@ -245,7 +245,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       </button>
       <button
         type="button"
-        className={`${buttonBase} border border-slate-200 text-red-600 hover:bg-red-50`}
+        className={`${buttonBase} border border-slate-200 dark:border-slate-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950`}
         onClick={handleReset}
       >
         <RotateCcw size={15} />
@@ -255,7 +255,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
   )
 
   return (
-    <div className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur no-print">
+    <div className="sticky top-0 z-20 border-b border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur no-print">
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-2 px-4 py-2.5">
         <div className="mr-auto flex items-center gap-2">
           <button
@@ -270,7 +270,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
           <button
             type="button"
             onClick={() => goHome()}
-            className="text-sm font-semibold text-slate-800 hover:text-indigo-700"
+            className="text-sm font-semibold text-slate-800 dark:text-slate-100 hover:text-indigo-700 dark:hover:text-indigo-300"
           >
             CV Builder
           </button>
@@ -339,7 +339,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
           aria-label="More actions"
           aria-expanded={moreOpen}
           onClick={() => setMoreOpen((v) => !v)}
-          className={`${buttonBase} border border-slate-200 text-slate-600 hover:bg-slate-50 lg:hidden`}
+          className={`${buttonBase} border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 lg:hidden`}
         >
           <MoreHorizontal size={15} />
           More
@@ -359,7 +359,7 @@ export function Toolbar({ pageRef }: ToolbarProps) {
       </div>
 
       {moreOpen ? (
-        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-2 border-t border-slate-100 px-4 py-2.5 lg:hidden">
+        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-2 border-t border-slate-100 dark:border-slate-800 px-4 py-2.5 lg:hidden">
           {secondaryActions}
         </div>
       ) : null}

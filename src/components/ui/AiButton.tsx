@@ -44,7 +44,7 @@ export function AiButton({ text, onResult, instruction, context, label = 'Improv
         onClick={handleClick}
         disabled={loading || !text.trim()}
         title={configured ? 'Improve with AI' : 'Configure AI to enable'}
-        className="inline-flex items-center gap-1 rounded-md border border-indigo-200 bg-indigo-50 px-2 py-0.5 text-[11px] font-medium text-indigo-600 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex items-center gap-1 rounded-md border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950 px-2 py-0.5 text-[11px] font-medium text-indigo-600 dark:text-indigo-400 transition hover:bg-indigo-100 dark:hover:bg-indigo-900 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
         {loading ? 'Writing…' : label}

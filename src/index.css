@@ -1,7 +1,13 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
 }
 
 html,
@@ -15,6 +21,11 @@ body {
   background-color: #f1f5f9;
   color: #0f172a;
   font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.dark body {
+  background-color: #020617;
+  color: #e2e8f0;
 }
 
 .markdown-body h1,

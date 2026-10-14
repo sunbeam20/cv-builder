@@ -28,7 +28,7 @@ export function ProjectsForm() {
       }
     >
       {projects.length === 0 ? (
-        <p className="text-xs text-slate-400">No projects yet. Click “Add project”.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">No projects yet. Click “Add project”.</p>
       ) : (
         <SortableList ids={projects.map((p) => p.id)} onReorder={reorder}>
           <div className="flex flex-col gap-3">

@@ -37,7 +37,7 @@ export function BulletsEditor({
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs font-medium text-slate-600">Highlights</span>
+      <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Highlights</span>
       {bullets.length > 0 ? (
         <SortableList ids={ids} onReorder={reorder}>
           <div className="flex flex-col gap-2">
@@ -64,7 +64,7 @@ export function BulletsEditor({
                         title="Remove highlight"
                         aria-label="Remove highlight"
                         onClick={() => removeAt(index)}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
                       >
                         <X size={14} />
                       </button>
@@ -79,7 +79,7 @@ export function BulletsEditor({
       <button
         type="button"
         onClick={() => onChange([...bullets, ''])}
-        className="inline-flex w-fit items-center gap-1 rounded-md border border-dashed border-slate-300 px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:border-indigo-400 hover:text-indigo-600"
+        className="inline-flex w-fit items-center gap-1 rounded-md border border-dashed border-slate-300 dark:border-slate-600 px-2.5 py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400"
       >
         <Plus size={13} />
         Add highlight

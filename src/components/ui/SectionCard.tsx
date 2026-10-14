@@ -22,7 +22,7 @@ export function SectionCard({
   const [open, setOpen] = useState(defaultOpen)
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
+    <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
       <header className="flex items-center justify-between gap-2 px-4 py-3">
         <button
           type="button"
@@ -32,11 +32,11 @@ export function SectionCard({
         >
           <ChevronDown
             size={16}
-            className={`text-slate-400 transition-transform ${open ? '' : '-rotate-90'}`}
+            className={`text-slate-400 dark:text-slate-500 transition-transform ${open ? '' : '-rotate-90'}`}
           />
-          <span className="text-sm font-semibold text-slate-800">{title}</span>
+          <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">{title}</span>
           {typeof count === 'number' ? (
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500">
+            <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
               {count}
             </span>
           ) : null}
@@ -52,7 +52,7 @@ export function SectionCard({
           </button>
         ) : null}
       </header>
-      {open ? <div className="border-t border-slate-100 px-4 py-4">{children}</div> : null}
+      {open ? <div className="border-t border-slate-100 dark:border-slate-800 px-4 py-4">{children}</div> : null}
     </section>
   )
 }

@@ -12,17 +12,17 @@ export function Field({ label, hint, action, children, className = '' }: FieldPr
   return (
     <label className={`flex flex-col gap-1 ${className}`}>
       <span className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium text-slate-600">{label}</span>
+        <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{label}</span>
         {action}
       </span>
       {children}
-      {hint ? <span className="text-[11px] text-slate-400">{hint}</span> : null}
+      {hint ? <span className="text-[11px] text-slate-400 dark:text-slate-500">{hint}</span> : null}
     </label>
   )
 }
 
 const baseInput =
-  'w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100'
+  'w-full rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100'
 
 export function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
   const { className = '', ...rest } = props
@@ -50,10 +50,10 @@ export function IconButton({ onClick, title, children, disabled, danger }: IconB
       aria-label={title}
       disabled={disabled}
       onClick={onClick}
-      className={`inline-flex h-7 w-7 items-center justify-center rounded-md border text-slate-500 transition disabled:cursor-not-allowed disabled:opacity-40 ${
+      className={`inline-flex h-7 w-7 items-center justify-center rounded-md border text-slate-500 dark:text-slate-400 transition disabled:cursor-not-allowed disabled:opacity-40 ${
         danger
-          ? 'border-slate-200 hover:border-red-300 hover:bg-red-50 hover:text-red-600'
-          : 'border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600'
+          ? 'border-slate-200 dark:border-slate-700 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400'
+          : 'border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950 hover:text-indigo-600 dark:hover:text-indigo-400'
       }`}
     >
       {children}

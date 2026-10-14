@@ -7,7 +7,7 @@ import type { TemplateTheme } from '../../lib/templates'
 function TemplateThumb({ theme }: { theme: TemplateTheme }) {
   return (
     <div
-      className="h-20 w-full overflow-hidden rounded border border-slate-200 bg-white"
+      className="h-20 w-full overflow-hidden rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
       style={{ fontFamily: theme.fontFamily }}
     >
       {theme.accentBar ? <div className="h-1" style={{ background: theme.accent }} /> : null}
@@ -23,9 +23,9 @@ function TemplateThumb({ theme }: { theme: TemplateTheme }) {
           </div>
         )}
         <div className="mt-1 space-y-0.5">
-          <div className="h-0.5 w-full rounded bg-slate-200" />
-          <div className="h-0.5 w-4/5 rounded bg-slate-200" />
-          <div className="h-0.5 w-11/12 rounded bg-slate-200" />
+          <div className="h-0.5 w-full rounded bg-slate-200 dark:bg-slate-700" />
+          <div className="h-0.5 w-4/5 rounded bg-slate-200 dark:bg-slate-700" />
+          <div className="h-0.5 w-11/12 rounded bg-slate-200 dark:bg-slate-700" />
         </div>
       </div>
     </div>
@@ -64,21 +64,21 @@ export function TemplatePicker() {
         aria-expanded={open}
         aria-label="Template"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 focus:border-indigo-500"
+        className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 focus:border-indigo-500"
       >
         <span
           className="inline-block h-3 w-3 rounded-sm ring-1 ring-black/5"
           style={{ background: current.accent }}
         />
         {current.name}
-        <ChevronDown size={14} className="text-slate-400" />
+        <ChevronDown size={14} className="text-slate-400 dark:text-slate-500" />
       </button>
 
       {open ? (
         <div
           role="listbox"
           aria-label="Choose template"
-          className="absolute left-0 z-30 mt-2 grid w-[22rem] max-w-[80vw] grid-cols-3 gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-xl"
+          className="absolute left-0 z-30 mt-2 grid w-[22rem] max-w-[80vw] grid-cols-3 gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl"
         >
           {TEMPLATE_LIST.map((t) => {
             const active = t.id === template
@@ -95,12 +95,12 @@ export function TemplatePicker() {
                 className={`flex flex-col gap-1 rounded-md border p-1.5 text-left transition ${
                   active
                     ? 'border-indigo-500 ring-1 ring-indigo-500'
-                    : 'border-slate-200 hover:border-slate-300'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                 }`}
               >
                 <TemplateThumb theme={t} />
-                <span className="flex items-center gap-1 text-[11px] font-medium text-slate-700">
-                  {active ? <Check size={11} className="text-indigo-600" /> : null}
+                <span className="flex items-center gap-1 text-[11px] font-medium text-slate-700 dark:text-slate-200">
+                  {active ? <Check size={11} className="text-indigo-600 dark:text-indigo-400" /> : null}
                   {t.name}
                 </span>
               </button>

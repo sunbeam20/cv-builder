@@ -72,9 +72,9 @@ function SliderField({
 }) {
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between text-xs font-medium text-slate-600">
+      <div className="mb-1 flex items-center justify-between text-xs font-medium text-slate-600 dark:text-slate-300">
         <span>{label}</span>
-        <span className="font-mono text-[11px] text-slate-400">{display}</span>
+        <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">{display}</span>
       </div>
       <input
         type="range"
@@ -100,16 +100,16 @@ function ColorField({
   onChange: (value: string) => void
 }) {
   return (
-    <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600">
+    <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
       {label}
       <span className="flex items-center gap-2">
-        <span className="font-mono text-[11px] uppercase text-slate-400">{value}</span>
+        <span className="font-mono text-[11px] uppercase text-slate-400 dark:text-slate-500">{value}</span>
         <input
           type="color"
           aria-label={label}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-7 w-9 cursor-pointer rounded border border-slate-200 bg-white p-0.5"
+          className="h-7 w-9 cursor-pointer rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-0.5"
         />
       </span>
     </label>
@@ -154,25 +154,25 @@ export function DesignPanel() {
       <div
         ref={drawerRef}
         tabIndex={-1}
-        className="absolute inset-y-0 left-0 flex w-full max-w-md flex-col bg-white shadow-2xl outline-none"
+        className="absolute inset-y-0 left-0 flex w-full max-w-md flex-col bg-white dark:bg-slate-900 shadow-2xl outline-none"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5">
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-            <Palette size={16} className="text-indigo-600" />
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 px-5 py-3.5">
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
+            <Palette size={16} className="text-indigo-600 dark:text-indigo-400" />
             Design
           </h2>
           <button
             type="button"
             aria-label="Close design panel"
             onClick={close}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
           >
             <X size={16} />
           </button>
         </div>
 
-        <p className="px-5 pt-4 text-xs text-slate-500">
+        <p className="px-5 pt-4 text-xs text-slate-500 dark:text-slate-400">
           Fine-tune the look of <span className="font-medium">{TEMPLATES[template].name}</span>.
           Overrides apply until you reset or pick another template. The live preview stays
           visible as you adjust.
@@ -181,14 +181,14 @@ export function DesignPanel() {
         <div className="flex-1 overflow-y-auto px-5 pb-2">
           <div className="flex flex-col gap-4">
           <div>
-            <div className="mb-1 text-xs font-medium text-slate-600">Presets</div>
+            <div className="mb-1 text-xs font-medium text-slate-600 dark:text-slate-300">Presets</div>
             <div className="flex flex-wrap gap-2">
               {DESIGN_PRESETS.map((preset) => (
                 <button
                   key={preset.id}
                   type="button"
                   onClick={() => setCustomization(preset.customization)}
-                  className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
+                  className="rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950 hover:text-indigo-700 dark:hover:text-indigo-300"
                 >
                   {preset.name}
                 </button>
@@ -197,17 +197,17 @@ export function DesignPanel() {
           </div>
 
           <div>
-            <div className="mb-1 text-xs font-medium text-slate-600">My presets</div>
+            <div className="mb-1 text-xs font-medium text-slate-600 dark:text-slate-300">My presets</div>
             <div className="flex flex-wrap items-center gap-2">
               {customPresets.map((preset) => (
                 <span
                   key={preset.id}
-                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 pl-2.5 pr-1 py-1 text-xs font-medium text-slate-600"
+                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 pl-2.5 pr-1 py-1 text-xs font-medium text-slate-600 dark:text-slate-300"
                 >
                   <button
                     type="button"
                     onClick={() => setCustomization(preset.customization)}
-                    className="hover:text-indigo-700"
+                    className="hover:text-indigo-700 dark:hover:text-indigo-300"
                   >
                     {preset.name}
                   </button>
@@ -215,7 +215,7 @@ export function DesignPanel() {
                     type="button"
                     aria-label={`Delete preset ${preset.name}`}
                     onClick={() => removeCustomPreset(preset.id)}
-                    className="inline-flex h-4 w-4 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-rose-600"
+                    className="inline-flex h-4 w-4 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-rose-600 dark:hover:text-rose-400"
                   >
                     <Trash2 size={12} />
                   </button>
@@ -231,12 +231,12 @@ export function DesignPanel() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') savePreset()
                   }}
-                  className="w-32 rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+                  className="w-32 rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-xs text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
                 />
                 <button
                   type="button"
                   onClick={savePreset}
-                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
+                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950 hover:text-indigo-700 dark:hover:text-indigo-300"
                 >
                   <Save size={12} />
                   Save
@@ -250,7 +250,7 @@ export function DesignPanel() {
               aria-label="Font family"
               value={customization.fontId ?? ''}
               onChange={(e) => setCustomization({ fontId: e.target.value || undefined })}
-              className="w-full rounded-md border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 outline-none focus:border-indigo-500"
+              className="w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-2 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
               style={{ fontFamily: theme.fontFamily }}
             >
               <option value="">Template default</option>
@@ -272,7 +272,7 @@ export function DesignPanel() {
             onChange={(baseFontSize) => setCustomization({ baseFontSize })}
           />
 
-          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3">
+          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
             <SliderField
               label="Name size"
               display={`${Math.round(theme.nameScale * 100)}%`}
@@ -300,13 +300,13 @@ export function DesignPanel() {
               step={1}
               onChange={(sectionSpacing) => setCustomization({ sectionSpacing })}
             />
-            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600">
+            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
               Bullet style
               <select
                 aria-label="Bullet style"
                 value={theme.bulletStyle}
                 onChange={(e) => setCustomization({ bulletStyle: e.target.value as BulletStyle })}
-                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+                className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
               >
                 {BULLET_STYLES.map((style) => (
                   <option key={style} value={style}>
@@ -326,14 +326,14 @@ export function DesignPanel() {
             />
           </div>
 
-          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3">
-            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600">
+          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
               Heading case
               <select
                 aria-label="Heading case"
                 value={theme.headingCase}
                 onChange={(e) => setCustomization({ headingCase: e.target.value as HeadingCase })}
-                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+                className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
               >
                 {HEADING_CASES.map((value) => (
                   <option key={value} value={value}>
@@ -342,13 +342,13 @@ export function DesignPanel() {
                 ))}
               </select>
             </label>
-            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600">
+            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
               Heading weight
               <select
                 aria-label="Heading weight"
                 value={theme.headingWeight}
                 onChange={(e) => setCustomization({ headingWeight: Number(e.target.value) })}
-                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+                className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
               >
                 {HEADING_WEIGHTS.map((weight) => (
                   <option key={weight} value={weight}>
@@ -368,14 +368,14 @@ export function DesignPanel() {
             />
           </div>
 
-          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3">
-            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600">
+          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+            <label className="flex items-center justify-between gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
               Header layout
               <select
                 aria-label="Header layout"
                 value={theme.headerLayout}
                 onChange={(e) => setCustomization({ headerLayout: e.target.value as HeaderLayout })}
-                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+                className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
               >
                 {HEADER_LAYOUTS.map((value) => (
                   <option key={value} value={value}>
@@ -422,7 +422,7 @@ export function DesignPanel() {
             />
           </div>
 
-          <div className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3">
+          <div className="flex flex-col gap-2 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
             <ColorField
               label="Accent"
               value={theme.accent}
@@ -450,12 +450,12 @@ export function DesignPanel() {
             />
           </div>
 
-          <div className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3">
-            <div className="text-xs font-medium text-slate-600">Section headings</div>
+          <div className="flex flex-col gap-2 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+            <div className="text-xs font-medium text-slate-600 dark:text-slate-300">Section headings</div>
             {SECTION_IDS.map((id) => (
               <label
                 key={id}
-                className="flex items-center justify-between gap-2 text-xs text-slate-600"
+                className="flex items-center justify-between gap-2 text-xs text-slate-600 dark:text-slate-300"
               >
                 {SECTION_LABELS[id]}
                 <select
@@ -464,7 +464,7 @@ export function DesignPanel() {
                   onChange={(e) =>
                     setSectionHeading(id, e.target.value as SectionHeadingStyle | '')
                   }
-                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-500"
+                  className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500"
                 >
                   <option value="">Template default</option>
                   {SECTION_HEADING_STYLES.map((value) => (
@@ -478,7 +478,7 @@ export function DesignPanel() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-xs font-medium text-slate-600">
+            <label className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
               <input
                 type="checkbox"
                 checked={theme.accentBar}
@@ -487,7 +487,7 @@ export function DesignPanel() {
               />
               Accent bar under the name
             </label>
-            <label className="flex items-center gap-2 text-xs font-medium text-slate-600">
+            <label className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
               <input
                 type="checkbox"
                 checked={theme.headingRule}
@@ -496,7 +496,7 @@ export function DesignPanel() {
               />
               Rule under section headings
             </label>
-            <label className="flex items-center gap-2 text-xs font-medium text-slate-600">
+            <label className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
               <input
                 type="checkbox"
                 checked={theme.contactIcons}
@@ -508,13 +508,13 @@ export function DesignPanel() {
           </div>
 
           <div
-            className="rounded-lg border border-slate-200 p-3"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 p-3"
             style={{ fontFamily: theme.fontFamily, fontSize: theme.baseFontSize }}
           >
             <p style={{ color: theme.nameColor }} className="font-semibold">
               Alex Morgan
             </p>
-            <p className="text-slate-500" style={{ fontSize: '0.95em' }}>
+            <p className="text-slate-500 dark:text-slate-400" style={{ fontSize: '0.95em' }}>
               Product Engineer ·{' '}
               <span style={{ color: theme.linkColor }} className="underline">
                 alexmorgan.dev
@@ -524,11 +524,11 @@ export function DesignPanel() {
         </div>
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-200 px-5 py-3.5">
+        <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-700 px-5 py-3.5">
           <button
             type="button"
             onClick={resetCustomization}
-            className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-700"
+            className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
           >
             <RotateCcw size={13} />
             Reset to template

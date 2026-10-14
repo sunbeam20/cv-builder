@@ -27,7 +27,7 @@ export function SkillsForm() {
       }
     >
       {skills.length === 0 ? (
-        <p className="text-xs text-slate-400">No skill groups yet. Click “Add group”.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">No skill groups yet. Click “Add group”.</p>
       ) : (
         <SortableList ids={skills.map((s) => s.id)} onReorder={reorder}>
           <div className="flex flex-col gap-3">

@@ -27,7 +27,7 @@ export function CertificationsForm() {
       }
     >
       {certifications.length === 0 ? (
-        <p className="text-xs text-slate-400">No certifications yet.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">No certifications yet.</p>
       ) : (
         <SortableList ids={certifications.map((c) => c.id)} onReorder={reorder}>
           <div className="flex flex-col gap-3">

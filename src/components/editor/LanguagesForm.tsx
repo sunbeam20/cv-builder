@@ -27,7 +27,7 @@ export function LanguagesForm() {
       }
     >
       {languages.length === 0 ? (
-        <p className="text-xs text-slate-400">No languages yet.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">No languages yet.</p>
       ) : (
         <SortableList ids={languages.map((l) => l.id)} onReorder={reorder}>
           <div className="flex flex-col gap-3">
