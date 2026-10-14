@@ -198,8 +198,9 @@ export const TOOLS: ToolDefinition[] = [
     category: 'career',
     features: [
       'Guided structure with a live preview',
-      'Reusable tone presets and a sample body',
-      'Copy, download, or print to PDF',
+      'Reusable tone presets, sample body, and AI-assisted rewrites',
+      'Font, accent, and margin controls',
+      'Export a real PDF, copy, or download as text',
     ],
   },
   {
@@ -211,7 +212,11 @@ export const TOOLS: ToolDefinition[] = [
     icon: MessagesSquare,
     status: 'live',
     category: 'career',
-    features: ['Flashcards for common questions', 'A STAR answer builder', 'Timed practice mode'],
+    features: [
+      'Question bank across five role packs',
+      'A STAR answer builder with live feedback and scoring',
+      'Timed practice mode, progress tracking, and per-question notes',
+    ],
   },
   {
     id: 'linkedin-optimizer',
@@ -223,9 +228,10 @@ export const TOOLS: ToolDefinition[] = [
     status: 'live',
     category: 'career',
     features: [
-      'Score your headline and about section',
+      'Score your headline, about, and skills',
       'Keyword suggestions by target role',
-      'Rewrite hints you can paste straight in',
+      'AI rewrites for your headline and about section',
+      'An AI review panel with optimisation suggestions',
     ],
   },
   {
@@ -253,8 +259,9 @@ export const TOOLS: ToolDefinition[] = [
     status: 'live',
     category: 'career',
     features: [
-      'Base, bonus, equity, and benefits side by side',
-      'Cost-of-living adjusted comparison',
+      'Base, bonus, equity with vesting and cliff, and benefits side by side',
+      'After-tax and cost-of-living adjusted comparison',
+      'Four-year compensation projection chart',
       'Highlights your best offer at a glance',
     ],
   },
@@ -323,9 +330,10 @@ export const TOOLS: ToolDefinition[] = [
     status: 'live',
     category: 'design',
     features: [
-      'Live preview at 16–512px',
-      'Square, rounded, or circular letters',
-      'Download SVG or PNG and copy the link tag',
+      'Start from a letter or upload your own image',
+      'Live preview at 16–512px with square, rounded, or circular shapes',
+      'Export SVG, PNG, ICO, and a packaged ZIP',
+      'Generate link tags and a web app manifest',
     ],
   },
   {
@@ -337,7 +345,12 @@ export const TOOLS: ToolDefinition[] = [
     icon: Shapes,
     status: 'live',
     category: 'design',
-    features: ['Monogram and wordmark styles', 'Shapes, colors, and spacing controls', 'Export PNG and SVG'],
+    features: [
+      'Monogram, icon, and wordmark styles',
+      'Twelve built-in icons plus shapes, colors, and spacing',
+      'Stacked or inline layout with optional gradient',
+      'Export PNG and SVG',
+    ],
   },
   {
     id: 'social-posts',
@@ -382,9 +395,10 @@ export const TOOLS: ToolDefinition[] = [
     status: 'live',
     category: 'design',
     features: [
-      'Name, role, and contact fields',
-      'Accent colour plus social links',
+      'Name, role, and contact fields with accent colour and social links',
+      'Three layouts with optional photo',
       'Copy rich HTML or plain text',
+      'Download a vCard to save your contact',
     ],
   },
 
@@ -585,8 +599,9 @@ export const TOOLS: ToolDefinition[] = [
     category: 'finance',
     features: [
       'Line items, tax, and running totals',
-      'Save your sender details and past invoices',
-      'Print the preview straight to PDF',
+      'Company logo, status tracking, and payment details',
+      'Duplicate invoices and save your sender details',
+      'Export a real PDF or print the preview',
     ],
   },
   {
@@ -600,8 +615,9 @@ export const TOOLS: ToolDefinition[] = [
     category: 'finance',
     features: [
       'Add people and shared expenses',
-      'Split evenly with per-item participants',
-      'Minimised settle-up transfers',
+      'Split evenly, by percentage, exact amounts, or shares',
+      'Per-person inputs with split validation',
+      'Minimised settle-up transfers you can copy',
     ],
   },
 
@@ -626,7 +642,12 @@ export const TOOLS: ToolDefinition[] = [
     icon: Search,
     status: 'live',
     category: 'utilities',
-    features: ['Meta title and description length checks', 'Google and social card previews', 'Copy-ready meta tags'],
+    features: [
+      'Meta title and description length checks',
+      'Google and social card previews',
+      'Upload a social share image and favicon to preview them',
+      'Copy-ready meta tags',
+    ],
   },
 ]
 
@@ -656,17 +677,145 @@ export function toolsByCategory(tools: ToolDefinition[] = TOOLS): CategoryGroup[
 }
 
 /**
- * Case-insensitive tool search across name, tagline, slug, category label, and
- * feature text. An empty query returns no results (callers decide the fallback).
+ * Plain-language search terms, mapped by tool slug. Lets people find a tool by
+ * what they want to do ("resume", "split a bill", "site icon") rather than by
+ * its exact name. Kept separate from `TOOLS` so the definitions stay lean.
  */
+export const TOOL_ALIASES: Record<string, string[]> = {
+  cv: ['resume', 'cv', 'curriculum vitae', 'resume builder', 'cv builder'],
+  ats: ['ats', 'resume scan', 'cv scan', 'applicant tracking', 'resume checker', 'ats score'],
+  jobs: ['applications', 'application tracker', 'job search', 'career tracker'],
+  portfolio: ['portfolio', 'personal site', 'website', 'portfolio website'],
+  'cover-letter': ['cover letter', 'application letter', 'letter'],
+  'interview-prep': ['interview', 'interview questions', 'star method', 'interview practice'],
+  linkedin: ['linkedin', 'profile', 'headline', 'linkedin profile'],
+  matcher: ['job match', 'match cv', 'tailor resume', 'job description'],
+  offer: ['salary', 'job offer', 'compensation', 'offer comparison', 'negotiation'],
+  banner: ['banner', 'linkedin banner', 'cover image', 'header image'],
+  colors: ['color', 'colour', 'palette', 'contrast'],
+  favicon: ['favicon', 'site icon', 'tab icon', 'icon'],
+  logo: ['logo', 'monogram', 'brand', 'icon'],
+  'email-signature': ['signature', 'email signature', 'sign off', 'vcard'],
+  hydrate: ['water', 'drink', 'hydration', 'water intake'],
+  habits: ['habit', 'streak', 'routine'],
+  sleep: ['sleep', 'bedtime', 'rest'],
+  mood: ['mood', 'journal', 'gratitude', 'diary'],
+  workout: ['workout', 'exercise', 'gym', 'fitness'],
+  medicine: ['medicine', 'medication', 'pills', 'reminder'],
+  focus: ['focus', 'pomodoro', 'timer', 'productivity'],
+  kanban: ['kanban', 'tasks', 'board', 'project management', 'todo'],
+  notes: ['notes', 'markdown', 'notepad', 'note taking'],
+  'json-csv': ['json', 'csv', 'convert data', 'format data'],
+  datetime: ['date', 'days between', 'age', 'time difference'],
+  password: ['password', 'passphrase', 'secure password', 'random password'],
+  convert: ['convert', 'unit conversion', 'measurement', 'metric', 'imperial'],
+  diff: ['diff', 'compare text', 'text compare', 'differences'],
+  lorem: ['lorem', 'placeholder text', 'dummy text', 'ipsum'],
+  invoice: ['invoice', 'billing', 'receipt', 'bill client'],
+  split: ['split bill', 'expense split', 'share cost', 'settle up', 'trip expenses'],
+  seo: ['seo', 'meta tags', 'link preview', 'open graph', 'social preview'],
+}
+
+const aliasText = (tool: ToolDefinition): string => (TOOL_ALIASES[tool.slug] ?? []).join(' ')
+
+/**
+ * Relevance score for a tool against a lower-cased query. Field order encodes
+ * priority: a name hit always outranks an alias/feature match.
+ */
+function scoreTool(tool: ToolDefinition, q: string): number {
+  const name = tool.name.toLowerCase()
+  if (name.startsWith(q)) return 100
+  if (name.includes(q)) return 80
+  if (aliasText(tool).includes(q)) return 70
+  if (tool.slug.toLowerCase().includes(q)) return 60
+  if ((CATEGORY_BY_ID.get(tool.category)?.label ?? '').toLowerCase().includes(q)) return 50
+  if (tool.tagline.toLowerCase().includes(q)) return 40
+  if ((tool.features?.join(' ') ?? '').toLowerCase().includes(q)) return 30
+  return 0
+}
+
+/**
+ * Ranked, case-insensitive tool search across name, intent aliases, slug,
+ * category label, tagline, and features. Results are ordered by relevance
+ * (ties keep registry order). An empty query returns no results.
+ */
+const STOPWORDS = new Set([
+  'a', 'an', 'the', 'my', 'your', 'our', 'for', 'to', 'of', 'in', 'on', 'with',
+  'and', 'make', 'build', 'create', 'need', 'want', 'help', 'me',
+])
+
+/** All query words present somewhere in the tool's searchable text. */
+function tokenScore(tool: ToolDefinition, words: string[]): number {
+  if (words.length === 0) return 0
+  const haystack = `${tool.name} ${aliasText(tool)} ${tool.slug} ${tool.tagline} ${
+    tool.features?.join(' ') ?? ''
+  }`.toLowerCase()
+  return words.every((word) => haystack.includes(word)) ? 20 : 0
+}
+
 export function searchTools(query: string, tools: ToolDefinition[] = TOOLS): ToolDefinition[] {
   const q = query.trim().toLowerCase()
   if (!q) return []
-  return tools.filter((tool) => {
-    const category = CATEGORY_BY_ID.get(tool.category)?.label ?? ''
-    const features = tool.features?.join(' ') ?? ''
-    return `${tool.name} ${tool.tagline} ${tool.slug} ${category} ${features}`
-      .toLowerCase()
-      .includes(q)
-  })
+  const words = q.split(/\s+/).filter((word) => word.length > 1 && !STOPWORDS.has(word))
+  return tools
+    .map((tool, index) => ({ tool, index, score: scoreTool(tool, q) || tokenScore(tool, words) }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .map((entry) => entry.tool)
+}
+
+/**
+ * Tools most closely related to `tool`: curated cross-category pairings first,
+ * then the rest of the same category. Used by the "related tools" footer.
+ */
+const RELATED: Record<string, string[]> = {
+  cv: ['ats', 'cover-letter', 'matcher', 'portfolio'],
+  ats: ['cv', 'matcher', 'cover-letter'],
+  'cover-letter': ['cv', 'ats', 'interview-prep'],
+  'interview-prep': ['cover-letter', 'linkedin', 'jobs'],
+  linkedin: ['portfolio', 'banner', 'interview-prep'],
+  matcher: ['ats', 'cv', 'cover-letter'],
+  jobs: ['cv', 'interview-prep', 'offer'],
+  portfolio: ['banner', 'linkedin', 'cv'],
+  offer: ['jobs', 'matcher', 'invoice'],
+  logo: ['favicon', 'banner', 'colors'],
+  favicon: ['logo', 'seo', 'colors'],
+  banner: ['logo', 'portfolio', 'colors'],
+  colors: ['logo', 'banner', 'favicon'],
+  'email-signature': ['linkedin', 'portfolio', 'banner'],
+  seo: ['favicon', 'banner', 'portfolio'],
+  split: ['invoice', 'password', 'convert'],
+  invoice: ['split', 'offer', 'seo'],
+  hydrate: ['habits', 'sleep', 'workout'],
+  habits: ['hydrate', 'focus', 'sleep'],
+  sleep: ['mood', 'habits', 'hydrate'],
+  mood: ['sleep', 'habits', 'notes'],
+  workout: ['hydrate', 'habits', 'sleep'],
+  medicine: ['hydrate', 'habits', 'sleep'],
+  focus: ['kanban', 'habits', 'notes'],
+  kanban: ['focus', 'notes', 'datetime'],
+  notes: ['kanban', 'json-csv', 'focus'],
+  'json-csv': ['diff', 'convert', 'notes'],
+  datetime: ['convert', 'json-csv', 'diff'],
+  password: ['json-csv', 'convert', 'seo'],
+  convert: ['datetime', 'json-csv', 'diff'],
+  diff: ['json-csv', 'convert', 'lorem'],
+  lorem: ['diff', 'notes', 'convert'],
+}
+
+export function relatedTools(tool: ToolDefinition, limit = 3): ToolDefinition[] {
+  const picked: ToolDefinition[] = []
+  const seen = new Set<string>([tool.id])
+  const add = (candidate?: ToolDefinition) => {
+    if (candidate && !seen.has(candidate.id) && picked.length < limit) {
+      seen.add(candidate.id)
+      picked.push(candidate)
+    }
+  }
+  for (const slug of RELATED[tool.slug] ?? []) add(TOOL_BY_SLUG.get(slug))
+  for (const candidate of LIVE_TOOLS) {
+    if (candidate.category === tool.category) add(candidate)
+  }
+  for (const candidate of LIVE_TOOLS) add(candidate)
+  return picked
 }

@@ -1,6 +1,7 @@
 import { isDevHost, parseHost, toolUrl, hubUrl } from '../lib/host'
 import { navigate, navigateToRoute } from './routes'
 import { TOOL_BY_SLUG } from './tools'
+import { useHubStore } from './hubStore'
 
 const current = () => parseHost(window.location.hostname)
 
@@ -18,6 +19,7 @@ export function goHome(): void {
 export function openTool(slug: string): void {
   const { rootHost, isDev } = current()
   const tool = TOOL_BY_SLUG.get(slug)
+  if (tool) useHubStore.getState().recordRecent(slug)
 
   if (isDev) {
     if (tool?.route) navigateToRoute(tool.route)

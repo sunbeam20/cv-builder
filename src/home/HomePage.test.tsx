@@ -32,4 +32,13 @@ describe('HomePage', () => {
     render(<HomePage />)
     expect(screen.getByText('Your data never leaves your browser')).toBeInTheDocument()
   })
+
+  it('renders the bento tiles with a working demo', () => {
+    render(<HomePage />)
+    expect(screen.getByText('Try it now')).toBeInTheDocument()
+    expect(screen.getByText('By the numbers')).toBeInTheDocument()
+    expect(screen.getByText('On the roadmap')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Copy' }))
+    expect(screen.getByText('Copied')).toBeInTheDocument()
+  })
 })

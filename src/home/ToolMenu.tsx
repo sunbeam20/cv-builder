@@ -37,7 +37,7 @@ export function ToolMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800"
       >
         <LayoutGrid size={14} />
         Tools
@@ -48,13 +48,13 @@ export function ToolMenu() {
         <div
           role="menu"
           aria-label="All tools"
-          className="absolute right-0 z-40 mt-2 max-h-[70vh] w-72 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-xl"
+          className="absolute right-0 z-40 mt-2 max-h-[70vh] w-72 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl"
         >
           {groups.map(({ category, tools }) => {
             const CategoryIcon = category.icon
             return (
               <div key={category.id} className="mb-1">
-                <p className="flex items-center gap-1.5 px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                <p className="flex items-center gap-1.5 px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
                   <CategoryIcon size={11} />
                   {category.label}
                 </p>
@@ -70,12 +70,12 @@ export function ToolMenu() {
                         setOpen(false)
                         openTool(tool.slug)
                       }}
-                      className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-slate-50"
+                      className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-slate-50 dark:hover:bg-slate-800"
                     >
                       <Icon size={14} className={soon ? 'text-slate-300' : 'text-indigo-500'} />
                       <span
                         className={`flex-1 truncate text-xs font-medium ${
-                          soon ? 'text-slate-400' : 'text-slate-700'
+                          soon ? 'text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'
                         }`}
                       >
                         {tool.name}

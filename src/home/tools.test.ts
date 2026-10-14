@@ -7,6 +7,7 @@ import {
   TOOL_BY_ROUTE,
   TOOL_BY_SLUG,
   LIVE_TOOLS,
+  relatedTools,
   searchTools,
   toolsByCategory,
 } from './tools'
@@ -82,5 +83,34 @@ describe('searchTools', () => {
 
   it('returns no matches for gibberish', () => {
     expect(searchTools('zzzzqqq')).toEqual([])
+  })
+
+  it('matches on plain-language intent aliases', () => {
+    expect(searchTools('resume').map((t) => t.id)).toContain('cv-builder')
+    expect(searchTools('site icon').map((t) => t.id)).toContain('favicon-maker')
+    expect(searchTools('split a bill').map((t) => t.id)).toContain('split-bill')
+  })
+
+  it('ranks name matches above feature matches', () => {
+    expect(searchTools('password')[0]?.id).toBe('password-generator')
+    expect(searchTools('tracker')[0]?.id).toBe('job-tracker')
+  })
+})
+
+describe('relatedTools', () => {
+  it('never includes the tool itself and respects the limit', () => {
+    const cv = TOOL_BY_SLUG.get('cv')
+    expect(cv).toBeDefined()
+    const related = relatedTools(cv!)
+    expect(related).toHaveLength(3)
+    expect(related.map((t) => t.id)).not.toContain('cv-builder')
+  })
+
+  it('only suggests live tools', () => {
+    for (const tool of LIVE_TOOLS) {
+      for (const related of relatedTools(tool)) {
+        expect(related.status).toBe('live')
+      }
+    }
   })
 })
